@@ -19,9 +19,9 @@ const Footer = () => {
         </Text>{" "}
         (s3605651) and{" "}
         <Text as="span" fontWeight="bold" color="darkGreen">
-          Abdulmalik Nakoa
+          Matthew Jackson
         </Text>{" "}
-        (s3973358) for COSC2758 Full Stack Development.
+        (s3897362) for COSC2758 Full Stack Development.
       </Box>
     </Fade>
   );
