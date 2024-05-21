@@ -26,12 +26,14 @@ const Signup = ({ onSuccessfulSignup }) => {
     username: "",
     password: "",
   });
-  const [confirmPassword, setConfirmPassword] = useState(""); // State to store confirm password
-  const [isNameValid, setIsNameValid] = useState(false); // State to store name validation status
-  const [isEmailValid, setIsEmailValid] = useState(false); // State to store email validation status
-  const [isPasswordValid, setIsPasswordValid] = useState(false); // State to store password validation status
-  const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false); // State to store confirm password validation status
-  const toast = useToast(); // Toast notification
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isUsernameValid, setIsUsernameValid] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
+  const [isFirstNameValid, setIsFirstNameValid] = useState(false);
+  const [isLastNameValid, setIsLastNameValid] = useState(false);
+  const toast = useToast();
 
   // Regular expressions for email and password validation
   const emailPattern =
@@ -46,17 +48,19 @@ const Signup = ({ onSuccessfulSignup }) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
 
-    // Inline validation checks
-    if (name === "first_name" || name === "last_name") {
-      setIsNameValid(value.length >= 2);
+    if (name === "username") {
+      setIsUsernameValid(value.length >= 3 && value.length <= 32);
     } else if (name === "email") {
       setIsEmailValid(emailPattern.test(value));
     } else if (name === "password") {
-      const isValid = value.length >= 6; // Simplified password validation
-      setIsPasswordValid(isValid);
+      setIsPasswordValid(value.length >= 6);
       if (confirmPassword) {
-        setIsConfirmPasswordValid(isValid && value === confirmPassword);
+        setIsConfirmPasswordValid(value === confirmPassword);
       }
+    } else if (name === "first_name") {
+      setIsFirstNameValid(value.length >= 2 && value.length <= 40);
+    } else if (name === "last_name") {
+      setIsLastNameValid(value.length >= 2 && value.length <= 40);
     }
   };
 
@@ -69,59 +73,11 @@ const Signup = ({ onSuccessfulSignup }) => {
   const handleConfirmPasswordChange = (e) => {
     const value = e.target.value;
     setConfirmPassword(value);
-    setIsConfirmPasswordValid(
-      user.password === value && user.password.length >= 6
-    );
+    setIsConfirmPasswordValid(user.password === value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    /**
-     * Validation for Name
-     * Name must be at least 2 characters long.
-     * If the name is valid, the check icon is displayed; otherwise, the warning icon is displayed.
-     */
-    if (!isNameValid) {
-      showErrorToast(
-        "Invalid Name",
-        "Name must be at least 2 characters long."
-      );
-      return;
-    }
-
-    /**
-     * Validation for Email
-     * Email must match the email pattern.
-     * If the email is valid, the check icon is displayed; otherwise, the warning icon is displayed.
-     */
-    if (!isEmailValid) {
-      showErrorToast("Invalid Email", "Please enter a valid email address.");
-      return;
-    }
-
-    /**
-     * Validation for Password
-     * Password must be at least 6 characters long.
-     * If the password is valid, the check icon is displayed; otherwise, the warning icon is displayed.
-     */
-    if (!isPasswordValid) {
-      showErrorToast(
-        "Weak Password",
-        "Password must be at least 6 characters long."
-      );
-      return;
-    }
-
-    /**
-     * Validation for Confirm Password
-     * Confirm password must match the password.
-     * If the confirm password is valid, the check icon is displayed; otherwise, the warning icon is displayed.
-     */
-    if (!isConfirmPasswordValid) {
-      showErrorToast("Password Mismatch", "The passwords do not match.");
-      return;
-    }
 
     try {
       const newUser = await createUser(user);
@@ -178,23 +134,22 @@ const Signup = ({ onSuccessfulSignup }) => {
               borderColor={"beige"}
             >
               <form onSubmit={handleSubmit}>
-                {/* First Name Field */}
                 <FormControl isRequired>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <InputGroup>
                     <Input
                       type="text"
-                      name="first_name"
-                      value={user.first_name}
+                      name="username"
+                      value={user.username}
                       onChange={handleChange}
                     />
                     <InputRightElement
                       children={
-                        isNameValid ? (
+                        isUsernameValid ? (
                           <CheckIcon color="green.500" />
                         ) : (
                           <Tooltip
-                            label="First name must be at least 2 characters long."
+                            label="Username must be between 3 and 32 characters."
                             hasArrow
                           >
                             <WarningTwoIcon color="red.500" />
@@ -205,7 +160,32 @@ const Signup = ({ onSuccessfulSignup }) => {
                   </InputGroup>
                 </FormControl>
 
-                {/* Last Name Field */}
+                <FormControl isRequired mt={4}>
+                  <FormLabel>First Name</FormLabel>
+                  <InputGroup>
+                    <Input
+                      type="text"
+                      name="first_name"
+                      value={user.first_name}
+                      onChange={handleChange}
+                    />
+                    <InputRightElement
+                      children={
+                        isFirstNameValid ? (
+                          <CheckIcon color="green.500" />
+                        ) : (
+                          <Tooltip
+                            label="First name must be between 2 and 40 characters."
+                            hasArrow
+                          >
+                            <WarningTwoIcon color="red.500" />
+                          </Tooltip>
+                        )
+                      }
+                    />
+                  </InputGroup>
+                </FormControl>
+
                 <FormControl isRequired mt={4}>
                   <FormLabel>Last Name</FormLabel>
                   <InputGroup>
@@ -217,11 +197,11 @@ const Signup = ({ onSuccessfulSignup }) => {
                     />
                     <InputRightElement
                       children={
-                        isNameValid ? (
+                        isLastNameValid ? (
                           <CheckIcon color="green.500" />
                         ) : (
                           <Tooltip
-                            label="Last name must be at least 2 characters long."
+                            label="Last name must be between 2 and 40 characters."
                             hasArrow
                           >
                             <WarningTwoIcon color="red.500" />
@@ -232,18 +212,6 @@ const Signup = ({ onSuccessfulSignup }) => {
                   </InputGroup>
                 </FormControl>
 
-                {/* Username Field */}
-                <FormControl isRequired mt={4}>
-                  <FormLabel>Username</FormLabel>
-                  <Input
-                    type="text"
-                    name="username"
-                    value={user.username}
-                    onChange={handleChange}
-                  />
-                </FormControl>
-
-                {/* Email Field */}
                 <FormControl isRequired mt={4}>
                   <FormLabel>Email</FormLabel>
                   <InputGroup>
@@ -270,7 +238,6 @@ const Signup = ({ onSuccessfulSignup }) => {
                   </InputGroup>
                 </FormControl>
 
-                {/* Password Field */}
                 <FormControl isRequired mt={4}>
                   <FormLabel>Password</FormLabel>
                   <InputGroup>
@@ -297,7 +264,6 @@ const Signup = ({ onSuccessfulSignup }) => {
                   </InputGroup>
                 </FormControl>
 
-                {/* Confirm Password Field */}
                 <FormControl isRequired mt={4}>
                   <FormLabel>Confirm Password</FormLabel>
                   <InputGroup>
@@ -327,10 +293,12 @@ const Signup = ({ onSuccessfulSignup }) => {
                   _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
                   type="submit"
                   isDisabled={
-                    !isNameValid ||
+                    !isUsernameValid ||
                     !isEmailValid ||
                     !isPasswordValid ||
-                    !isConfirmPasswordValid
+                    !isConfirmPasswordValid ||
+                    !isFirstNameValid ||
+                    !isLastNameValid
                   }
                 >
                   Sign Up
