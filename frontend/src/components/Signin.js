@@ -34,7 +34,7 @@ const Signin = ({ onSuccessfulSignin }) => {
           duration: 5000,
           isClosable: true,
         });
-        onSuccessfulSignin();
+        onSuccessfulSignin(user);
       } else {
         // If user is not found, display error toast
         toast({

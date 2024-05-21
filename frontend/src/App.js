@@ -19,24 +19,31 @@ function App() {
   const toast = useToast();
   const [currentView, setCurrentView] = useState("main");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const loggedInUser = localStorage.getItem("userLoggedIn");
-    setIsLoggedIn(!!loggedInUser);
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+    if (loggedInUser) {
+      setIsLoggedIn(true);
+      setUser(loggedInUser);
+    }
   }, []);
 
   const changeView = (view) => {
     setCurrentView(view);
   };
 
-  const handleAuthSuccess = () => {
+  const handleAuthSuccess = (user) => {
     setIsLoggedIn(true);
+    setUser(user);
+    localStorage.setItem("user", JSON.stringify(user));
     setCurrentView("main"); // Redirect to the home page
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("userLoggedIn"); // Clear the logged-in user's state
+    localStorage.removeItem("user"); // Clear the logged-in user's state
     setIsLoggedIn(false);
+    setUser(null);
     setCurrentView("main"); // Redirect to the main page
   };
 
