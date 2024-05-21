@@ -9,40 +9,47 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { Fade } from "@chakra-ui/transition";
+import { verifyUser, setUser } from "../data/repository";
 
 const Signin = ({ onSuccessfulSignin }) => {
   // State to store user credentials
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
   const toast = useToast(); // Toast notification
 
-  // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Retrieve users from localStorage
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    // Find user with matching email and password
-    const user = users.find(
-      (u) =>
-        u.email === credentials.email && u.password === credentials.password
-    );
-
-    // If user is found, set userLoggedIn in localStorage and display success toast
-    if (user) {
-      localStorage.setItem("userLoggedIn", credentials.email);
-      toast({
-        title: "Successful Login",
-        description: `Welcome ${user.name}!`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      onSuccessfulSignin();
-    } else {
-      // If user is not found, display error toast
+    try {
+      const user = await verifyUser(credentials.username, credentials.password);
+      if (user) {
+        // Store user in localStorage
+        setUser(user);
+        toast({
+          title: "Successful Login",
+          description: `Welcome ${user.first_name} ${user.last_name}!`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        onSuccessfulSignin();
+      } else {
+        // If user is not found, display error toast
+        toast({
+          title: "Error",
+          description: "Invalid username or password",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      // Handle errors during the login process
       toast({
         title: "Error",
-        description: "Invalid email or password",
+        description: "An error occurred during login",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -73,13 +80,13 @@ const Signin = ({ onSuccessfulSignin }) => {
         >
           <form onSubmit={handleSubmit}>
             <FormControl isRequired>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Username</FormLabel>
               <Input
-                type="email"
-                name="email"
-                value={credentials.email}
+                type="text"
+                name="text"
+                value={credentials.username}
                 onChange={(e) =>
-                  setCredentials({ ...credentials, email: e.target.value })
+                  setCredentials({ ...credentials, username: e.target.value })
                 }
               />
             </FormControl>
