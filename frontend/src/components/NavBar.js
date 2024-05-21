@@ -26,9 +26,9 @@ import { Fade } from "@chakra-ui/transition";
  * @param {string} props.userName - User's name
  * @returns {JSX.Element} NavBar component
  */
-const NavBar = ({ changeView, isLoggedIn, handleLogout, userName }) => {
-  // userName can be fetched from props, state management, or localStorage
-  const name = userName || localStorage.getItem("userLoggedIn") || "";
+const NavBar = ({ changeView, isLoggedIn, handleLogout }) => {
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const name = user.first_name || "";
   return (
     <Fade in={true}>
       <Grid
