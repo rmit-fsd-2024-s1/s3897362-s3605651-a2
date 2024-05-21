@@ -24,8 +24,15 @@ async function findUser(id) {
 }
 
 async function createUser(user) {
-  const response = await axios.post(API_HOST + "/api/users", user);
-  return response.data;
+  try {
+    const response = await axios.post(`${API_HOST}/api/users`, user);
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 400) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error("An error occurred while creating the user.");
+  }
 }
 
 async function updateUser(id, user) {

@@ -44,19 +44,42 @@ exports.login = async (req, res) => {
 // Create a user in the database.
 exports.createUser = async (req, res) => {
   try {
-    const hash = await argon2.hash(req.body.password, {
+    const { username, email, password, first_name, last_name } = req.body;
+
+    // Check if username or email already exists
+    const existingUserByUsername = await db.user.findOne({
+      where: { username },
+    });
+    const existingUserByEmail = await db.user.findOne({ where: { email } });
+
+    if (existingUserByUsername && existingUserByEmail) {
+      return res
+        .status(400)
+        .json({ message: "Username and Email are already in use." });
+    } else if (existingUserByUsername) {
+      return res.status(400).json({ message: "Username is already in use." });
+    } else if (existingUserByEmail) {
+      return res.status(400).json({ message: "Email is already in use." });
+    }
+
+    const hash = await argon2.hash(password, {
       type: argon2.argon2id,
     });
+
     const user = await db.user.create({
-      username: req.body.username,
-      email: req.body.email, // Ensure the email is included in the request
+      username,
+      email,
       password_hash: hash,
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
+      first_name,
+      last_name,
     });
+
     res.status(201).json(user);
   } catch (error) {
-    res.status(500).send({ message: "Error creating user" });
+    console.error("Error creating user:", error.message); // Log the actual error
+    res
+      .status(500)
+      .json({ message: "An error occurred while creating the user." });
   }
 };
 

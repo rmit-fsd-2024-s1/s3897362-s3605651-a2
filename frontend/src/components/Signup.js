@@ -15,14 +15,16 @@ import {
 } from "@chakra-ui/react";
 import { CheckIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { Fade } from "@chakra-ui/transition";
+import { createUser } from "../data/repository";
 
 const Signup = ({ onSuccessfulSignup }) => {
   // State to store user details
   const [user, setUser] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
+    username: "",
     password: "",
-    dateOfJoining: new Date().toLocaleDateString(),
   });
   const [confirmPassword, setConfirmPassword] = useState(""); // State to store confirm password
   const [isNameValid, setIsNameValid] = useState(false); // State to store name validation status
@@ -34,9 +36,6 @@ const Signup = ({ onSuccessfulSignup }) => {
   // Regular expressions for email and password validation
   const emailPattern =
     /^(([^<>()\\.,;:\s@"]+(\.[^<>()\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  // Password must be at least 8 characters long, include at least one number, and one special character (e.g., !@#$%^&*).
-  const passwordPattern =
-    /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
 
   /**
    * Function to handle input change
@@ -48,12 +47,12 @@ const Signup = ({ onSuccessfulSignup }) => {
     setUser({ ...user, [name]: value });
 
     // Inline validation checks
-    if (name === "name") {
+    if (name === "first_name" || name === "last_name") {
       setIsNameValid(value.length >= 2);
     } else if (name === "email") {
       setIsEmailValid(emailPattern.test(value));
     } else if (name === "password") {
-      const isValid = passwordPattern.test(value);
+      const isValid = value.length >= 6; // Simplified password validation
       setIsPasswordValid(isValid);
       if (confirmPassword) {
         setIsConfirmPasswordValid(isValid && value === confirmPassword);
@@ -71,11 +70,11 @@ const Signup = ({ onSuccessfulSignup }) => {
     const value = e.target.value;
     setConfirmPassword(value);
     setIsConfirmPasswordValid(
-      user.password === value && passwordPattern.test(user.password)
+      user.password === value && user.password.length >= 6
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     /**
@@ -103,13 +102,13 @@ const Signup = ({ onSuccessfulSignup }) => {
 
     /**
      * Validation for Password
-     * Password must be at least 8 characters long, include at least one number, and one special character.
+     * Password must be at least 6 characters long.
      * If the password is valid, the check icon is displayed; otherwise, the warning icon is displayed.
      */
     if (!isPasswordValid) {
       showErrorToast(
         "Weak Password",
-        "Password must be at least 8 characters long, include at least one number, and one special character (e.g., !@#$%^&*)."
+        "Password must be at least 6 characters long."
       );
       return;
     }
@@ -124,34 +123,20 @@ const Signup = ({ onSuccessfulSignup }) => {
       return;
     }
 
-    /**
-     * Check if the email already exists
-     * If the email already exists, show an error toast.
-     */
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    if (users.some((u) => u.email === user.email)) {
-      showErrorToast(
-        "Email Exists",
-        "An account with this email already exists."
-      );
-      return;
+    try {
+      const newUser = await createUser(user);
+      localStorage.setItem("user", JSON.stringify(newUser));
+      toast({
+        title: "Signup Successful",
+        description: "You are now logged in.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onSuccessfulSignup(newUser);
+    } catch (error) {
+      showErrorToast("Signup Failed", error.message);
     }
-
-    // Add the new user to the users array in localStorage
-    users.push({ ...user, dateOfJoining: new Date().toLocaleDateString() });
-    // Update the users array in localStorage
-    localStorage.setItem("users", JSON.stringify(users));
-    // Set the userLoggedIn in localStorage
-    localStorage.setItem("userLoggedIn", user.email);
-    // Display a success toast
-    toast({
-      title: "Signup Successful",
-      description: "You are now logged in.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
-    onSuccessfulSignup(); // Redirect to the home page
   };
 
   /**
@@ -193,14 +178,14 @@ const Signup = ({ onSuccessfulSignup }) => {
               borderColor={"beige"}
             >
               <form onSubmit={handleSubmit}>
-                {/* Name Field */}
+                {/* First Name Field */}
                 <FormControl isRequired>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <InputGroup>
                     <Input
                       type="text"
-                      name="name"
-                      value={user.name}
+                      name="first_name"
+                      value={user.first_name}
                       onChange={handleChange}
                     />
                     <InputRightElement
@@ -209,7 +194,7 @@ const Signup = ({ onSuccessfulSignup }) => {
                           <CheckIcon color="green.500" />
                         ) : (
                           <Tooltip
-                            label="Name must be at least 2 characters long."
+                            label="First name must be at least 2 characters long."
                             hasArrow
                           >
                             <WarningTwoIcon color="red.500" />
@@ -218,6 +203,44 @@ const Signup = ({ onSuccessfulSignup }) => {
                       }
                     />
                   </InputGroup>
+                </FormControl>
+
+                {/* Last Name Field */}
+                <FormControl isRequired mt={4}>
+                  <FormLabel>Last Name</FormLabel>
+                  <InputGroup>
+                    <Input
+                      type="text"
+                      name="last_name"
+                      value={user.last_name}
+                      onChange={handleChange}
+                    />
+                    <InputRightElement
+                      children={
+                        isNameValid ? (
+                          <CheckIcon color="green.500" />
+                        ) : (
+                          <Tooltip
+                            label="Last name must be at least 2 characters long."
+                            hasArrow
+                          >
+                            <WarningTwoIcon color="red.500" />
+                          </Tooltip>
+                        )
+                      }
+                    />
+                  </InputGroup>
+                </FormControl>
+
+                {/* Username Field */}
+                <FormControl isRequired mt={4}>
+                  <FormLabel>Username</FormLabel>
+                  <Input
+                    type="text"
+                    name="username"
+                    value={user.username}
+                    onChange={handleChange}
+                  />
                 </FormControl>
 
                 {/* Email Field */}
@@ -263,7 +286,7 @@ const Signup = ({ onSuccessfulSignup }) => {
                           <CheckIcon color="green.500" />
                         ) : (
                           <Tooltip
-                            label="Password must be at least 8 characters long, include at least one number, and one special character (e.g., !@#$%^&*)."
+                            label="Password must be at least 6 characters long."
                             hasArrow
                           >
                             <WarningTwoIcon color="red.500" />
