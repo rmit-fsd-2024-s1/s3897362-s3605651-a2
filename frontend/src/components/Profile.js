@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -29,6 +29,7 @@ import {
   Heading,
   Tooltip,
   SimpleGrid,
+  Spinner,
   StackDivider,
 } from "@chakra-ui/react";
 import {
@@ -38,6 +39,7 @@ import {
   ViewOffIcon,
 } from "@chakra-ui/icons";
 import { Fade } from "@chakra-ui/transition";
+import { getUser } from "../data/repository";
 
 const Profile = () => {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Modal state
@@ -48,10 +50,8 @@ const Profile = () => {
     dateOfJoining: "",
   });
   const toast = useToast(); // Toast state
-  const username = localStorage.getItem("userLoggedIn"); // Get the current user's email
-  const users = JSON.parse(localStorage.getItem("users")) || []; // Get the users array from local storage
-  const userIndex = users.findIndex((u) => u.email === username); // Find the index of the current user
-  const user = users[userIndex]; // Get the current user object
+  const [user, setUser] = useState(null); // State to store the user object
+  const [loading, setLoading] = useState(true); // State to manage loading state
 
   const [isNameValid, setIsNameValid] = useState(true); // Name validation state
   const [isEmailValid, setIsEmailValid] = useState(true); // Email validation state
@@ -72,6 +72,33 @@ const Profile = () => {
   // Email pattern
   const emailPattern =
     /^(([^<>()\\.,;:\s@"]+(\.[^<>()\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  // Fetch user data when the component mounts
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user")); // Get the logged-in user from local storage
+        if (storedUser) {
+          const userData = await getUser(storedUser.id);
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching data
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  // If loading, show a spinner
+  if (loading) {
+    return (
+      <Flex align="center" justify="center" height="100vh">
+        <Spinner size="xl" />
+      </Flex>
+    );
+  }
 
   // If no user is found, display a message indicating that no user information is available.
   if (!user) {
@@ -196,26 +223,26 @@ const Profile = () => {
       return;
     }
 
-    /**
-     * Update the users array with the new user data
-     * Map over the users array
-     * If the user's name matches the current user's name, update the user with the new data
-     * Otherwise, return the user as is
-     */
-    const updatedUsers = users.map((u) => {
-      if (u.name === username) {
-        return { ...u, name: editUser.name, email: editUser.email, password };
-      }
-      return u;
-    });
+    // /**
+    //  * Update the users array with the new user data
+    //  * Map over the users array
+    //  * If the user's name matches the current user's name, update the user with the new data
+    //  * Otherwise, return the user as is
+    //  */
+    // const updatedUsers = users.map((u) => {
+    //   if (u.name === username) {
+    //     return { ...u, name: editUser.name, email: editUser.email, password };
+    //   }
+    //   return u;
+    // });
 
     // Update the local storage with the new users array
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    // localStorage.setItem("users", JSON.stringify(updatedUsers));
 
     // If the username was changed, update the current userLoggedIn as well
-    if (username !== editUser.name) {
-      localStorage.setItem("userLoggedIn", editUser.email);
-    }
+    // if (username !== editUser.name) {
+    //   localStorage.setItem("userLoggedIn", editUser.email);
+    // }
 
     // Display a success toast indicating that the profile has been updated
     toast({
@@ -238,15 +265,15 @@ const Profile = () => {
    * Set a flag indicating account deletion success
    * Reload the page after account deletion
    */
-  const handleDelete = () => {
-    if (deleteName === user.name && deleteEmail === user.email) {
-      const updatedUsers = users.filter((u) => u.name !== user.name);
-      localStorage.setItem("users", JSON.stringify(updatedUsers));
-      localStorage.removeItem("userLoggedIn");
-      localStorage.setItem("accountDeletionSuccess", "true");
-      window.location.reload();
-    }
-  };
+  // const handleDelete = () => {
+  //   if (deleteName === user.name && deleteEmail === user.email) {
+  //     const updatedUsers = users.filter((u) => u.name !== user.name);
+  //     localStorage.setItem("users", JSON.stringify(updatedUsers));
+  //     localStorage.removeItem("userLoggedIn");
+  //     localStorage.setItem("accountDeletionSuccess", "true");
+  //     window.location.reload();
+  //   }
+  // };
 
   return (
     <Fade in={true}>
@@ -295,7 +322,7 @@ const Profile = () => {
                   Name
                 </Text>
                 <Text fontSize="2xl" color="text">
-                  {user.name}
+                  {user.first_name} {user.last_name}
                 </Text>
               </VStack>
             </Box>
@@ -355,7 +382,7 @@ const Profile = () => {
                   Date of Joining
                 </Text>
                 <Text fontSize="2xl" color="text">
-                  {user.dateOfJoining}
+                  {new Date(user.createdAt).toLocaleDateString()}
                 </Text>
               </VStack>
             </Box>
@@ -412,7 +439,7 @@ const Profile = () => {
                     value={editUser.email}
                     onChange={handleInputChange}
                   />
-                  <InputRightElement>
+                  {/* <InputRightElement>
                     {emailPattern.test(editUser.email) &&
                     !users.some(
                       (u) => u.email === editUser.email && u.email !== username
@@ -426,7 +453,7 @@ const Profile = () => {
                         <WarningIcon color="red.500" />
                       </Tooltip>
                     )}
-                  </InputRightElement>
+                  </InputRightElement> */}
                 </InputGroup>
               </FormControl>
 
@@ -586,7 +613,7 @@ const Profile = () => {
                 >
                   Cancel
                 </Button>
-                <Button
+                {/* <Button
                   colorScheme="red"
                   onClick={handleDelete}
                   isDisabled={
@@ -595,7 +622,7 @@ const Profile = () => {
                   ml={3}
                 >
                   Delete
-                </Button>
+                </Button> */}
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialogOverlay>
