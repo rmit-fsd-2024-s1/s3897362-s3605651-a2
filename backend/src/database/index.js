@@ -11,6 +11,9 @@ db.sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   dialect: config.DIALECT,
 });
 
+// Initialize the User model
+db.user = require("./models/user")(db.sequelize, DataTypes);
+
 // Include a sync option with seed data logic included.
 db.sync = async () => {
   try {
@@ -28,28 +31,33 @@ db.sync = async () => {
 
 async function seedData() {
   try {
-    const count = await db.user.count();
+    const count = await db.user.count(); // Ensure this references the correct model
 
-    // Only seed data if necessary.
+    // Only seed data if the table is empty
     if (count > 0) return;
 
     const argon2 = require("argon2");
 
+    // Hash the password and create the first user
     let hash = await argon2.hash("abc123", { type: argon2.argon2id });
     await db.user.create({
       username: "sdatta",
+      email: "sdatta@example.com", // Added the email field
       password_hash: hash,
       first_name: "Sagar",
       last_name: "Datta",
     });
 
+    // Hash another password and create the second user
     hash = await argon2.hash("def456", { type: argon2.argon2id });
     await db.user.create({
       username: "mjackson",
+      email: "mjackson@example.com", // Added the email field
       password_hash: hash,
       first_name: "Matthew",
       last_name: "Jackson",
     });
+
     console.log("Seed data added successfully.");
   } catch (error) {
     console.error("Failed to seed data:", error);
