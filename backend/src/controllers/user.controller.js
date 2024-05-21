@@ -89,11 +89,10 @@ exports.updateUser = async (req, res) => {
   try {
     const user = await db.user.findByPk(id);
     if (!user) {
-      res.status(404).send({ message: "User not found!" });
-      return;
+      return res.status(404).send({ message: "User not found!" });
     }
     const updatedUser = await user.update(req.body);
-    res.send(updatedUser);
+    res.json(updatedUser);
   } catch (error) {
     res.status(500).send({ message: "Error updating user with id=" + id });
   }

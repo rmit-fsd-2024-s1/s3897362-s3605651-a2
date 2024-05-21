@@ -39,22 +39,25 @@ import {
   ViewOffIcon,
 } from "@chakra-ui/icons";
 import { Fade } from "@chakra-ui/transition";
-import { getUser } from "../data/repository";
+import { findUser, getUser, updateUser } from "../data/repository";
 
 const Profile = () => {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Modal state
   const [editUser, setEditUser] = useState({
     // Form state
-    name: "",
+    username: "",
     email: "",
-    dateOfJoining: "",
+    first_name: "",
+    last_name: "",
   });
   const toast = useToast(); // Toast state
   const [user, setUser] = useState(null); // State to store the user object
   const [loading, setLoading] = useState(true); // State to manage loading state
 
-  const [isNameValid, setIsNameValid] = useState(true); // Name validation state
+  const [isUsernameValid, setIsUsernameValid] = useState(true); // Username validation state
   const [isEmailValid, setIsEmailValid] = useState(true); // Email validation state
+  const [isFirstNameValid, setIsFirstNameValid] = useState(true); // First name validation state
+  const [isLastNameValid, setIsLastNameValid] = useState(true); // Last name validation state
 
   const [password, setPassword] = useState(""); // Password state
   const [confirmPassword, setConfirmPassword] = useState(""); // Confirm password state
@@ -62,12 +65,9 @@ const Profile = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Show confirm password state
 
   const [isAlertOpen, setIsAlertOpen] = useState(false); // Alert dialog state
-  const [deleteName, setDeleteName] = useState(""); // Delete name state
-  const [deleteEmail, setDeleteEmail] = useState(""); // Delete email state
 
   // Password pattern
-  const passwordPattern =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+  const passwordPattern = /^.{6,}$/;
 
   // Email pattern
   const emailPattern =
@@ -119,10 +119,18 @@ const Profile = () => {
    * Displays the modal
    */
   const handleEditOpen = () => {
-    setEditUser({ ...user }); // Pre-populate the form with current user data
-    setPassword(user.password); // Set the password state
-    setIsNameValid(user.name.length >= 2); // Validate the name
-    setIsEmailValid(emailPattern.test(user.email)); // Validate the email
+    setEditUser({
+      username: user.username,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+    }); // Pre-populate the form with current user data
+    setPassword(""); // Reset the password state
+    setConfirmPassword(""); // Reset the confirm password state
+    setIsUsernameValid(true);
+    setIsEmailValid(true);
+    setIsFirstNameValid(true);
+    setIsLastNameValid(true);
     setShowPassword(false); // Reset showPassword state
     setShowConfirmPassword(false); // Reset showConfirmPassword state
     onOpen(); // Open the modal
@@ -138,142 +146,68 @@ const Profile = () => {
     const { name, value } = e.target;
     setEditUser((prev) => ({ ...prev, [name]: value }));
 
-    if (name === "name") {
-      setIsNameValid(value.length >= 2);
+    if (name === "username") {
+      setIsUsernameValid(value.length >= 3 && value.length <= 32);
     } else if (name === "email") {
       setIsEmailValid(emailPattern.test(value));
-    }
-
-    if (name === "password") {
+    } else if (name === "first_name") {
+      setIsFirstNameValid(value.length >= 2 && value.length <= 40);
+    } else if (name === "last_name") {
+      setIsLastNameValid(value.length >= 2 && value.length <= 40);
+    } else if (name === "password") {
       setPassword(value);
       if (value) setShowConfirmPassword(true);
       else setShowConfirmPassword(false);
-    }
-
-    if (name === "confirmPassword") {
+    } else if (name === "confirmPassword") {
       setConfirmPassword(value);
     }
   };
 
   // Function to save the changes made to the user's profile
-  const handleSaveChanges = () => {
-    /**
-     * Validate the name field
-     * Display an error toast if the name is less than 2 characters long
-     */
-    if (editUser.name.length < 2) {
-      toast({
-        title: "Error",
-        description: "Name must be at least 2 characters long.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      return;
-    }
+  const handleSaveChanges = async () => {
+    try {
+      // Validate form inputs as needed
 
-    /**
-     * Validate the email field
-     * Display an error toast if the email is not valid
-     * Email must be in the format
-     */
-    if (!emailPattern.test(editUser.email)) {
+      // Prepare the updated user data
+      const updatedUser = {
+        username: editUser.username,
+        email: editUser.email,
+        first_name: editUser.first_name,
+        last_name: editUser.last_name,
+        password: password,
+      };
+
+      // Update the user in the database
+      await updateUser(user.user_id, updatedUser); // Ensure the correct ID is passed
+
+      // Fetch the updated user data from the backend
+      const fetchedUser = await findUser(user.user_id);
+
+      // Update user data in the component state and local storage
+      setUser(fetchedUser);
+      localStorage.setItem("user", JSON.stringify(fetchedUser));
+
+      // Display a success toast indicating that the profile has been updated
       toast({
-        title: "Error",
-        description: "Please enter a valid email address.",
-        status: "error",
+        title: "Profile Updated",
+        description: "Your profile has been successfully updated.",
+        status: "success",
         duration: 5000,
         isClosable: true,
-        position: "top",
       });
-      return;
-    }
-    /**
-     * Validate the password field
-     * Display an error toast if the password is not valid
-     * Password must be at least 8 characters long, contain at least 1 number and 1 special character
-     */
-    if (!passwordPattern.test(password)) {
+
+      onClose(); // Close the modal after saving changes
+    } catch (error) {
       toast({
         title: "Error",
         description:
-          "Password must be at least 8 characters long, contain at least 1 number and 1 special character.",
+          error.message || "An error occurred while updating the profile.",
         status: "error",
         duration: 5000,
         isClosable: true,
-        position: "top",
       });
-      return;
     }
-
-    /**
-     * Validate the confirm password field
-     * Display an error toast if the passwords do not match
-     */
-    if (showConfirmPassword && password !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      return;
-    }
-
-    // /**
-    //  * Update the users array with the new user data
-    //  * Map over the users array
-    //  * If the user's name matches the current user's name, update the user with the new data
-    //  * Otherwise, return the user as is
-    //  */
-    // const updatedUsers = users.map((u) => {
-    //   if (u.name === username) {
-    //     return { ...u, name: editUser.name, email: editUser.email, password };
-    //   }
-    //   return u;
-    // });
-
-    // Update the local storage with the new users array
-    // localStorage.setItem("users", JSON.stringify(updatedUsers));
-
-    // If the username was changed, update the current userLoggedIn as well
-    // if (username !== editUser.name) {
-    //   localStorage.setItem("userLoggedIn", editUser.email);
-    // }
-
-    // Display a success toast indicating that the profile has been updated
-    toast({
-      title: "Profile Updated",
-      description: "Your profile has been successfully updated.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
-
-    onClose(); // Close the modal after saving changes
   };
-
-  /**
-   * Function to handle account deletion
-   * If the entered name and email match the current user's name and email, delete the account
-   * Update the users array by filtering out the current user
-   * Update the local storage with the new users array
-   * Remove the userLoggedIn key from local storage
-   * Set a flag indicating account deletion success
-   * Reload the page after account deletion
-   */
-  // const handleDelete = () => {
-  //   if (deleteName === user.name && deleteEmail === user.email) {
-  //     const updatedUsers = users.filter((u) => u.name !== user.name);
-  //     localStorage.setItem("users", JSON.stringify(updatedUsers));
-  //     localStorage.removeItem("userLoggedIn");
-  //     localStorage.setItem("accountDeletionSuccess", "true");
-  //     window.location.reload();
-  //   }
-  // };
 
   return (
     <Fade in={true}>
@@ -291,13 +225,13 @@ const Profile = () => {
         <Box maxWidth="1200" margin="0 auto">
           <SimpleGrid
             mt={4}
-            columns={{ sm: 1, md: 3 }}
+            columns={{ sm: 1, md: 2 }}
             spacing={5}
             w="full"
             px={4}
             py={5}
           >
-            {/* Name Card */}
+            {/* Username Card */}
             <Box
               shadow="md"
               borderWidth="1px"
@@ -319,7 +253,37 @@ const Profile = () => {
                   fontWeight="bold"
                   textColor={"heading"}
                 >
-                  Name
+                  Username
+                </Text>
+                <Text fontSize="2xl" color="text">
+                  {user.username}
+                </Text>
+              </VStack>
+            </Box>
+
+            {/* Full Name Card */}
+            <Box
+              shadow="md"
+              borderWidth="1px"
+              borderRadius="lg"
+              bg="card"
+              p={5}
+              transition="all 0.2s"
+              _hover={{ transform: "scale(1.02)" }}
+              borderColor={"beige"}
+            >
+              <VStack
+                spacing={4}
+                align="flex-start"
+                divider={<StackDivider borderColor={"lightGreen"} />}
+              >
+                <Text
+                  fontFamily="'Josefin Sans', sans-serif"
+                  fontSize="xl"
+                  fontWeight="bold"
+                  textColor={"heading"}
+                >
+                  Full Name
                 </Text>
                 <Text fontSize="2xl" color="text">
                   {user.first_name} {user.last_name}
@@ -386,6 +350,39 @@ const Profile = () => {
                 </Text>
               </VStack>
             </Box>
+
+            {/* Date Modified Card */}
+            {new Date(user.updatedAt).toLocaleDateString() !==
+              new Date(user.createdAt).toLocaleDateString() && (
+              <Box
+                shadow="md"
+                borderWidth="1px"
+                borderRadius="lg"
+                bg="card"
+                p={5}
+                transition="all 0.2s"
+                _hover={{ transform: "scale(1.02)" }}
+                borderColor={"beige"}
+              >
+                <VStack
+                  spacing={4}
+                  align="flex-start"
+                  divider={<StackDivider borderColor="lightGreen" />}
+                >
+                  <Text
+                    fontFamily="'Josefin Sans', sans-serif"
+                    fontSize="xl"
+                    fontWeight="bold"
+                    textColor={"heading"}
+                  >
+                    Date Modified
+                  </Text>
+                  <Text fontSize="2xl" color="text">
+                    {new Date(user.updatedAt).toLocaleDateString()}
+                  </Text>
+                </VStack>
+              </Box>
+            )}
           </SimpleGrid>
         </Box>
         {/* Edit Profile Button */}
@@ -406,20 +403,19 @@ const Profile = () => {
             <ModalCloseButton />
             <ModalBody pb={6}>
               <FormControl>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Username</FormLabel>
                 <InputGroup>
-                  {/* Name Input */}
                   <Input
-                    name="name"
-                    value={editUser.name}
+                    name="username"
+                    value={editUser.username}
                     onChange={handleInputChange}
                   />
                   <InputRightElement>
-                    {editUser.name.length >= 2 ? (
+                    {isUsernameValid ? (
                       <CheckIcon color="green.500" />
                     ) : (
                       <Tooltip
-                        label="Name must be at least 2 characters long."
+                        label="Username must be between 3 and 32 characters."
                         hasArrow
                       >
                         <WarningIcon color="red.500" />
@@ -432,18 +428,14 @@ const Profile = () => {
               <FormControl mt={4}>
                 <FormLabel>Email</FormLabel>
                 <InputGroup>
-                  {/* Email Input */}
                   <Input
                     name="email"
                     type="email"
                     value={editUser.email}
                     onChange={handleInputChange}
                   />
-                  {/* <InputRightElement>
-                    {emailPattern.test(editUser.email) &&
-                    !users.some(
-                      (u) => u.email === editUser.email && u.email !== username
-                    ) ? (
+                  <InputRightElement>
+                    {isEmailValid ? (
                       <CheckIcon color="green.500" />
                     ) : (
                       <Tooltip
@@ -453,13 +445,58 @@ const Profile = () => {
                         <WarningIcon color="red.500" />
                       </Tooltip>
                     )}
-                  </InputRightElement> */}
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>First Name</FormLabel>
+                <InputGroup>
+                  <Input
+                    name="first_name"
+                    value={editUser.first_name}
+                    onChange={handleInputChange}
+                  />
+                  <InputRightElement>
+                    {isFirstNameValid ? (
+                      <CheckIcon color="green.500" />
+                    ) : (
+                      <Tooltip
+                        label="First name must be between 2 and 40 characters."
+                        hasArrow
+                      >
+                        <WarningIcon color="red.500" />
+                      </Tooltip>
+                    )}
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>Last Name</FormLabel>
+                <InputGroup>
+                  <Input
+                    name="last_name"
+                    value={editUser.last_name}
+                    onChange={handleInputChange}
+                  />
+                  <InputRightElement>
+                    {isLastNameValid ? (
+                      <CheckIcon color="green.500" />
+                    ) : (
+                      <Tooltip
+                        label="Last name must be between 2 and 40 characters."
+                        hasArrow
+                      >
+                        <WarningIcon color="red.500" />
+                      </Tooltip>
+                    )}
+                  </InputRightElement>
                 </InputGroup>
               </FormControl>
 
               <FormControl mt={4}>
                 <FormLabel>Password</FormLabel>
-                {/* Password Input */}
                 <InputGroup>
                   <Input
                     name="password"
@@ -478,7 +515,7 @@ const Profile = () => {
                       <CheckIcon color="green.500" />
                     ) : (
                       <Tooltip
-                        label="Password must be at least 8 characters long, include at least one number, and one special character (e.g., !@#$%^&*)."
+                        label="Password must be at least 6 characters long."
                         hasArrow
                       >
                         <WarningIcon color="red.500" />
@@ -520,21 +557,16 @@ const Profile = () => {
 
             <ModalFooter>
               <Button
-                mr={3}
-                colorScheme="red"
-                onClick={() => setIsAlertOpen(true)}
-              >
-                Delete Account
-              </Button>
-              <Button
                 colorScheme="blue"
                 mr={3}
                 onClick={handleSaveChanges}
                 isDisabled={
                   !(
-                    isNameValid &&
+                    isUsernameValid &&
                     isEmailValid &&
-                    passwordPattern.test(password)
+                    isFirstNameValid &&
+                    isLastNameValid &&
+                    (!showConfirmPassword || password === confirmPassword)
                   )
                 }
               >
@@ -559,50 +591,7 @@ const Profile = () => {
               </AlertDialogHeader>
 
               <AlertDialogCloseButton />
-              <AlertDialogBody>
-                <FormControl>
-                  <FormLabel>
-                    Please enter your exact name for account deletion
-                  </FormLabel>
-                  <InputGroup>
-                    <Input
-                      placeholder={user.name}
-                      onChange={(e) => setDeleteName(e.target.value)}
-                      isInvalid={deleteName !== "" && deleteName !== user.name}
-                      isValid={deleteName === user.name}
-                    />
-                    <InputRightElement>
-                      {deleteName === user.name ? (
-                        <CheckIcon color="green.500" />
-                      ) : (
-                        deleteName !== "" && <WarningIcon color="red.500" />
-                      )}
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>
-                    Please enter your exact email for account deletion
-                  </FormLabel>
-                  <InputGroup>
-                    <Input
-                      placeholder={user.email}
-                      onChange={(e) => setDeleteEmail(e.target.value)}
-                      isInvalid={
-                        deleteEmail !== "" && deleteEmail !== user.email
-                      }
-                      isValid={deleteEmail === user.email}
-                    />
-                    <InputRightElement>
-                      {deleteEmail === user.email ? (
-                        <CheckIcon color="green.500" />
-                      ) : (
-                        deleteEmail !== "" && <WarningIcon color="red.500" />
-                      )}
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-              </AlertDialogBody>
+              <AlertDialogBody>{/* Empty body for now */}</AlertDialogBody>
 
               <AlertDialogFooter>
                 <Button
@@ -613,16 +602,6 @@ const Profile = () => {
                 >
                   Cancel
                 </Button>
-                {/* <Button
-                  colorScheme="red"
-                  onClick={handleDelete}
-                  isDisabled={
-                    deleteName !== user.name || deleteEmail !== user.email
-                  }
-                  ml={3}
-                >
-                  Delete
-                </Button> */}
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialogOverlay>

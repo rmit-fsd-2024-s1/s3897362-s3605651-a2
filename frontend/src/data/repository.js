@@ -35,9 +35,19 @@ async function createUser(user) {
   }
 }
 
-async function updateUser(id, user) {
-  const response = await axios.put(API_HOST + `/api/users/${id}`, user);
-  return response.data;
+async function updateUser(userId, userData) {
+  try {
+    const response = await axios.put(
+      `${API_HOST}/api/users/${userId}`,
+      userData
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      throw new Error("User not found!");
+    }
+    throw new Error("An error occurred while updating the user.");
+  }
 }
 
 async function deleteUser(id) {
