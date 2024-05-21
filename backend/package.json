@@ -15,5 +15,12 @@
     "api"
   ],
   "author": "Sagar & Matt",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "argon2": "^0.40.1",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.7",
+    "sequelize": "^6.37.3"
+  }
 }
