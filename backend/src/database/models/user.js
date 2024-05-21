@@ -1,4 +1,3 @@
-// models/user.js
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     "User",
@@ -22,20 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-      },
     },
     {
-      timestamps: false,
       tableName: "users",
+      timestamps: true, // Enable Sequelize to manage createdAt and updatedAt
     }
   );
 
