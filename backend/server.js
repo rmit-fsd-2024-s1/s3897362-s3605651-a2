@@ -2,11 +2,10 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-// Placeholder for database import; ensure to uncomment or modify as per actual path when ready
-// const db = require("./src/database");
+const db = require("./src/database"); // Ensure this path is correct
 
-// Placeholder for database synchronization; uncomment when db is configured
-// db.sync();
+// Database will be synchronized in the background.
+db.sync();
 
 const app = express();
 
@@ -21,12 +20,12 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello World!" });
 });
 
-// Placeholder for route imports; uncomment and ensure paths are correct when routes are defined
-// require("./src/routes/user.routes.js")(express, app);
-// require("./src/routes/post.routes.js")(express, app);
+// Import and use user routes
+const userRoutes = require("./src/routes/user.routes"); // Adjust the path if necessary
+app.use("/api/users", userRoutes);
 
 // Set the server to listen on a port
-const PORT = 4000;
+const PORT = process.env.PORT || 4000; // Using process.env.PORT for flexibility with deployment environments
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
