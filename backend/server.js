@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 // Placeholder for database import; ensure to uncomment or modify as per actual path when ready
