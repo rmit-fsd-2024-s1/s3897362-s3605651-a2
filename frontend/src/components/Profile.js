@@ -19,13 +19,6 @@ import {
   useToast,
   InputRightElement,
   InputGroup,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogCloseButton,
   Heading,
   Tooltip,
   SimpleGrid,
@@ -39,10 +32,19 @@ import {
   ViewOffIcon,
 } from "@chakra-ui/icons";
 import { Fade } from "@chakra-ui/transition";
-import { findUser, getUser, updateUser } from "../data/repository";
+import {
+  findUser,
+  getUser,
+  updateUser,
+  changePassword,
+} from "../data/repository";
 
 const Profile = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure(); // Modal state
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure(); // Modal state for edit profile
   const [editUser, setEditUser] = useState({
     // Form state
     username: "",
@@ -64,7 +66,12 @@ const Profile = () => {
   const [showPassword, setShowPassword] = useState(false); // Show password state
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Show confirm password state
 
-  const [isAlertOpen, setIsAlertOpen] = useState(false); // Alert dialog state
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   // Password pattern
   const passwordPattern = /^.{6,}$/;
@@ -133,8 +140,15 @@ const Profile = () => {
     setIsLastNameValid(true);
     setShowPassword(false); // Reset showPassword state
     setShowConfirmPassword(false); // Reset showConfirmPassword state
-    onOpen(); // Open the modal
+    onEditOpen(); // Open the modal
   };
+
+  const handleChangePasswordOpen = () => {
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setIsChangePasswordOpen(true);
+  };
+  const onChangePasswordClose = () => setIsChangePasswordOpen(false);
 
   /**
    * Function to handle input changes in the form
@@ -196,12 +210,35 @@ const Profile = () => {
         isClosable: true,
       });
 
-      onClose(); // Close the modal after saving changes
+      onEditClose(); // Close the modal after saving changes
     } catch (error) {
       toast({
         title: "Error",
         description:
           error.message || "An error occurred while updating the profile.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      await changePassword(user.user_id, currentPassword, newPassword);
+      toast({
+        title: "Password Updated",
+        description: "Your password has been successfully updated.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onChangePasswordClose();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error.message || "An error occurred while changing the password.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -395,8 +432,19 @@ const Profile = () => {
         >
           Edit Profile
         </Button>
-        {/* Edit Modal */}
-        <Modal isOpen={isOpen} onClose={onClose}>
+        {/* Change Password Button */}
+        <Button
+          mt={7}
+          bg={"darkGreen"}
+          textColor={"beige"}
+          onClick={handleChangePasswordOpen}
+          _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+        >
+          Change Password
+        </Button>
+
+        {/* Edit Profile Modal */}
+        <Modal isOpen={isEditOpen} onClose={onEditClose}>
           <ModalOverlay />
           <ModalContent bg={"card"} textColor={"darkGreen"}>
             <ModalHeader>Edit Profile</ModalHeader>
@@ -509,7 +557,7 @@ const Profile = () => {
                       variant="unstyled"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                     </Button>
                     {passwordPattern.test(password) ? (
                       <CheckIcon color="green.500" />
@@ -540,7 +588,7 @@ const Profile = () => {
                         variant="unstyled"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                        {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                       </Button>
                       {password === confirmPassword ? (
                         <CheckIcon color="green.500" />
@@ -573,7 +621,7 @@ const Profile = () => {
                 Save Changes
               </Button>
               <Button
-                onClick={onClose}
+                onClick={onEditClose}
                 bg={"darkGreen"}
                 textColor={"beige"}
                 _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
@@ -583,29 +631,93 @@ const Profile = () => {
             </ModalFooter>
           </ModalContent>
         </Modal>
-        <AlertDialog isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)}>
-          <AlertDialogOverlay>
-            <AlertDialogContent bg={"card"} textColor={"darkGreen"}>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Delete Account
-              </AlertDialogHeader>
+        {/* Change Password Modal */}
+        <Modal isOpen={isChangePasswordOpen} onClose={onChangePasswordClose}>
+          <ModalOverlay />
+          <ModalContent bg={"card"} textColor={"darkGreen"}>
+            <ModalHeader>Change Password</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <FormControl>
+                <FormLabel>Current Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showCurrentPassword ? "text" : "password"}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
+                  <InputRightElement>
+                    <Button
+                      variant="unstyled"
+                      onClick={() =>
+                        setShowCurrentPassword(!showCurrentPassword)
+                      }
+                    >
+                      {showCurrentPassword ? <ViewIcon /> : <ViewOffIcon />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
 
-              <AlertDialogCloseButton />
-              <AlertDialogBody>{/* Empty body for now */}</AlertDialogBody>
+              <FormControl mt={4}>
+                <FormLabel>New Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showNewPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <InputRightElement>
+                    <Button
+                      variant="unstyled"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                    >
+                      {showNewPassword ? <ViewIcon /> : <ViewOffIcon />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
 
-              <AlertDialogFooter>
-                <Button
-                  bg={"darkGreen"}
-                  textColor={"beige"}
-                  _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
-                  onClick={() => setIsAlertOpen(false)}
-                >
-                  Cancel
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
+              <FormControl mt={4}>
+                <FormLabel>Confirm New Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showNewPassword ? "text" : "password"}
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  />
+                  <InputRightElement>
+                    <Button
+                      variant="unstyled"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                    >
+                      {showNewPassword ? <ViewIcon /> : <ViewOffIcon />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button
+                colorScheme="blue"
+                mr={3}
+                onClick={handleChangePassword}
+                isDisabled={newPassword !== confirmNewPassword || !newPassword}
+              >
+                Change Password
+              </Button>
+              <Button
+                onClick={onChangePasswordClose}
+                bg={"darkGreen"}
+                textColor={"beige"}
+                _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+              >
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Flex>
     </Fade>
   );

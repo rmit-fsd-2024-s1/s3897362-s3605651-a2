@@ -55,6 +55,25 @@ async function deleteUser(id) {
   return response.data;
 }
 
+async function verifyPassword(userId, password) {
+  const response = await axios.post(API_HOST + "/api/users/verify-password", {
+    userId,
+    password,
+  });
+  return response.data;
+}
+
+async function changePassword(userId, currentPassword, newPassword) {
+  const response = await axios.put(
+    `${API_HOST}/api/users/${userId}/change-password`,
+    {
+      currentPassword,
+      newPassword,
+    }
+  );
+  return response.data;
+}
+
 // --- Helper functions to interact with local storage --------------------------------------------
 function setUser(user) {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
@@ -77,4 +96,6 @@ export {
   getUser,
   setUser,
   removeUser,
+  verifyPassword,
+  changePassword,
 };

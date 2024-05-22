@@ -114,3 +114,57 @@ exports.deleteUser = async (req, res) => {
     res.status(500).send({ message: "Could not delete user with id=" + id });
   }
 };
+
+exports.verifyPassword = async (req, res) => {
+  try {
+    const { userId, password } = req.body;
+    const user = await db.user.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+    const isMatch = await argon2.verify(user.password_hash, password);
+    if (isMatch) {
+      res.status(200).json({ message: "Password verified successfully." });
+    } else {
+      res.status(400).json({ message: "Incorrect password." });
+    }
+  } catch (error) {
+    console.error("Error verifying password:", error.message);
+    res
+      .status(500)
+      .json({ message: "An error occurred while verifying the password." });
+  }
+};
+
+// Update user's password after confirming the current password
+exports.changePassword = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { currentPassword, newPassword } = req.body;
+
+    // Find the user by ID
+    const user = await db.user.findByPk(userId);
+    if (!user) {
+      return res.status(404).send({ message: "User not found!" });
+    }
+
+    // Verify the current password
+    const isMatch = await argon2.verify(user.password_hash, currentPassword);
+    if (!isMatch) {
+      return res
+        .status(400)
+        .send({ message: "Current password is incorrect." });
+    }
+
+    // Hash the new password
+    const hash = await argon2.hash(newPassword, { type: argon2.argon2id });
+
+    // Update the user's password
+    user.password_hash = hash;
+    await user.save();
+
+    res.status(200).send({ message: "Password updated successfully." });
+  } catch (error) {
+    res.status(500).send({ message: "Error updating password" });
+  }
+};

@@ -20,4 +20,9 @@ router.put("/:id", users.updateUser);
 // Route to delete a user
 router.delete("/:id", users.deleteUser);
 
+router.post("/verify-password", users.verifyPassword);
+
+// Route to change user's password
+router.put("/:id/change-password", users.changePassword);
+
 module.exports = router;
