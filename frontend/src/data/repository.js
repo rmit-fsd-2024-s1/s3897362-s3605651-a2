@@ -87,6 +87,12 @@ function removeUser() {
   localStorage.removeItem(USER_KEY);
 }
 
+// --- Product Functions --------------------------------------------------------------------------
+async function fetchProducts() {
+  const response = await axios.get(`${API_HOST}/api/products`);
+  return response.data;
+}
+
 export {
   verifyUser,
   findUser,
@@ -98,4 +104,5 @@ export {
   removeUser,
   verifyPassword,
   changePassword,
+  fetchProducts,
 };

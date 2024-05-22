@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -19,6 +19,7 @@ import {
   ModalBody,
   Skeleton,
 } from "@chakra-ui/react";
+import { fetchProducts } from "../data/repository";
 import { Fade } from "@chakra-ui/transition";
 import { MinusIcon } from "@chakra-ui/icons";
 import CreditCardForm from "./CreditCardForm";
@@ -106,7 +107,22 @@ const initialSpecials = [
 ];
 const Products = ({ changeView }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [products, setProducts] = useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const data = await fetchProducts();
+        setProducts(data);
+        setIsLoaded(true);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    }
+
+    loadProducts();
+  }, []);
 
   // Initialize cart state from local storage or use an empty array if none exist
   const [cart, setCart] = useState(
@@ -311,8 +327,8 @@ const Products = ({ changeView }) => {
         <Flex direction="row" justify="space-between">
           <Box maxWidth="1100" margin="0 auto">
             <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10} pb={5}>
-              {/* Map over the specials array to display each product */}
-              {specials.map((special, index) => (
+              {/* Map over the products array to display each product */}
+              {products.map((product, index) => (
                 <Box
                   key={index}
                   p={5}
@@ -339,26 +355,25 @@ const Products = ({ changeView }) => {
                     borderRadius="lg"
                   >
                     <Image
-                      src={special.image}
-                      alt={special.name}
+                      src={product.image}
+                      alt={product.name}
                       objectFit="cover" // Adjust as needed
                       boxSize="200px"
                       width="100%"
                       borderRadius="lg" // Rounded corners for the image
-                      onLoad={() => setIsLoaded(true)}
                     />
                   </Skeleton>
                   <Heading fontSize="xl" mb={2} mt={4}>
-                    {special.name}
+                    {product.name}
                   </Heading>
                   <Text color="text" mb={4} flexGrow={1}>
-                    {special.description}
+                    {product.description}
                   </Text>
                   <Spacer />
                   <Flex justifyContent="space-between" alignItems="center">
                     {/* Price and Quantity */}
                     <Text fontWeight="bold" fontSize="lg">
-                      ${special.price.toFixed(2)}
+                      ${Number(product.price).toFixed(2)}
                       <Text
                         as="span"
                         fontSize="sm"
@@ -366,17 +381,17 @@ const Products = ({ changeView }) => {
                         fontWeight="normal"
                         fontFamily="'Josefin Sans', sans-serif"
                       >
-                        /{special.unit}
+                        /{product.unit}
                       </Text>
                     </Text>
-                    <Text fontSize="md">QTY: {special.quantity}</Text>
+                    <Text fontSize="md">QTY: {product.quantity}</Text>
                   </Flex>
                   {/* Add to cart button */}
                   <Button
                     mt={4}
                     bg={"darkGreen"}
                     textColor={"beige"}
-                    onClick={() => addToCart(special)}
+                    onClick={() => addToCart(product)}
                     _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
                   >
                     Add to cart
