@@ -10,7 +10,6 @@ import Signup from "./components/Signup";
 import Signin from "./components/Signin";
 import Profile from "./components/Profile";
 import DietPlan from "./components/DietPlan";
-import VegetableGardeningTips from "./components/VegetableGardeningTips";
 import OrderSummary from "./components/OrderSummary";
 import "./App.css";
 import { Fade } from "@chakra-ui/transition";
@@ -106,7 +105,6 @@ function App() {
           {currentView === "products" && <Products changeView={changeView} />}
           {currentView === "orderSummary" && <OrderSummary />}
           {currentView === "profile" && <Profile />}
-          {currentView === "gardening-tips" && <VegetableGardeningTips />}
           {currentView === "diet-plan" && <DietPlan />}
           {currentView === "signup" && (
             <Signup onSuccessfulSignup={handleAuthSuccess} />

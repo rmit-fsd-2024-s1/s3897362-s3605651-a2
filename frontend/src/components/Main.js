@@ -172,7 +172,7 @@ const Main = ({ changeView }) => {
               <Heading as="h3" size="lg" mb={4} textColor={"heading"}>
                 {/* Add onClick event to change the view to "gardening-tips" */}
                 <span
-                  onClick={() => changeView("gardening-tips")}
+                  onClick={() => changeView("diet-plan")}
                   style={{ cursor: "pointer", color: theme.colors.heading }}
                   onMouseOver={(e) =>
                     (e.target.style.color = theme.colors.text)
@@ -181,24 +181,24 @@ const Main = ({ changeView }) => {
                     (e.target.style.color = theme.colors.heading)
                   }
                 >
-                  Gardening Tips
+                  Meal Plan
                 </span>
               </Heading>
               <Text mb={4} textColor={"text"}>
-                Interested in starting your own organic garden? Visit our{" "}
+                Interested in starting your own diet? Visit our{" "}
                 {/* Add onClick event to change the view to "gardening-tips" */}
                 <span
-                  onClick={() => changeView("gardening-tips")}
+                  onClick={() => changeView("diet-plan")}
                   style={{ cursor: "pointer", color: theme.colors.text }}
                   onMouseOver={(e) =>
                     (e.target.style.color = theme.colors.heading)
                   }
                   onMouseOut={(e) => (e.target.style.color = theme.colors.text)}
                 >
-                  gardening tips
+                  meal plan
                 </span>{" "}
-                page for helpful tips and tricks to get you started on your
-                gardening journey.
+                page to setup your profile and generate a healthy meal plan for
+                your diet.
               </Text>
             </Box>
           </SimpleGrid>

@@ -55,14 +55,6 @@ const NavBar = ({ changeView, isLoggedIn, handleLogout }) => {
           >
             Product Specials
           </Button>
-          <Button
-            onClick={() => changeView("gardening-tips")}
-            colorScheme="blackAlpha"
-            variant="ghost"
-            textColor={"beige"}
-          >
-            Gardening Tips
-          </Button>
           {isLoggedIn && (
             <Button
               onClick={() => changeView("diet-plan")}
