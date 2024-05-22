@@ -24,6 +24,10 @@ app.get("/", (req, res) => {
 const userRoutes = require("./src/routes/user.routes"); // Adjust the path if necessary
 app.use("/api/users", userRoutes);
 
+// Import and use product routes
+const productRoutes = require("./src/routes/product.routes"); // Adjust the path if necessary
+app.use("/api/products", productRoutes);
+
 // Set the server to listen on a port
 const PORT = process.env.PORT || 4000; // Using process.env.PORT for flexibility with deployment environments
 app.listen(PORT, () => {

@@ -11,8 +11,9 @@ db.sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   dialect: config.DIALECT,
 });
 
-// Initialize the User model
+// Import models
 db.user = require("./models/user")(db.sequelize, DataTypes);
+db.product = require("./models/product")(db.sequelize, DataTypes);
 
 // Include a sync option with seed data logic included.
 db.sync = async () => {
@@ -57,6 +58,35 @@ async function seedData() {
       first_name: "Matthew",
       last_name: "Jackson",
     });
+
+    // Seed products
+    const productCount = await db.product.count();
+    if (productCount === 0) {
+      await db.product.bulkCreate([
+        {
+          name: "Organic Blueberries",
+          description:
+            "Fresh, plump organic blueberries perfect for your morning smoothie.",
+          price: 4.99,
+          quantity: 100,
+          unit: "pint",
+          image: "url_to_image1",
+          isSpecial: false,
+          specialPrice: null,
+        },
+        {
+          name: "Local Honey",
+          description: "Raw and unfiltered honey sourced from local farms.",
+          price: 7.99,
+          quantity: 75,
+          unit: "unit2",
+          image: "12oz jar",
+          isSpecial: false,
+          specialPrice: 15.0,
+        },
+        // Add more products as needed
+      ]);
+    }
 
     console.log("Seed data added successfully.");
   } catch (error) {
