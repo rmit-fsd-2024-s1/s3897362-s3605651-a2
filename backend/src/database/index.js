@@ -14,6 +14,18 @@ db.sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 // Import models
 db.user = require("./models/user")(db.sequelize, DataTypes);
 db.product = require("./models/product")(db.sequelize, DataTypes);
+db.cart = require("./models/cart")(db.sequelize, DataTypes);
+db.cartItem = require("./models/cartItem")(db.sequelize, DataTypes);
+
+// Set up associations
+db.user.hasOne(db.cart, { foreignKey: "user_id" });
+db.cart.belongsTo(db.user, { foreignKey: "user_id" });
+
+db.cart.hasMany(db.cartItem, { foreignKey: "cart_id" });
+db.cartItem.belongsTo(db.cart, { foreignKey: "cart_id" });
+
+db.product.hasMany(db.cartItem, { foreignKey: "product_id" });
+db.cartItem.belongsTo(db.product, { foreignKey: "product_id" });
 
 // Include a sync option with seed data logic included.
 db.sync = async () => {
