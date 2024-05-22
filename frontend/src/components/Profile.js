@@ -37,6 +37,9 @@ import {
   getUser,
   updateUser,
   changePassword,
+  deleteUser,
+  removeUser,
+  verifyPassword,
 } from "../data/repository";
 
 const Profile = () => {
@@ -74,6 +77,13 @@ const Profile = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
 
   const [isNewPasswordValid, setIsNewPasswordValid] = useState(true);
+
+  const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
+  const [deleteUsername, setDeleteUsername] = useState("");
+  const [deleteEmail, setDeleteEmail] = useState("");
+  const [deletePassword, setDeletePassword] = useState("");
+  const [confirmDeletePassword, setConfirmDeletePassword] = useState("");
+  const [showDeletePassword, setShowDeletePassword] = useState(false);
 
   // Password pattern
   const passwordPattern = /^.{6,}$/;
@@ -161,6 +171,23 @@ const Profile = () => {
     setIsNewPasswordValid(value.length >= 6);
   };
 
+  const handleDeleteAccountOpen = () => {
+    setDeleteUsername("");
+    setDeleteEmail("");
+    setDeletePassword("");
+    setConfirmDeletePassword("");
+    setShowDeletePassword(false);
+    setIsDeleteAccountOpen(true);
+  };
+
+  const onDeleteAccountClose = () => {
+    setDeleteUsername("");
+    setDeleteEmail("");
+    setDeletePassword("");
+    setConfirmDeletePassword("");
+    setShowDeletePassword(false);
+    setIsDeleteAccountOpen(false);
+  };
   /**
    * Function to handle input changes in the form
    * Validates the name, email, password, and confirm password fields
@@ -250,6 +277,45 @@ const Profile = () => {
         title: "Error",
         description:
           error.message || "An error occurred while changing the password.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      // Verify credentials
+      if (
+        user.username === deleteUsername &&
+        user.email === deleteEmail &&
+        (await verifyPassword(user.user_id, deletePassword))
+      ) {
+        await deleteUser(user.user_id);
+        removeUser();
+        toast({
+          title: "Account Deleted",
+          description: "Your account has been successfully deleted.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        // Redirect to home page or login page
+        window.location.href = "/";
+      } else {
+        toast({
+          title: "Error",
+          description: "The provided credentials are incorrect.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while deleting the account.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -450,8 +516,18 @@ const Profile = () => {
             textColor={"beige"}
             onClick={handleChangePasswordOpen}
             _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+            mr={4} // Margin right to add space between buttons
           >
             Change Password
+          </Button>
+          {/* Delete Account Button */}
+          <Button
+            bg={"red.500"}
+            textColor={"white"}
+            onClick={handleDeleteAccountOpen}
+            _hover={{ bg: "red.700" }}
+          >
+            Delete Account
           </Button>
         </Flex>
 
@@ -738,6 +814,92 @@ const Profile = () => {
               </Button>
               <Button
                 onClick={onChangePasswordClose}
+                bg={"darkGreen"}
+                textColor={"beige"}
+                _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+              >
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+        <Modal isOpen={isDeleteAccountOpen} onClose={onDeleteAccountClose}>
+          <ModalOverlay />
+          <ModalContent bg={"card"} textColor={"darkGreen"}>
+            <ModalHeader>Delete Account</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <FormControl>
+                <FormLabel>Username</FormLabel>
+                <Input
+                  value={deleteUsername}
+                  onChange={(e) => setDeleteUsername(e.target.value)}
+                />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type="email"
+                  value={deleteEmail}
+                  onChange={(e) => setDeleteEmail(e.target.value)}
+                />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showDeletePassword ? "text" : "password"}
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                  />
+                  <InputRightElement>
+                    <Button
+                      variant="unstyled"
+                      onClick={() => setShowDeletePassword(!showDeletePassword)}
+                    >
+                      {showDeletePassword ? <ViewIcon /> : <ViewOffIcon />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Confirm Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showDeletePassword ? "text" : "password"}
+                    value={confirmDeletePassword}
+                    onChange={(e) => setConfirmDeletePassword(e.target.value)}
+                  />
+                  <InputRightElement>
+                    <Button
+                      variant="unstyled"
+                      onClick={() => setShowDeletePassword(!showDeletePassword)}
+                    >
+                      {showDeletePassword ? <ViewIcon /> : <ViewOffIcon />}
+                    </Button>
+                    {deletePassword === confirmDeletePassword ? (
+                      <CheckIcon color="green.500" />
+                    ) : (
+                      <Tooltip label="The passwords must match." hasArrow>
+                        <WarningIcon color="red.500" />
+                      </Tooltip>
+                    )}
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button
+                colorScheme="red"
+                mr={3}
+                onClick={handleDeleteAccount}
+                isDisabled={!deleteUsername || !deleteEmail || !deletePassword}
+              >
+                Delete Account
+              </Button>
+              <Button
+                onClick={onDeleteAccountClose}
                 bg={"darkGreen"}
                 textColor={"beige"}
                 _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
