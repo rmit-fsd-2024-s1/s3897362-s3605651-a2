@@ -73,6 +73,8 @@ const Profile = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
+  const [isNewPasswordValid, setIsNewPasswordValid] = useState(true);
+
   // Password pattern
   const passwordPattern = /^.{6,}$/;
 
@@ -144,11 +146,20 @@ const Profile = () => {
   };
 
   const handleChangePasswordOpen = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
     setShowCurrentPassword(false);
     setShowNewPassword(false);
     setIsChangePasswordOpen(true);
   };
   const onChangePasswordClose = () => setIsChangePasswordOpen(false);
+
+  const handleNewPasswordChange = (e) => {
+    const value = e.target.value;
+    setNewPassword(value);
+    setIsNewPasswordValid(value.length >= 6);
+  };
 
   /**
    * Function to handle input changes in the form
@@ -262,7 +273,7 @@ const Profile = () => {
         <Box maxWidth="1200" margin="0 auto">
           <SimpleGrid
             mt={4}
-            columns={{ sm: 1, md: 2 }}
+            columns={{ sm: 1, md: 3 }}
             spacing={5}
             w="full"
             px={4}
@@ -422,26 +433,27 @@ const Profile = () => {
             )}
           </SimpleGrid>
         </Box>
-        {/* Edit Profile Button */}
-        <Button
-          mt={7}
-          bg={"darkGreen"}
-          textColor={"beige"}
-          onClick={handleEditOpen}
-          _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
-        >
-          Edit Profile
-        </Button>
-        {/* Change Password Button */}
-        <Button
-          mt={7}
-          bg={"darkGreen"}
-          textColor={"beige"}
-          onClick={handleChangePasswordOpen}
-          _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
-        >
-          Change Password
-        </Button>
+        <Flex mt={7} spacing={4}>
+          {/* Edit Profile Button */}
+          <Button
+            bg={"darkGreen"}
+            textColor={"beige"}
+            onClick={handleEditOpen}
+            _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+            mr={4} // Margin right to add space between buttons
+          >
+            Edit Profile
+          </Button>
+          {/* Change Password Button */}
+          <Button
+            bg={"darkGreen"}
+            textColor={"beige"}
+            onClick={handleChangePasswordOpen}
+            _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+          >
+            Change Password
+          </Button>
+        </Flex>
 
         {/* Edit Profile Modal */}
         <Modal isOpen={isEditOpen} onClose={onEditClose}>
@@ -665,15 +677,25 @@ const Profile = () => {
                   <Input
                     type={showNewPassword ? "text" : "password"}
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={handleNewPasswordChange}
                   />
-                  <InputRightElement>
+                  <InputRightElement mr={5}>
                     <Button
                       variant="unstyled"
                       onClick={() => setShowNewPassword(!showNewPassword)}
                     >
                       {showNewPassword ? <ViewIcon /> : <ViewOffIcon />}
                     </Button>
+                    {isNewPasswordValid ? (
+                      <CheckIcon color="green.500" />
+                    ) : (
+                      <Tooltip
+                        label="Password must be at least 6 characters long."
+                        hasArrow
+                      >
+                        <WarningIcon color="red.500" />
+                      </Tooltip>
+                    )}
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
@@ -686,13 +708,20 @@ const Profile = () => {
                     value={confirmNewPassword}
                     onChange={(e) => setConfirmNewPassword(e.target.value)}
                   />
-                  <InputRightElement>
+                  <InputRightElement mr={5}>
                     <Button
                       variant="unstyled"
                       onClick={() => setShowNewPassword(!showNewPassword)}
                     >
                       {showNewPassword ? <ViewIcon /> : <ViewOffIcon />}
                     </Button>
+                    {newPassword === confirmNewPassword ? (
+                      <CheckIcon color="green.500" />
+                    ) : (
+                      <Tooltip label="The passwords must match." hasArrow>
+                        <WarningIcon color="red.500" />
+                      </Tooltip>
+                    )}
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
