@@ -23,18 +23,30 @@ module.exports = (sequelize, DataTypes) => {
               key: "product_id",
             },
         },
-        rating:{
-
-        },	
-        review_text:{
-
-        },	
-        created_at:{
-
-        },	
-        updated_at:{
-
-        }},
+        rating: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            validate: {
+              min: 1,
+              max: 5,
+            },
+          },
+          review_text: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+          },
+          created_at: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+          },
+          updated_at: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            onUpdate: DataTypes.NOW,
+          },
+        },
       {
         tableName: "reviews",
         timestamps: true, // Enable Sequelize to manage createdAt and updatedAt automatically
