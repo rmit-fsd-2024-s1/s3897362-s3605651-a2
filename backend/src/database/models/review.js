@@ -37,7 +37,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         is_deleted: {
           type: DataTypes.BOOLEAN,
-          allowNull: false,
           defaultValue: false,
         },
         created_at: {
@@ -49,17 +48,13 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.DATE,
           allowNull: false,
           defaultValue: DataTypes.NOW,
-          onUpdate: DataTypes.NOW,
         },
       },
       {
         tableName: "reviews",
-        timestamps: true, // Enable Sequelize to manage createdAt and updatedAt automatically
-        createdAt: "created_at",
-        updatedAt: "updated_at",
+        timestamps: true,
       }
     );
-  
+
     return Review;
   };
-  

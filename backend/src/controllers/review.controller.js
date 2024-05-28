@@ -1,7 +1,5 @@
 const db = require("../database");
 
-const db = require("../database");
-
 exports.getAllReviews = async (req, res) => {
   try {
     const reviews = await db.Review.findAll();
@@ -58,21 +56,38 @@ exports.updateReview = async (req, res) => {
   }
 };
 
-exports.deleteReview = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const review = await db.Review.findByPk(id);
-      if (review) {
-        await review.update({
-          review_text: "REVIEW WAS DELETED BY ADMIN TEXT GOES HERE.",
-          is_deleted: true,
-        });
-        res.send({ message: "Review marked as deleted successfully!" });
-      } else {
-        res.status(404).send({ message: "Review not found!" });
-      }
-    } catch (error) {
-      res.status(500).send({ message: "Error updating review" });
+exports.deleteReviewByUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const review = await db.Review.findByPk(id);
+    if (review) {
+      await review.update({
+        review_text: "[**** THIS REVIEW HAS BEEN DELETED BY THE USER ****]",
+        is_deleted: true,
+      });
+      res.json(review);
+    } else {
+      res.status(404).send({ message: "Review not found" });
     }
-  };
-  
+  } catch (error) {
+    res.status(500).send({ message: "Error deleting review" });
+  }
+};
+
+exports.deleteReviewByAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const review = await db.Review.findByPk(id);
+    if (review) {
+      await review.update({
+        review_text: "[**** THIS REVIEW HAS BEEN DELETED BY THE ADMIN ****]",
+        is_deleted: true,
+      });
+      res.json(review);
+    } else {
+      res.status(404).send({ message: "Review not found" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "Error deleting review" });
+  }
+};
