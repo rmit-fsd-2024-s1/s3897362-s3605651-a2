@@ -29,19 +29,24 @@ import {
 } from "../data/repository";
 import { Fade } from "@chakra-ui/transition";
 import { MinusIcon } from "@chakra-ui/icons";
-import CreditCardForm from "./CreditCardForm";
 
 const Products = ({ changeView }) => {
   const [specialProducts, setSpecialProducts] = useState([]);
   const [regularProducts, setRegularProducts] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [cart, setCart] = useState([]);
+  const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     return user ? user.user_id : null;
   });
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isCheckoutOpen,
+    onOpen: onCheckoutOpen,
+    onClose: onCheckoutClose,
+  } = useDisclosure();
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -81,8 +86,20 @@ const Products = ({ changeView }) => {
       }
     }
 
+    async function loadUser() {
+      if (userId) {
+        try {
+          const userData = await JSON.parse(localStorage.getItem("user"));
+          setUser(userData);
+        } catch (error) {
+          console.error("Failed to fetch user:", error);
+        }
+      }
+    }
+
     loadProducts();
     loadCart();
+    loadUser();
   }, [userId]);
 
   const handleAddToCart = async (product) => {
@@ -227,9 +244,14 @@ const Products = ({ changeView }) => {
               .toFixed(2)}
           </Text>
         </Flex>
-        <Button mt={5} colorScheme="red" onClick={handleClearCart}>
-          Clear Cart
-        </Button>
+        <Flex mt={5} justifyContent="space-between">
+          <Button colorScheme="red" onClick={handleClearCart}>
+            Clear Cart
+          </Button>
+          <Button colorScheme="blue" onClick={onCheckoutOpen}>
+            Checkout
+          </Button>
+        </Flex>
       </>
     );
   };
@@ -430,6 +452,69 @@ const Products = ({ changeView }) => {
                 Cart
               </Heading>
               <CartItems cart={cart} />
+              <Modal isOpen={isCheckoutOpen} onClose={onCheckoutClose}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>
+                    {user.first_name} {user.last_name}'s Cart
+                  </ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    {cart.length > 0 ? (
+                      cart.map((item, index) => (
+                        <Flex
+                          key={index}
+                          alignItems="center"
+                          justifyContent="space-between"
+                          mb={3}
+                        >
+                          <Flex alignItems="center">
+                            <Text fontSize="2xl" color="heading" mr={2}>
+                              {item.quantity}
+                            </Text>
+                            <Text fontSize="2xl" color="lightGreen" mr={2}>
+                              x
+                            </Text>
+                            <Text fontWeight="bold" color="text" mr={2}>
+                              {item.Product.name}
+                            </Text>
+                          </Flex>
+                          <Text color="middleGreen">
+                            $
+                            {(
+                              (item.Product.isSpecial
+                                ? item.Product.specialPrice
+                                : item.Product.price) * item.quantity
+                            ).toFixed(2)}
+                          </Text>
+                        </Flex>
+                      ))
+                    ) : (
+                      <Text>No items in the cart.</Text>
+                    )}
+                    <Divider borderColor="lightGreen" />
+                    <Flex justifyContent="space-between" mt={5}>
+                      <Text fontSize="xl" fontWeight="bold" color={"heading"}>
+                        Total:
+                      </Text>
+                      <Text fontSize="xl" color={"heading"}>
+                        $
+                        {cart
+                          .reduce(
+                            (total, item) =>
+                              total +
+                              (item.Product.isSpecial
+                                ? item.Product.specialPrice
+                                : item.Product.price) *
+                                item.quantity,
+                            0
+                          )
+                          .toFixed(2)}
+                      </Text>
+                    </Flex>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
             </Box>
           )}
         </Flex>
