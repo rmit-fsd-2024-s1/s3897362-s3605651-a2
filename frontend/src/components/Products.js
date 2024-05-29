@@ -29,6 +29,7 @@ import {
 } from "../data/repository";
 import { Fade } from "@chakra-ui/transition";
 import { MinusIcon } from "@chakra-ui/icons";
+import CreditCardForm from "./CreditCardForm";
 
 const Products = ({ changeView }) => {
   const [specialProducts, setSpecialProducts] = useState([]);
@@ -41,7 +42,6 @@ const Products = ({ changeView }) => {
     return user ? user.user_id : null;
   });
   const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isCheckoutOpen,
     onOpen: onCheckoutOpen,
@@ -452,7 +452,11 @@ const Products = ({ changeView }) => {
                 Cart
               </Heading>
               <CartItems cart={cart} />
-              <Modal isOpen={isCheckoutOpen} onClose={onCheckoutClose}>
+              <Modal
+                isOpen={isCheckoutOpen}
+                onClose={onCheckoutClose}
+                size="3xl"
+              >
                 <ModalOverlay />
                 <ModalContent>
                   <ModalHeader>
@@ -460,57 +464,75 @@ const Products = ({ changeView }) => {
                   </ModalHeader>
                   <ModalCloseButton />
                   <ModalBody>
-                    {cart.length > 0 ? (
-                      cart.map((item, index) => (
-                        <Flex
-                          key={index}
-                          alignItems="center"
-                          justifyContent="space-between"
-                          mb={3}
-                        >
-                          <Flex alignItems="center">
-                            <Text fontSize="2xl" color="heading" mr={2}>
-                              {item.quantity}
-                            </Text>
-                            <Text fontSize="2xl" color="lightGreen" mr={2}>
-                              x
-                            </Text>
-                            <Text fontWeight="bold" color="text" mr={2}>
-                              {item.Product.name}
-                            </Text>
-                          </Flex>
-                          <Text color="middleGreen">
+                    <Flex direction="row" justify="space-between">
+                      <Box flex="1" mr="2">
+                        {cart.length > 0 ? (
+                          cart.map((item, index) => (
+                            <Flex
+                              key={index}
+                              alignItems="center"
+                              justifyContent="space-between"
+                              mb={3}
+                            >
+                              <Flex alignItems="center">
+                                <Text fontSize="2xl" color="heading" mr={2}>
+                                  {item.quantity}
+                                </Text>
+                                <Text fontSize="2xl" color="lightGreen" mr={2}>
+                                  x
+                                </Text>
+                                <Text fontWeight="bold" color="text" mr={2}>
+                                  {item.Product.name}
+                                </Text>
+                              </Flex>
+                              <Text color="middleGreen">
+                                $
+                                {(
+                                  (item.Product.isSpecial
+                                    ? item.Product.specialPrice
+                                    : item.Product.price) * item.quantity
+                                ).toFixed(2)}
+                              </Text>
+                            </Flex>
+                          ))
+                        ) : (
+                          <Text>No items in the cart.</Text>
+                        )}
+                        <Divider borderColor="lightGreen" />
+                        <Flex justifyContent="space-between" mt={5}>
+                          <Text
+                            fontSize="xl"
+                            fontWeight="bold"
+                            color={"heading"}
+                          >
+                            Total:
+                          </Text>
+                          <Text
+                            fontSize="xl"
+                            fontWeight="bold"
+                            color={"orange.500"}
+                          >
                             $
-                            {(
-                              (item.Product.isSpecial
-                                ? item.Product.specialPrice
-                                : item.Product.price) * item.quantity
-                            ).toFixed(2)}
+                            {cart
+                              .reduce(
+                                (total, item) =>
+                                  total +
+                                  (item.Product.isSpecial
+                                    ? item.Product.specialPrice
+                                    : item.Product.price) *
+                                    item.quantity,
+                                0
+                              )
+                              .toFixed(2)}
                           </Text>
                         </Flex>
-                      ))
-                    ) : (
-                      <Text>No items in the cart.</Text>
-                    )}
-                    <Divider borderColor="lightGreen" />
-                    <Flex justifyContent="space-between" mt={5}>
-                      <Text fontSize="xl" fontWeight="bold" color={"heading"}>
-                        Total:
-                      </Text>
-                      <Text fontSize="xl" color={"heading"}>
-                        $
-                        {cart
-                          .reduce(
-                            (total, item) =>
-                              total +
-                              (item.Product.isSpecial
-                                ? item.Product.specialPrice
-                                : item.Product.price) *
-                                item.quantity,
-                            0
-                          )
-                          .toFixed(2)}
-                      </Text>
+                      </Box>
+                      <Box flex="1" ml="2">
+                        <CreditCardForm
+                          onClose={onCheckoutClose}
+                          changeView={changeView}
+                        />
+                      </Box>
                     </Flex>
                   </ModalBody>
                 </ModalContent>
