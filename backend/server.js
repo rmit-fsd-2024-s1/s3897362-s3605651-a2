@@ -21,15 +21,15 @@ app.get("/", (req, res) => {
 });
 
 // Import and use user routes
-const userRoutes = require("./src/routes/user.routes"); // Adjust the path if necessary
+const userRoutes = require("./src/routes/user.routes");
 app.use("/api/users", userRoutes);
 
 // Import and use product routes
-const productRoutes = require("./src/routes/product.routes"); // Adjust the path if necessary
+const productRoutes = require("./src/routes/product.routes");
 app.use("/api/products", productRoutes);
 
 // Import and use cart routes
-const cartRoutes = require("./src/routes/cart.routes"); // Adjust the path if necessary
+const cartRoutes = require("./src/routes/cart.routes");
 app.use("/api/cart", cartRoutes);
 
 // Set the server to listen on a port
