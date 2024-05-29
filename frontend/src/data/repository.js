@@ -99,12 +99,16 @@ async function getCart(userId) {
 }
 
 async function addToCart(userId, productId, quantity = 1) {
-  const response = await axios.post(`${API_HOST}/api/cart/add`, {
-    user_id: userId,
-    product_id: productId,
-    quantity,
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${API_HOST}/api/cart/add`, {
+      user_id: userId,
+      product_id: productId,
+      quantity,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
 }
 
 async function removeFromCart(userId, productId, quantity = 1) {
