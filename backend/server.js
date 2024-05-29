@@ -4,6 +4,9 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./src/database"); // Ensure this path is correct
 
+// Import the clearInactiveCarts job
+require("./src/jobs/clearInactiveCarts");
+
 // Database will be synchronized in the background.
 db.sync();
 
