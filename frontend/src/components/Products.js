@@ -71,6 +71,11 @@ const Products = ({ changeView }) => {
       await addToCart(userId, product.product_id);
       const updatedCart = await getCart(userId);
       setCart(updatedCart);
+
+      // Fetch the updated products
+      const updatedProducts = await fetchProducts();
+      setProducts(updatedProducts);
+
       toast({
         title: "Added to Cart",
         description: `${product.name} has been added to your cart.`,
