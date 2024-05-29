@@ -139,7 +139,7 @@ exports.getCartItems = async (req, res) => {
       where: { cart_id: cart.cart_id },
       include: {
         model: db.product,
-        attributes: ["name", "price"],
+        attributes: ["name", "price", "isSpecial", "specialPrice"],
       },
     });
 

@@ -198,7 +198,12 @@ const Products = ({ changeView }) => {
               </Text>
             </Flex>
             <Text color="middleGreen">
-              ${(item.Product.price * item.quantity).toFixed(2)}
+              $
+              {(
+                (item.Product.isSpecial
+                  ? item.Product.specialPrice
+                  : item.Product.price) * item.quantity
+              ).toFixed(2)}
             </Text>
           </Flex>
         ))}
@@ -211,7 +216,12 @@ const Products = ({ changeView }) => {
             $
             {cart
               .reduce(
-                (total, item) => total + item.Product.price * item.quantity,
+                (total, item) =>
+                  total +
+                  (item.Product.isSpecial
+                    ? item.Product.specialPrice
+                    : item.Product.price) *
+                    item.quantity,
                 0
               )
               .toFixed(2)}
