@@ -93,6 +93,36 @@ async function fetchProducts() {
   return response.data;
 }
 
+async function getCart(userId) {
+  const response = await axios.get(`${API_HOST}/api/cart/${userId}`);
+  return response.data;
+}
+
+async function addToCart(userId, productId, quantity = 1) {
+  const response = await axios.post(`${API_HOST}/api/cart/add`, {
+    user_id: userId,
+    product_id: productId,
+    quantity,
+  });
+  return response.data;
+}
+
+async function removeFromCart(userId, productId, quantity = 1) {
+  const response = await axios.post(`${API_HOST}/api/cart/remove-item`, {
+    user_id: userId,
+    product_id: productId,
+    quantity,
+  });
+  return response.data;
+}
+
+async function clearCart(userId) {
+  const response = await axios.post(`${API_HOST}/api/cart/clear`, {
+    user_id: userId,
+  });
+  return response.data;
+}
+
 export {
   verifyUser,
   findUser,
@@ -105,4 +135,8 @@ export {
   verifyPassword,
   changePassword,
   fetchProducts,
+  getCart,
+  addToCart,
+  removeFromCart,
+  clearCart,
 };
