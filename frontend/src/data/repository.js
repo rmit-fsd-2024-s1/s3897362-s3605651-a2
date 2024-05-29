@@ -137,6 +137,17 @@ async function clearCart(userId) {
   }
 }
 
+async function checkoutCart(userID) {
+  try {
+    const response = await axios.post(`${API_HOST}/api/cart/checkout`, {
+      user_id: userID,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message || "Failed to checkout cart");
+  }
+}
+
 export {
   verifyUser,
   findUser,
@@ -153,4 +164,5 @@ export {
   addToCart,
   removeFromCart,
   clearCart,
+  checkoutCart,
 };

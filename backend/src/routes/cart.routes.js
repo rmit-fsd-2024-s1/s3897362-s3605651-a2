@@ -14,4 +14,7 @@ router.post("/clear", cartController.clearCart);
 // Route to get all items in the cart for a specific user
 router.get("/:id", cartController.getCartItems);
 
+// Route to checkout
+router.post("/checkout", cartController.checkout);
+
 module.exports = router;

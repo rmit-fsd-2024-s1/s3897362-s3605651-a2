@@ -205,3 +205,31 @@ exports.clearCart = async (req, res) => {
       .json({ message: "An error occurred while clearing the cart." });
   }
 };
+
+exports.checkout = async (req, res) => {
+  const { user_id } = req.body;
+
+  if (!user_id) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  try {
+    // Find the user's cart
+    const cart = await db.cart.findOne({ where: { user_id } });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    // Delete all cart items without restoring product quantities
+    await db.cartItem.destroy({ where: { cart_id: cart.cart_id } });
+
+    // Update the cart's updatedAt timestamp
+    cart.updatedAt = new Date();
+    await cart.save();
+
+    res.json({ message: "Checkout successful. Cart is now empty." });
+  } catch (error) {
+    console.error("Error during checkout:", error);
+    res.status(500).json({ message: "An error occurred during checkout." });
+  }
+};
