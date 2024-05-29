@@ -237,16 +237,6 @@ const Products = ({ changeView }) => {
   return (
     <Fade in={true}>
       <Box p="4">
-        <Heading
-          as="h1"
-          size="lg"
-          fontFamily="'Josefin Sans', sans-serif"
-          textAlign="center"
-          mb={5}
-          color="heading"
-        >
-          Specials of the Week!
-        </Heading>
         <Flex direction="row" justify="space-between">
           <Box maxWidth="1100" margin="0 auto">
             {specialProducts.length > 0 && (
@@ -259,7 +249,7 @@ const Products = ({ changeView }) => {
                   mb={5}
                   color="heading"
                 >
-                  Special Products
+                  Specials of the Week!
                 </Heading>
                 <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10}>
                   {specialProducts.map((product, index) => (
@@ -312,8 +302,17 @@ const Products = ({ changeView }) => {
                             fontFamily="'Josefin Sans', sans-serif"
                           >
                             /{product.unit}
+                            <Text
+                              fontWeight="bold"
+                              fontSize="md"
+                              color="middleGreen"
+                              textDecoration="line-through"
+                            >
+                              ${Number(product.price).toFixed(2)}
+                            </Text>
                           </Text>
                         </Text>
+
                         <Text fontSize="md">QTY: {product.quantity}</Text>
                       </Flex>
                       <Button
