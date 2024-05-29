@@ -80,30 +80,30 @@ async function seedData() {
           description:
             "Fresh, plump organic blueberries perfect for your morning smoothie.",
           price: 4.99,
-          quantity: 100,
+          quantity: 10,
           unit: "pint",
           image:
             "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?q=80&w=1469&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          isSpecial: false,
-          specialPrice: null,
+          isSpecial: true,
+          specialPrice: 3.49,
         },
         {
           name: "Local Honey",
           description: "Raw and unfiltered honey sourced from local farms.",
           price: 7.99,
-          quantity: 75,
+          quantity: 10,
           unit: "12oz jar",
           image:
             "https://images.unsplash.com/photo-1587049352851-8d4e89133924?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          isSpecial: false,
-          specialPrice: null,
+          isSpecial: true,
+          specialPrice: 5.98,
         },
         {
           name: "Almond Milk",
           description:
             "Organic almond milk, unsweetened and made with real almonds.",
           price: 2.99,
-          quantity: 50,
+          quantity: 10,
           unit: "quart",
           image:
             "https://images.unsplash.com/photo-1626196340104-2d6769a08761?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -115,7 +115,7 @@ async function seedData() {
           description:
             "Crispy and lightly salted, these kale chips are a healthy snack.",
           price: 3.99,
-          quantity: 40,
+          quantity: 10,
           unit: "bag",
           image:
             "https://images.unsplash.com/photo-1534942240902-fc71ff3dfaee?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -127,7 +127,7 @@ async function seedData() {
           description:
             "High-quality, grass-fed ground beef with a rich flavor.",
           price: 8.99,
-          quantity: 30,
+          quantity: 10,
           unit: "lb",
           image:
             "https://images.unsplash.com/photo-1690983323540-d6e889c4b107?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -139,19 +139,19 @@ async function seedData() {
           description:
             "Large eggs from chickens raised in a free-range, organic environment.",
           price: 4.99,
-          quantity: 60,
+          quantity: 10,
           unit: "dozen",
           image:
             "https://images.unsplash.com/photo-1586802990181-a5771596eaea?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          isSpecial: false,
-          specialPrice: null,
+          isSpecial: true,
+          specialPrice: 2.49,
         },
         {
           name: "Whole Grain Bread",
           description:
             "Baked fresh, this whole grain bread is hearty and full of fiber.",
           price: 3.49,
-          quantity: 50,
+          quantity: 10,
           unit: "loaf",
           image:
             "https://images.unsplash.com/photo-1626423642268-24cc183cbacb?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -163,7 +163,7 @@ async function seedData() {
           description:
             "Creamy and nutritious, perfect for guacamole or salads.",
           price: 1.49,
-          quantity: 100,
+          quantity: 10,
           unit: "each",
           image:
             "https://images.unsplash.com/photo-1519162808019-7de1683fa2ad?q=80&w=1375&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
