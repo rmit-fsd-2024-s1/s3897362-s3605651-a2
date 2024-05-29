@@ -127,10 +127,14 @@ async function removeFromCart(userId, productId, quantity) {
 }
 
 async function clearCart(userId) {
-  const response = await axios.post(`${API_HOST}/api/cart/clear`, {
-    user_id: userId,
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${API_HOST}/api/cart/clear`, {
+      user_id: userId,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message || "Failed to clear cart");
+  }
 }
 
 export {

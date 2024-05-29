@@ -35,9 +35,27 @@ const Products = ({ changeView }) => {
   const [products, setProducts] = useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [cart, setCart] = useState([]);
-  const userId = JSON.parse(localStorage.getItem("user")).user_id;
+  const [userId, setUserId] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user ? user.user_id : null;
+  });
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      setUserId(user ? user.user_id : null);
+    };
+
+    // Listen for storage changes
+    window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   useEffect(() => {
     async function loadProducts() {
@@ -50,19 +68,18 @@ const Products = ({ changeView }) => {
       }
     }
 
-    loadProducts();
-  }, []);
-
-  useEffect(() => {
     async function loadCart() {
-      try {
-        const cartItems = await getCart(userId);
-        setCart(cartItems);
-      } catch (error) {
-        console.error("Failed to fetch cart items:", error);
+      if (userId) {
+        try {
+          const cartData = await getCart(userId);
+          setCart(cartData);
+        } catch (error) {
+          console.error("Failed to fetch cart:", error);
+        }
       }
     }
 
+    loadProducts();
     loadCart();
   }, [userId]);
 
