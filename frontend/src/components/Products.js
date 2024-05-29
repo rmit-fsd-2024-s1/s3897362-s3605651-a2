@@ -127,6 +127,28 @@ const Products = ({ changeView }) => {
     }
   };
 
+  const handleClearCart = async () => {
+    try {
+      await clearCart(userId);
+      const updatedCart = await getCart(userId);
+      setCart(updatedCart);
+
+      // Fetch the updated products
+      const updatedProducts = await fetchProducts();
+      setProducts(updatedProducts);
+
+      toast({
+        title: "Cart Cleared",
+        description: "All items have been removed from your cart.",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Failed to clear cart:", error);
+    }
+  };
+
   const CartItems = ({ cart }) => {
     return (
       <>
@@ -187,6 +209,9 @@ const Products = ({ changeView }) => {
               .toFixed(2)}
           </Text>
         </Flex>
+        <Button size="sm" mt={5} colorScheme="red" onClick={handleClearCart}>
+          Clear
+        </Button>
       </>
     );
   };
