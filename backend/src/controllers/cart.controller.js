@@ -137,7 +137,10 @@ exports.getCartItems = async (req, res) => {
     // Find all cart items
     const cartItems = await db.cartItem.findAll({
       where: { cart_id: cart.cart_id },
-      include: [db.product], // Include product details
+      include: {
+        model: db.product,
+        attributes: ["name", "price"],
+      },
     });
 
     res.json(cartItems);

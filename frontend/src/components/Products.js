@@ -20,28 +20,24 @@ import {
   Skeleton,
   useToast,
 } from "@chakra-ui/react";
-import { fetchProducts, addToCart } from "../data/repository";
+import {
+  fetchProducts,
+  getCart,
+  addToCart,
+  removeFromCart,
+  clearCart,
+} from "../data/repository";
 import { Fade } from "@chakra-ui/transition";
 import { MinusIcon } from "@chakra-ui/icons";
 import CreditCardForm from "./CreditCardForm";
 
-/**
- * Initial Specials Array
- * Contains an array of objects, each representing a special product.
- * Each object has the following properties:
- * - name: string
- * - description: string
- * - price: number
- * - quantity: number
- * - unit: string
- * - image: string (URL to the image)
- */
 const Products = ({ changeView }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
   const [products, setProducts] = useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const [userId, setUserId] = useState(null);
+  const [cart, setCart] = useState([]);
+  const userId = JSON.parse(localStorage.getItem("user")).user_id;
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     async function loadProducts() {
@@ -58,15 +54,23 @@ const Products = ({ changeView }) => {
   }, []);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUserId(storedUser.user_id);
+    async function loadCart() {
+      try {
+        const cartItems = await getCart(userId);
+        setCart(cartItems);
+      } catch (error) {
+        console.error("Failed to fetch cart items:", error);
+      }
     }
-  }, []);
+
+    loadCart();
+  }, [userId]);
 
   const handleAddToCart = async (product) => {
     try {
       await addToCart(userId, product.product_id);
+      const updatedCart = await getCart(userId);
+      setCart(updatedCart);
       toast({
         title: "Added to Cart",
         description: `${product.name} has been added to your cart.`,
@@ -74,25 +78,58 @@ const Products = ({ changeView }) => {
         duration: 2000,
         isClosable: true,
       });
-
-      // Fetch the updated product list to reflect the quantity changes
-      const updatedProducts = await fetchProducts();
-      setProducts(updatedProducts);
     } catch (error) {
       console.error("Failed to add product to cart:", error);
-      toast({
-        title: "Error",
-        description: "Failed to add product to cart.",
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-      });
     }
+  };
+
+  const CartItems = ({ cart }) => {
+    return (
+      <>
+        {cart.map((item, index) => (
+          <Flex
+            key={index}
+            alignItems="center"
+            justifyContent="space-between"
+            mb={3}
+          >
+            <Flex alignItems="center">
+              <Text fontSize="2xl" color="heading" mr={2}>
+                {item.quantity}
+              </Text>
+              <Text fontSize="2xl" color="lightGreen" mr={2}>
+                x
+              </Text>
+              <Text fontWeight="bold" color="text" mr={2}>
+                {item.Product.name}
+              </Text>
+            </Flex>
+            <Text color="middleGreen">
+              ${(item.Product.price * item.quantity).toFixed(2)}
+            </Text>
+          </Flex>
+        ))}
+        <Divider borderColor="lightGreen"></Divider>
+        <Flex justifyContent="space-between" mt={5}>
+          <Text fontSize="xl" fontWeight="bold" color={"heading"}>
+            Total:
+          </Text>
+          <Text fontSize="xl" color={"heading"}>
+            $
+            {cart
+              .reduce(
+                (total, item) => total + item.Product.price * item.quantity,
+                0
+              )
+              .toFixed(2)}
+          </Text>
+        </Flex>
+      </>
+    );
   };
 
   return (
     <Fade in={true}>
-      {/* Display the specials of the week */}
       <Box p="4">
         <Heading
           as="h1"
@@ -107,7 +144,6 @@ const Products = ({ changeView }) => {
         <Flex direction="row" justify="space-between">
           <Box maxWidth="1100" margin="0 auto">
             <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10} pb={5}>
-              {/* Map over the products array to display each product */}
               {products.map((product, index) => (
                 <Box
                   key={index}
@@ -123,12 +159,9 @@ const Products = ({ changeView }) => {
                   flexDirection="column"
                   transition="all 0.2s"
                   _hover={{ transform: "scale(1.01)" }}
-                  overflow="hidden" // To ensure the image is contained within the borders
+                  overflow="hidden"
                   borderColor={"beige"}
                 >
-                  {/* Skeleton loader for the image
-                   * to prevent images randomly loading and looking untidy
-                   */}
                   <Skeleton
                     isLoaded={isLoaded}
                     height="200px"
@@ -137,10 +170,10 @@ const Products = ({ changeView }) => {
                     <Image
                       src={product.image}
                       alt={product.name}
-                      objectFit="cover" // Adjust as needed
+                      objectFit="cover"
                       boxSize="200px"
                       width="100%"
-                      borderRadius="lg" // Rounded corners for the image
+                      borderRadius="lg"
                     />
                   </Skeleton>
                   <Heading fontSize="xl" mb={2} mt={4}>
@@ -151,7 +184,6 @@ const Products = ({ changeView }) => {
                   </Text>
                   <Spacer />
                   <Flex justifyContent="space-between" alignItems="center">
-                    {/* Price and Quantity */}
                     <Text fontWeight="bold" fontSize="lg">
                       ${Number(product.price).toFixed(2)}
                       <Text
@@ -166,7 +198,6 @@ const Products = ({ changeView }) => {
                     </Text>
                     <Text fontSize="md">QTY: {product.quantity}</Text>
                   </Flex>
-                  {/* Add to cart button */}
                   <Button
                     mt={4}
                     bg={"darkGreen"}
@@ -180,6 +211,30 @@ const Products = ({ changeView }) => {
               ))}
             </SimpleGrid>
           </Box>
+          {cart.length > 0 && (
+            <Box
+              position="sticky"
+              top={20}
+              bg="card"
+              p={5}
+              ml={5}
+              mr={5}
+              shadow="lg"
+              borderWidth="1px"
+              borderRadius="lg"
+              borderColor={"beige"}
+              transition="all 0.2s"
+              _hover={{ transform: "scale(1.005)" }}
+              width={{ base: "40vw", lg: "30vw", xl: "20vw" }}
+              flexShrink={0}
+              alignSelf="start"
+            >
+              <Heading as="h3" size="lg" mb={4} textColor={"heading"}>
+                Cart
+              </Heading>
+              <CartItems cart={cart} />
+            </Box>
+          )}
         </Flex>
       </Box>
     </Fade>
