@@ -32,8 +32,9 @@ import { MinusIcon } from "@chakra-ui/icons";
 import CreditCardForm from "./CreditCardForm";
 
 const Products = ({ changeView }) => {
-  const [products, setProducts] = useState([]);
-  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [specialProducts, setSpecialProducts] = useState([]);
+  const [regularProducts, setRegularProducts] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [cart, setCart] = useState([]);
   const [userId, setUserId] = useState(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -48,10 +49,8 @@ const Products = ({ changeView }) => {
       setUserId(user ? user.user_id : null);
     };
 
-    // Listen for storage changes
     window.addEventListener("storage", handleStorageChange);
 
-    // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
@@ -61,7 +60,10 @@ const Products = ({ changeView }) => {
     async function loadProducts() {
       try {
         const data = await fetchProducts();
-        setProducts(data);
+        const special = data.filter((product) => product.isSpecial);
+        const regular = data.filter((product) => !product.isSpecial);
+        setSpecialProducts(special);
+        setRegularProducts(regular);
         setIsLoaded(true);
       } catch (error) {
         console.error("Failed to fetch products:", error);
@@ -89,9 +91,11 @@ const Products = ({ changeView }) => {
       const updatedCart = await getCart(userId);
       setCart(updatedCart);
 
-      // Fetch the updated products
       const updatedProducts = await fetchProducts();
-      setProducts(updatedProducts);
+      const special = updatedProducts.filter((product) => product.isSpecial);
+      const regular = updatedProducts.filter((product) => !product.isSpecial);
+      setSpecialProducts(special);
+      setRegularProducts(regular);
 
       toast({
         title: "Added to Cart",
@@ -111,9 +115,11 @@ const Products = ({ changeView }) => {
       const updatedCart = await getCart(userId);
       setCart(updatedCart);
 
-      // Fetch the updated products
       const updatedProducts = await fetchProducts();
-      setProducts(updatedProducts);
+      const special = updatedProducts.filter((product) => product.isSpecial);
+      const regular = updatedProducts.filter((product) => !product.isSpecial);
+      setSpecialProducts(special);
+      setRegularProducts(regular);
 
       toast({
         title: "Removed from Cart",
@@ -133,9 +139,11 @@ const Products = ({ changeView }) => {
       const updatedCart = await getCart(userId);
       setCart(updatedCart);
 
-      // Fetch the updated products
       const updatedProducts = await fetchProducts();
-      setProducts(updatedProducts);
+      const special = updatedProducts.filter((product) => product.isSpecial);
+      const regular = updatedProducts.filter((product) => !product.isSpecial);
+      setSpecialProducts(special);
+      setRegularProducts(regular);
 
       toast({
         title: "Cart Cleared",
@@ -209,8 +217,8 @@ const Products = ({ changeView }) => {
               .toFixed(2)}
           </Text>
         </Flex>
-        <Button size="sm" mt={5} colorScheme="red" onClick={handleClearCart}>
-          Clear
+        <Button mt={5} colorScheme="red" onClick={handleClearCart}>
+          Clear Cart
         </Button>
       </>
     );
@@ -231,8 +239,100 @@ const Products = ({ changeView }) => {
         </Heading>
         <Flex direction="row" justify="space-between">
           <Box maxWidth="1100" margin="0 auto">
-            <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10} pb={5}>
-              {products.map((product, index) => (
+            {specialProducts.length > 0 && (
+              <>
+                <Heading
+                  as="h2"
+                  size="lg"
+                  fontFamily="'Josefin Sans', sans-serif"
+                  textAlign="center"
+                  mb={5}
+                  color="heading"
+                >
+                  Special Products
+                </Heading>
+                <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10}>
+                  {specialProducts.map((product, index) => (
+                    <Box
+                      key={index}
+                      p={5}
+                      shadow="lg"
+                      borderWidth="1px"
+                      borderRadius="lg"
+                      position="relative"
+                      bg="card"
+                      textColor={"heading"}
+                      height="100%"
+                      display="flex"
+                      flexDirection="column"
+                      transition="all 0.2s"
+                      _hover={{ transform: "scale(1.01)" }}
+                      overflow="hidden"
+                      borderColor={"beige"}
+                    >
+                      <Skeleton
+                        isLoaded={isLoaded}
+                        height="200px"
+                        borderRadius="lg"
+                      >
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          objectFit="cover"
+                          boxSize="200px"
+                          width="100%"
+                          borderRadius="lg"
+                        />
+                      </Skeleton>
+                      <Heading fontSize="xl" mb={2} mt={4}>
+                        {product.name}
+                      </Heading>
+                      <Text color="text" mb={4} flexGrow={1}>
+                        {product.description}
+                      </Text>
+                      <Spacer />
+                      <Flex justifyContent="space-between" alignItems="center">
+                        <Text fontWeight="bold" fontSize="lg" color="red.500">
+                          ${Number(product.specialPrice).toFixed(2)}
+                          <Text
+                            as="span"
+                            fontSize="sm"
+                            color="text"
+                            fontWeight="normal"
+                            fontFamily="'Josefin Sans', sans-serif"
+                          >
+                            /{product.unit}
+                          </Text>
+                        </Text>
+                        <Text fontSize="md">QTY: {product.quantity}</Text>
+                      </Flex>
+                      <Button
+                        mt={4}
+                        bg={"darkGreen"}
+                        textColor={"beige"}
+                        onClick={() => handleAddToCart(product)}
+                        _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+                      >
+                        Add to cart
+                      </Button>
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              </>
+            )}
+            <Heading
+              as="h2"
+              size="lg"
+              fontFamily="'Josefin Sans', sans-serif"
+              textAlign="center"
+              mt={10}
+              mb={5}
+              color="heading"
+            >
+              Regular Products
+            </Heading>
+            <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10}>
+              {regularProducts.map((product, index) => (
                 <Box
                   key={index}
                   p={5}
