@@ -88,6 +88,28 @@ const Products = ({ changeView }) => {
     }
   };
 
+  const handleRemoveFromCart = async (product) => {
+    try {
+      await removeFromCart(userId, product.product_id, 1);
+      const updatedCart = await getCart(userId);
+      setCart(updatedCart);
+
+      // Fetch the updated products
+      const updatedProducts = await fetchProducts();
+      setProducts(updatedProducts);
+
+      toast({
+        title: "Removed from Cart",
+        description: `${product.name} has been removed from your cart.`,
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Failed to remove product from cart:", error);
+    }
+  };
+
   const CartItems = ({ cart }) => {
     return (
       <>
@@ -99,6 +121,25 @@ const Products = ({ changeView }) => {
             mb={3}
           >
             <Flex alignItems="center">
+              <Tooltip label="Remove from Cart" fontSize="xs">
+                <Button
+                  onClick={() =>
+                    handleRemoveFromCart({
+                      product_id: item.product_id,
+                      name: item.Product.name,
+                      quantity: item.quantity,
+                    })
+                  }
+                  colorScheme="red"
+                  size="xs"
+                  height="18px"
+                  width="18px"
+                  fontSize="10px"
+                  mr={2}
+                >
+                  <MinusIcon />
+                </Button>
+              </Tooltip>
               <Text fontSize="2xl" color="heading" mr={2}>
                 {item.quantity}
               </Text>
@@ -114,7 +155,7 @@ const Products = ({ changeView }) => {
             </Text>
           </Flex>
         ))}
-        <Divider borderColor="lightGreen"></Divider>
+        <Divider borderColor="lightGreen" />
         <Flex justifyContent="space-between" mt={5}>
           <Text fontSize="xl" fontWeight="bold" color={"heading"}>
             Total:

@@ -111,13 +111,19 @@ async function addToCart(userId, productId, quantity = 1) {
   }
 }
 
-async function removeFromCart(userId, productId, quantity = 1) {
-  const response = await axios.post(`${API_HOST}/api/cart/remove-item`, {
-    user_id: userId,
-    product_id: productId,
-    quantity,
-  });
-  return response.data;
+async function removeFromCart(userId, productId, quantity) {
+  try {
+    const response = await axios.post(`${API_HOST}/api/cart/remove-item`, {
+      user_id: userId,
+      product_id: productId,
+      quantity,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response.data.message || "Failed to remove item from cart"
+    );
+  }
 }
 
 async function clearCart(userId) {
