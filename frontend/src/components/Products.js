@@ -30,7 +30,7 @@ import {
   clearCart,
 } from "../data/repository";
 import CreditCardForm from "./CreditCardForm";
-import ReviewEntry from "./components/ReviewEntry";
+import ReviewEntry from "./ReviewEntry";
 
 
 const Products = ({ changeView }) => {
