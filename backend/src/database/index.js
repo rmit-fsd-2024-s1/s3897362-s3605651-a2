@@ -16,7 +16,7 @@ db.user = require("./models/user")(db.sequelize, DataTypes);
 db.product = require("./models/product")(db.sequelize, DataTypes);
 db.cart = require("./models/cart")(db.sequelize, DataTypes);
 db.cartItem = require("./models/cartItem")(db.sequelize, DataTypes);
-db.review = require("./models/review")(db.sequelize, DataTypes);
+db.reviews = require("./models/review")(db.sequelize, DataTypes);
 
 // Set up associations
 db.user.hasOne(db.cart, { foreignKey: "user_id" });
@@ -27,6 +27,18 @@ db.cartItem.belongsTo(db.cart, { foreignKey: "cart_id" });
 
 db.product.hasMany(db.cartItem, { foreignKey: "product_id" });
 db.cartItem.belongsTo(db.product, { foreignKey: "product_id" });
+
+db.user.hasMany(db.reviews, { foreignKey: "user_id", sourceKey: "user_id" });
+db.reviews.belongsTo(db.user, { foreignKey: "user_id", targetKey: "user_id" });
+
+db.product.hasMany(db.reviews, {
+  foreignKey: "product_id",
+  sourceKey: "product_id",
+});
+db.reviews.belongsTo(db.product, {
+  foreignKey: "product_id",
+  targetKey: "product_id",
+});
 
 // Include a sync option with seed data logic included.
 db.sync = async () => {
