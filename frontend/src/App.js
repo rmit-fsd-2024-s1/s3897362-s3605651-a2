@@ -19,7 +19,7 @@ function App() {
   const [currentView, setCurrentView] = useState("main");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const [selectedProductId, setSelectedProductId] = useState(null); // Added this line
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
