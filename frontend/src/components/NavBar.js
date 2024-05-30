@@ -64,7 +64,7 @@ const NavBar = ({ changeView, isLoggedIn, handleLogout }) => {
             >
               Diet Plan
             </Button>
-          )}
+            )}
         </Flex>
         <Flex justify="end" pr={4} align="center">
           {isLoggedIn ? (

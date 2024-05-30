@@ -20,6 +20,8 @@ import {
   Skeleton,
   useToast,
 } from "@chakra-ui/react";
+import { Fade } from "@chakra-ui/transition";
+import { MinusIcon } from "@chakra-ui/icons";
 import {
   fetchProducts,
   getCart,
@@ -27,9 +29,9 @@ import {
   removeFromCart,
   clearCart,
 } from "../data/repository";
-import { Fade } from "@chakra-ui/transition";
-import { MinusIcon } from "@chakra-ui/icons";
 import CreditCardForm from "./CreditCardForm";
+import ReviewEntry from "./components/ReviewEntry";
+
 
 const Products = ({ changeView }) => {
   const [specialProducts, setSpecialProducts] = useState([]);
@@ -47,6 +49,15 @@ const Products = ({ changeView }) => {
     onOpen: onCheckoutOpen,
     onClose: onCheckoutClose,
   } = useDisclosure();
+    const [isReviewOpen, onReviewOpen, onReviewClose] = useDisclosure();
+    const [selectedProductId, setSelectedProductId] = useState(null);
+
+    const openReviewModal = (productId) => {
+      setSelectedProductId(productId);
+      onReviewOpen();
+    };
+
+
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -346,6 +357,29 @@ const Products = ({ changeView }) => {
                       >
                         Add to cart
                       </Button>
+                      <Button
+                        mt={2}
+                        bg={"blue.500"}
+                        textColor={"white"}
+                        onClick={() => openReviewModal(product.product_id)}
+                        _hover={{ bg: "blue.400", textColor: "white" }}
+                      >
+                        Leave a Review
+                      </Button>
+                      <Modal isOpen={isReviewOpen} onClose={onReviewClose} size="lg">
+                        <ModalOverlay />
+                        <ModalContent>
+                          <ModalHeader>Leave a Review</ModalHeader>
+                          <ModalCloseButton />
+                          <ModalBody>
+                            <ReviewEntry
+                              productId={selectedProductId}
+                              onClose={onReviewClose}
+                            />
+                          </ModalBody>
+                        </ModalContent>
+                      </Modal>
+
                     </Box>
                   ))}
                 </SimpleGrid>

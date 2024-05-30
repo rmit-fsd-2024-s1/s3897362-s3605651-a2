@@ -1,17 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Box, Flex, Heading, Button, Textarea, FormControl, FormLabel, Input, Select, useTheme, useToast,
+  Box,
+  Flex,
+  Heading,
+  Button,
+  Textarea,
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
+  useToast,
+  Text, // Added this line
 } from "@chakra-ui/react";
 import { Fade } from "@chakra-ui/transition";
 import axios from "axios";
 
 const ReviewEntry = ({ changeView, userId, productId, isAdmin }) => {
-  const theme = useTheme();
   const toast = useToast();
-
   const [rating, setRating] = useState("");
   const [reviewText, setReviewText] = useState("");
   const [reviews, setReviews] = useState([]);
+
+  // Added state for productId and setter
+  const [currentProductId, setProductId] = useState(productId);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -30,15 +41,15 @@ const ReviewEntry = ({ changeView, userId, productId, isAdmin }) => {
     };
 
     fetchReviews();
-  }, []);
+  }, [toast]);
 
   const handleSubmit = async () => {
     if (rating && reviewText) {
       try {
         await axios.post("/api/reviews", {
           user_id: userId,
-          product_id: productId,
-          rating: rating,
+          product_id: currentProductId,
+          rating,
           review_text: reviewText,
         });
         toast({
@@ -120,89 +131,70 @@ const ReviewEntry = ({ changeView, userId, productId, isAdmin }) => {
     <Fade in={true}>
       <Flex direction="column" p={5} gap={6}>
         <Box maxWidth="600px" margin="0 auto">
-          <Heading as="h1" size="xl" mb={4} textColor={"heading"}>
-            Submit a Review
+          <Heading as="h1" mb={6} textAlign="center">
+            Write a Review
           </Heading>
-          <FormControl id="productId" mb={4} isRequired>
+          <FormControl mb={4}>
             <FormLabel>Product ID</FormLabel>
             <Input
               type="text"
-              value={productId}
+              value={currentProductId || ""}
               onChange={(e) => setProductId(e.target.value)}
-              placeholder="Enter Product ID"
+              placeholder="Enter the product ID"
             />
           </FormControl>
-          <FormControl id="rating" mb={4} isRequired>
+          <FormControl mb={4}>
             <FormLabel>Rating</FormLabel>
             <Select
               placeholder="Select rating"
               value={rating}
               onChange={(e) => setRating(e.target.value)}
             >
-              <option value="1">1 - Poor</option>
-              <option value="2">2 - Fair</option>
-              <option value="3">3 - Good</option>
-              <option value="4">4 - Very Good</option>
-              <option value="5">5 - Excellent</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </Select>
           </FormControl>
-          <FormControl id="reviewText" mb={4} isRequired>
-            <FormLabel>Review Text</FormLabel>
+          <FormControl mb={4}>
+            <FormLabel>Review</FormLabel>
             <Textarea
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
-              placeholder="Write your review (max 100 words)"
-              maxLength={500} // Adjust the maxLength as needed
-              size="sm"
+              placeholder="Write your review here..."
             />
           </FormControl>
-          <Button
-            bg={"darkGreen"}
-            textColor={"beige"}
-            _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
-            onClick={handleSubmit}
-          >
+          <Button colorScheme="teal" onClick={handleSubmit}>
             Submit Review
           </Button>
         </Box>
-        <Box maxWidth="600px" margin="0 auto" mt={8}>
-          <Heading as="h2" size="lg" mb={4} textColor={"heading"}>
+        <Box>
+          <Heading as="h2" mb={4}>
             Reviews
           </Heading>
           {reviews.map((review) => (
-            <Box
-              key={review.review_id}
-              bg="card"
-              p={5}
-              shadow="md"
-              borderWidth="1px"
-              borderColor={"beige"}
-              borderRadius="lg"
-              mb={4}
-            >
-              <Text fontSize="lg" mb={2} textColor={"text"}>
-                {review.review_text}
-              </Text>
-              <Text fontSize="sm" mb={2} textColor={"text"}>
-                Rating: {review.rating}
-              </Text>
-              {isAdmin && (
+            <Box key={review.review_id} p={4} borderWidth={1} borderRadius="md" mb={4}>
+              <Text><strong>Product ID:</strong> {review.product_id}</Text>
+              <Text><strong>Rating:</strong> {review.rating}</Text>
+              <Text><strong>Review:</strong> {review.review_text}</Text>
+              {isAdmin ? (
                 <Button
-                  size="sm"
                   colorScheme="red"
                   onClick={() => handleDeleteByAdmin(review.review_id)}
-                  mr={2}
+                  mt={2}
                 >
-                  Delete as Admin
+                  Delete Review (Admin)
+                </Button>
+              ) : (
+                <Button
+                  colorScheme="red"
+                  onClick={() => handleDeleteByUser(review.review_id)}
+                  mt={2}
+                >
+                  Delete Review
                 </Button>
               )}
-              <Button
-                size="sm"
-                colorScheme="red"
-                onClick={() => handleDeleteByUser(review.review_id)}
-              >
-                Delete as User
-              </Button>
             </Box>
           ))}
         </Box>

@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useEffect } from "react";
 import { Grid, GridItem, useToast } from "@chakra-ui/react";
 import Header from "./components/Header";
@@ -11,6 +10,7 @@ import Signin from "./components/Signin";
 import Profile from "./components/Profile";
 import DietPlan from "./components/DietPlan";
 import OrderSummary from "./components/OrderSummary";
+import ReviewEntry from "./components/ReviewEntry";
 import "./App.css";
 import { Fade } from "@chakra-ui/transition";
 
@@ -19,6 +19,7 @@ function App() {
   const [currentView, setCurrentView] = useState("main");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState(null); // Added this line
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -111,6 +112,14 @@ function App() {
           )}
           {currentView === "signin" && (
             <Signin onSuccessfulSignin={handleAuthSuccess} />
+          )}
+          {currentView === "reviewentry" && (
+            <ReviewEntry
+              changeView={changeView}
+              userId={user?.id}
+              productId={selectedProductId} // Pass the selected product ID
+              isAdmin={user?.role === "admin"}
+            />
           )}
         </GridItem>
         <GridItem pl="2" pr="2" pt="2" bg="middleGreen" gridArea="footer">
