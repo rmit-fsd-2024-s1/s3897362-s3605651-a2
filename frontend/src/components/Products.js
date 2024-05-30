@@ -49,15 +49,6 @@ const Products = ({ changeView }) => {
     onOpen: onCheckoutOpen,
     onClose: onCheckoutClose,
   } = useDisclosure();
-    const [isReviewOpen, onReviewOpen, onReviewClose] = useDisclosure();
-    const [selectedProductId, setSelectedProductId] = useState(null);
-
-    const openReviewModal = (productId) => {
-      setSelectedProductId(productId);
-      onReviewOpen();
-    };
-
-
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -357,29 +348,6 @@ const Products = ({ changeView }) => {
                       >
                         Add to cart
                       </Button>
-                      <Button
-                        mt={2}
-                        bg={"blue.500"}
-                        textColor={"white"}
-                        onClick={() => openReviewModal(product.product_id)}
-                        _hover={{ bg: "blue.400", textColor: "white" }}
-                      >
-                        Leave a Review
-                      </Button>
-                      <Modal isOpen={isReviewOpen} onClose={onReviewClose} size="lg">
-                        <ModalOverlay />
-                        <ModalContent>
-                          <ModalHeader>Leave a Review</ModalHeader>
-                          <ModalCloseButton />
-                          <ModalBody>
-                            <ReviewEntry
-                              productId={selectedProductId}
-                              onClose={onReviewClose}
-                            />
-                          </ModalBody>
-                        </ModalContent>
-                      </Modal>
-
                     </Box>
                   ))}
                 </SimpleGrid>
