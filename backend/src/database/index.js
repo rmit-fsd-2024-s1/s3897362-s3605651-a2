@@ -16,6 +16,7 @@ db.user = require("./models/user")(db.sequelize, DataTypes);
 db.product = require("./models/product")(db.sequelize, DataTypes);
 db.cart = require("./models/cart")(db.sequelize, DataTypes);
 db.cartItem = require("./models/cartItem")(db.sequelize, DataTypes);
+db.review = require("./models/review")(db.sequelize, DataTypes);
 
 // Set up associations
 db.user.hasOne(db.cart, { foreignKey: "user_id" });

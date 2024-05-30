@@ -36,7 +36,7 @@ const cartRoutes = require("./src/routes/cart.routes");
 app.use("/api/cart", cartRoutes);
 
 // Import and use review routes
-const reviewRoutes = require("./src/routes/review.routes");
+const reviewRoutes = require("./src/routes/reviews.routes");
 app.use("/api/reviews", reviewRoutes);
 
 // Set the server to listen on a port
