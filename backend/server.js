@@ -35,6 +35,10 @@ app.use("/api/products", productRoutes);
 const cartRoutes = require("./src/routes/cart.routes");
 app.use("/api/cart", cartRoutes);
 
+// Import and use review routes
+const reviewRoutes = require("./src/routes/review.routes");
+app.use("/api/reviews", reviewRoutes);
+
 // Set the server to listen on a port
 const PORT = process.env.PORT || 4000; // Using process.env.PORT for flexibility with deployment environments
 app.listen(PORT, () => {
