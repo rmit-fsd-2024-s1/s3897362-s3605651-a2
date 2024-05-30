@@ -8,7 +8,7 @@ const clearInactiveCarts = async () => {
     const inactiveCarts = await db.cart.findAll({
       where: {
         updatedAt: {
-          [db.Sequelize.Op.lt]: fifteenMinutesAgo,
+          [db.Op.lt]: fifteenMinutesAgo, // use db.Op instead of db.Sequelize.Op
         },
       },
     });
@@ -29,13 +29,6 @@ const clearInactiveCarts = async () => {
       // Clear the cart
       await db.cartItem.destroy({ where: { cart_id: cart.cart_id } });
     }
-
-    // Delete carts that have been cleared
-    await db.cart.destroy({
-      where: {
-        cart_id: inactiveCarts.map((cart) => cart.cart_id),
-      },
-    });
 
     console.log("Cleared inactive carts");
   } catch (error) {
