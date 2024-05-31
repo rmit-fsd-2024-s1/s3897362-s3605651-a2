@@ -39,6 +39,12 @@ const Products = ({ changeView }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]); // State to store products data
+  const [selectedProductId, setSelectedProductId] = useState(null); // State to store the ID of the product selected for review
+  const [isReviewModalOpen, setReviewModalOpen] = useState(false); // State to control the visibility of the review modal
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = () => setIsOpen(false);
+  const onOpen = () => setIsOpen(true);
   const [userId, setUserId] = useState(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     return user ? user.user_id : null;
@@ -49,6 +55,25 @@ const Products = ({ changeView }) => {
     onOpen: onCheckoutOpen,
     onClose: onCheckoutClose,
   } = useDisclosure();
+
+  // Function to fetch products data from the server
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const data = await fetchProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    }
+    loadProducts();
+  }, []);
+
+  // Function to handle the click event on the "Write a Review" button
+  const handleReviewButtonClick = (productId) => {
+    setSelectedProductId(productId);
+    setReviewModalOpen(true);
+  };
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -348,6 +373,15 @@ const Products = ({ changeView }) => {
                       >
                         Add to cart
                       </Button>
+                      <Button
+                        mt={4}
+                        bg={"darkGreen"}
+                        textColor={"beige"}
+                        onClick={() => handleReviewButtonClick(product.product_id)}
+                        _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+                      >
+                        Reviews
+                      </Button>
                     </Box>
                   ))}
                 </SimpleGrid>
@@ -428,6 +462,15 @@ const Products = ({ changeView }) => {
                   >
                     Add to cart
                   </Button>
+                  <Button
+                        mt={4}
+                        bg={"darkGreen"}
+                        textColor={"beige"}
+                        onClick={() => handleReviewButtonClick(product.product_id)}
+                        _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+                      >
+                        Reviews
+                      </Button>
                 </Box>
               ))}
             </SimpleGrid>
@@ -536,6 +579,21 @@ const Products = ({ changeView }) => {
                         />
                       </Box>
                     </Flex>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+              {/* Button to open the modal */}
+              <Button onClick={onOpen}>Open Modal</Button>
+
+              {/* Modal component */}
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Modal Title</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    {/* Content of the modal */}
+                    This is the content of the modal.
                   </ModalBody>
                 </ModalContent>
               </Modal>
