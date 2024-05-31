@@ -31,7 +31,7 @@ import {
 } from "../data/repository";
 import CreditCardForm from "./CreditCardForm";
 import ReviewEntry from "./ReviewEntry";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 
 const Products = ({ changeView }) => {
@@ -44,7 +44,7 @@ const Products = ({ changeView }) => {
     const user = JSON.parse(localStorage.getItem("user"));
     return user ? user.user_id : null;
   });
-  const navigate = useNavigate
+  const history = useHistory();
   const toast = useToast();
   const {
     isOpen: isCheckoutOpen,
@@ -129,11 +129,11 @@ const Products = ({ changeView }) => {
       console.error("Failed to add product to cart:", error);
     }
   };
-
+/*
   const writeReview = async (product) => {
-        Navigate("/review-entry", { product });
+        history.push("/review-entry", { product });
   };
-  
+*/
   const handleRemoveFromCart = async (product) => {
     try {
       await removeFromCart(userId, product.product_id, 1);
@@ -358,7 +358,7 @@ const Products = ({ changeView }) => {
                         mt={4}
                         bg={"darkGreen"}
                         textColor={"beige"}
-                        onClick={() => writeReview()}
+                        onClick={() => handleAddToCart(product)}
                         _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
                       >
                         Write A Review
