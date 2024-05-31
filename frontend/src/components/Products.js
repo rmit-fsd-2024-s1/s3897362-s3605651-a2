@@ -127,12 +127,7 @@ const Products = ({ changeView }) => {
       console.error("Failed to add product to cart:", error);
     }
   };
-/*
-  const writeReview = async (product) => {
-        history.push("/review-entry", { product });
-  };
 
-*/
   const handleRemoveFromCart = async (product) => {
     try {
       await removeFromCart(userId, product.product_id, 1);
@@ -353,17 +348,6 @@ const Products = ({ changeView }) => {
                       >
                         Add to cart
                       </Button>
-                      <Button
-                        mt={4}
-                        bg={"darkGreen"}
-                        textColor={"beige"}
-                        onClick={() => handleAddToCart(product)}
-                        _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
-                      >
-                        Write A Review
-                      </Button>
-
-
                     </Box>
                   ))}
                 </SimpleGrid>
