@@ -31,7 +31,6 @@ import {
 } from "../data/repository";
 import CreditCardForm from "./CreditCardForm";
 import ReviewEntry from "./ReviewEntry";
-import { useHistory } from "react-router-dom";
 
 
 const Products = ({ changeView }) => {
@@ -44,7 +43,6 @@ const Products = ({ changeView }) => {
     const user = JSON.parse(localStorage.getItem("user"));
     return user ? user.user_id : null;
   });
-  const history = useHistory();
   const toast = useToast();
   const {
     isOpen: isCheckoutOpen,
@@ -133,6 +131,7 @@ const Products = ({ changeView }) => {
   const writeReview = async (product) => {
         history.push("/review-entry", { product });
   };
+
 */
   const handleRemoveFromCart = async (product) => {
     try {
