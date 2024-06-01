@@ -107,7 +107,12 @@ const ProductList = () => {
                     <Badge colorScheme="red">No</Badge>
                   )}
                 </Td>
-                <Td p={2}>
+                <Td
+                  p={2}
+                  fontWeight={product.specialPrice ? "bold" : "normal"}
+                  color={product.specialPrice ? "red.500" : "gray.500"}
+                  fontStyle={product.specialPrice ? "normal" : "italic"}
+                >
                   {product.specialPrice ? `$${product.specialPrice}` : "N/A"}
                 </Td>
               </Tr>
