@@ -13,6 +13,7 @@ import {
   Box,
   Text,
   Badge,
+  Tooltip,
 } from "@chakra-ui/react";
 
 const GET_PRODUCTS = gql`
@@ -94,11 +95,27 @@ const ProductList = () => {
                 <Td p={2}>{product.quantity}</Td>
                 <Td p={2}>{product.unit}</Td>
                 <Td p={2}>
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    boxSize="50px"
-                  />
+                  <Tooltip
+                    label={
+                      <Image
+                        borderRadius={10}
+                        src={product.image}
+                        alt={product.name}
+                      />
+                    }
+                    placement="right"
+                    hasArrow
+                    padding={0}
+                    borderRadius={10}
+                  >
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      borderRadius={3}
+                      boxSize="50px"
+                      cursor="pointer"
+                    />
+                  </Tooltip>
                 </Td>
                 <Td p={2}>
                   {product.isSpecial ? (
@@ -110,7 +127,7 @@ const ProductList = () => {
                 <Td
                   p={2}
                   fontWeight={product.specialPrice ? "bold" : "normal"}
-                  color={product.specialPrice ? "orange.500" : "gray.500"}
+                  color={product.specialPrice ? "red.500" : "gray.500"}
                   fontStyle={product.specialPrice ? "normal" : "italic"}
                 >
                   {product.specialPrice ? `$${product.specialPrice}` : "N/A"}
