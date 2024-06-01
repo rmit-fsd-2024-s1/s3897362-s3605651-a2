@@ -87,7 +87,7 @@ const ProductList = () => {
     .filter(Boolean);
 
   return (
-    <Box p={5} width="100%" height="100%" overflow="hidden">
+    <Box p={5} width="100%" height="100%" display="flex" flexDirection="column">
       <Box position="sticky" top={0} bg="white" zIndex={2} pb={4}>
         <Flex justifyContent="space-between" mb={4}>
           <Button
@@ -109,7 +109,7 @@ const ProductList = () => {
       </Box>
       <Box flex="1" overflowY="auto" height="calc(100vh - 120px)">
         <TableContainer>
-          <Table variant="simple" size="sm" width="100%">
+          <Table variant="simple" size="sm" height="100%" width="100%">
             <Thead position="sticky" top={0} bg="teal.500" zIndex={1}>
               <Tr>
                 {isDeleteMode && (
@@ -169,7 +169,9 @@ const ProductList = () => {
                   >
                     {product.description}
                   </Td>
-                  <Td p={2}>${product.price}</Td>
+                  <Td fontWeight="bold" color="gray.600" p={2}>
+                    ${product.price}
+                  </Td>
                   <Td p={2}>{product.quantity}</Td>
                   <Td p={2}>{product.unit}</Td>
                   <Td p={2}>
@@ -206,7 +208,7 @@ const ProductList = () => {
                   <Td
                     p={2}
                     fontWeight={product.specialPrice ? "bold" : "normal"}
-                    color={product.specialPrice ? "red.500" : "gray.500"}
+                    color={product.specialPrice ? "green.500" : "gray.500"}
                     fontStyle={product.specialPrice ? "normal" : "italic"}
                   >
                     {product.specialPrice ? `$${product.specialPrice}` : "N/A"}
