@@ -50,6 +50,22 @@ const ProductList = () => {
   if (loading) return <Spinner />;
   if (error) return <Text>Error :(</Text>;
 
+  const handleDelete = () => {
+    selectedProducts.forEach((product_id) => {
+      deleteProduct({ variables: { product_id } });
+    });
+    setSelectedProducts([]);
+    setIsDeleteMode(false);
+  };
+
+  const handleSelectProduct = (product_id) => {
+    setSelectedProducts((prevSelected) =>
+      prevSelected.includes(product_id)
+        ? prevSelected.filter((id) => id !== product_id)
+        : [...prevSelected, product_id]
+    );
+  };
+
   return (
     <Box p={5} width="100%">
       <TableContainer
