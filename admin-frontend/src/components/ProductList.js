@@ -32,6 +32,12 @@ const GET_PRODUCTS = gql`
   }
 `;
 
+const DELETE_PRODUCT = gql`
+  mutation DeleteProduct($product_id: ID!) {
+    deleteProduct(product_id: $product_id)
+  }
+`;
+
 const ProductList = () => {
   const { loading, error, data } = useQuery(GET_PRODUCTS);
 
