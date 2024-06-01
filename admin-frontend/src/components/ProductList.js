@@ -110,7 +110,7 @@ const ProductList = () => {
                 <Td
                   p={2}
                   fontWeight={product.specialPrice ? "bold" : "normal"}
-                  color={product.specialPrice ? "red.500" : "gray.500"}
+                  color={product.specialPrice ? "orange.500" : "gray.500"}
                   fontStyle={product.specialPrice ? "normal" : "italic"}
                 >
                   {product.specialPrice ? `$${product.specialPrice}` : "N/A"}
