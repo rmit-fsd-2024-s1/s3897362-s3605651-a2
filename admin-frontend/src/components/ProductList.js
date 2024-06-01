@@ -145,13 +145,13 @@ const ProductList = () => {
     ) {
       errors.description = "Description must be between 1 and 256 characters";
     }
+    const pricePattern = /^\d+\.\d{2}$/;
     if (
-      isNaN(formState.price) ||
-      formState.price <= 0 ||
-      !/^\d+(\.\d{1,2})?$/.test(formState.price)
+      !pricePattern.test(formState.price) ||
+      parseFloat(formState.price) <= 0
     ) {
       errors.price =
-        "Price must be a number greater than 0 with up to two decimal places";
+        "Price must be a number with exactly two decimal places and greater than 0";
     }
     if (
       isNaN(formState.quantity) ||
@@ -179,13 +179,12 @@ const ProductList = () => {
     }
     if (
       formState.isSpecial &&
-      (isNaN(formState.specialPrice) ||
-        formState.specialPrice >= formState.price ||
-        formState.specialPrice <= 0 ||
-        !/^\d+(\.\d{1,2})?$/.test(formState.specialPrice))
+      (!pricePattern.test(formState.specialPrice) ||
+        parseFloat(formState.specialPrice) >= parseFloat(formState.price) ||
+        parseFloat(formState.specialPrice) <= 0)
     ) {
       errors.specialPrice =
-        "Special Price must be a number less than Price and greater than 0 with up to two decimal places";
+        "Special Price must be a number with exactly two decimal places, less than Price, and greater than 0";
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -445,15 +444,14 @@ const ProductList = () => {
             <FormControl id="price" mb={4} isInvalid={formErrors.price}>
               <FormLabel>Price</FormLabel>
               <Input
-                type="number"
-                step="0.01"
+                type="text"
                 value={formState.price}
-                onChange={(e) =>
-                  setFormState({
-                    ...formState,
-                    price: parseFloat(e.target.value),
-                  })
-                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*\.?\d{0,2}$/.test(value)) {
+                    setFormState({ ...formState, price: value });
+                  }
+                }}
               />
               <FormErrorMessage>{formErrors.price}</FormErrorMessage>
             </FormControl>
@@ -522,15 +520,14 @@ const ProductList = () => {
               >
                 <FormLabel>Special Price</FormLabel>
                 <Input
-                  type="number"
-                  step="0.01"
+                  type="text"
                   value={formState.specialPrice}
-                  onChange={(e) =>
-                    setFormState({
-                      ...formState,
-                      specialPrice: parseFloat(e.target.value),
-                    })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*\.?\d{0,2}$/.test(value)) {
+                      setFormState({ ...formState, specialPrice: value });
+                    }
+                  }}
                 />
                 <FormErrorMessage>{formErrors.specialPrice}</FormErrorMessage>
               </FormControl>
