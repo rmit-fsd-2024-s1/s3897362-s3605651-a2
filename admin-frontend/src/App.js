@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Heading, Flex, Button } from "@chakra-ui/react";
 import Home from "./components/Home";
-import ProductList from "./components/ProductList";
+import ProductList from "./components/ProductList/ProductList";
 
 const App = () => {
   const [selectedPage, setSelectedPage] = useState("home");
