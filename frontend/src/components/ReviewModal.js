@@ -11,7 +11,7 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import { getAllReviews } from "../data/repository";
+import { getAllReviews, getReviewById } from "../data/repository";
 import ReviewForm from "./ReviewForm"; // Import ReviewForm component
 
 const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
@@ -21,22 +21,24 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
 
   const fetchReviews = async () => {
     try {
-      const fetchedReviews = await getAllReviews();
-      const productReviews = fetchedReviews.filter(
-        (review) => review.productId === productId
-      );
-      setReviews(productReviews);
+      const fetchedReview = await getReviewById(productId);
+      if (fetchedReview) {
+        setReviews([fetchedReview]);
+      } else {
+        setReviews([]);
+      }
     } catch (error) {
-      console.error("Failed to fetch reviews:", error);
+      console.error("Failed to fetch review:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch reviews. Please try again later.",
+        description: "Failed to fetch review. Please try again later.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
     }
   };
+
 
   useEffect(() => {
     if (isOpen) {
@@ -62,13 +64,13 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
               Reviews:
             </Text>
             {reviews.map((review) => (
-              <Box key={review.id} bg="gray.100" p={2} mb={2}>
-                <Text fontWeight="bold">{review.title}</Text>
-                <Text>{review.content}</Text>
-                <Text>Rating: {review.rating}</Text>
-              </Box>
+                <Box key={review.review_id} bg="gray.100" p={2} mb={2}>
+                    <Text fontWeight="bold">Review Text: {review.review_text}</Text>
+                    <Text>Rating: {review.rating}</Text>
+                </Box>
             ))}
-            {reviews.length === 0 && <Text>No reviews available.</Text>}
+            {reviews.length === 0 && <Text>No reviews available. 
+                </Text>}
 
             {/* Button to write review */}
             <Button

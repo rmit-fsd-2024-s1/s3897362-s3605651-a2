@@ -20,6 +20,13 @@ const ReviewForm = ({ isOpen, onClose, productId, userId, onSubmit }) => {
 
   const handleSubmit = async () => {
     try {
+      console.log("Submitting review data:", {
+        user_id: userId,
+        product_id: productId,
+        rating,
+        review_text: reviewText
+      });
+  
       await createReview({
         user_id: userId,
         product_id: productId,
