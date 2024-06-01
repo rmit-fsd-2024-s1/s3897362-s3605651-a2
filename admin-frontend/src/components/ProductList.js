@@ -72,6 +72,23 @@ const ProductList = () => {
 
   return (
     <Box p={5} width="100%">
+      <Flex justifyContent="space-between" mb={4}>
+        <Button
+          colorScheme="red"
+          onClick={() => setIsDeleteMode(!isDeleteMode)}
+        >
+          {isDeleteMode ? "Cancel Delete" : "Delete Product"}
+        </Button>
+        {isDeleteMode && (
+          <Button
+            colorScheme="red"
+            onClick={handleDelete}
+            isDisabled={selectedProducts.length === 0}
+          >
+            Confirm
+          </Button>
+        )}
+      </Flex>
       <TableContainer
         maxW="100%"
         overflowX="auto"
