@@ -11,6 +11,16 @@ const resolvers = {
       }
     },
   },
+  Mutation: {
+    createProduct: async (_, args) => {
+      try {
+        const product = await db.product.create(args);
+        return product;
+      } catch (error) {
+        throw new Error("Error creating product");
+      }
+    },
+  },
 };
 
 module.exports = resolvers;
