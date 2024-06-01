@@ -18,6 +18,12 @@ import {
   IconButton,
   Checkbox,
   Flex,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 
 const GET_PRODUCTS = gql`
