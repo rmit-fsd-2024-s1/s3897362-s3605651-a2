@@ -40,6 +40,9 @@ const DELETE_PRODUCT = gql`
 
 const ProductList = () => {
   const { loading, error, data } = useQuery(GET_PRODUCTS);
+  const [deleteProduct] = useMutation(DELETE_PRODUCT, {
+    refetchQueries: [{ query: GET_PRODUCTS }],
+  });
 
   if (loading) return <Spinner />;
   if (error) return <Text>Error :(</Text>;
