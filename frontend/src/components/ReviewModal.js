@@ -11,14 +11,15 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import { getAllReviews, getReviewsByProductId } from "../data/repository";
-import ReviewForm from "./ReviewForm"; // Import ReviewForm component
+import { getReviewsByProductId, updateReview } from "../data/repository";
+import ReviewForm from "./ReviewForm";
+import ReviewEditForm from "./ReviewEdit";
 
 const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
   const [reviews, setReviews] = useState([]);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const toast = useToast();
-  
+
   const fetchReviews = async () => {
     try {
       const fetchedReviews = await getReviewsByProductId(productId); // Use new function
@@ -48,6 +49,38 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
     setIsReviewFormOpen(false);
   };
 
+  const ReviewItem = ({ review, currentUser }) => {
+    const [isEditing, setIsEditing] = useState(false);
+  
+    const handleUpdateReview = async (updatedReviewData) => {
+      try {
+        await updateReview(review.id, updatedReviewData);
+        setIsEditing(false);
+        // Optionally, refresh the reviews list after editing
+      } catch (error) {
+        console.error('Failed to update review:', error);
+        // Handle error
+      }
+    };
+  
+    return (
+      <div>
+        {isEditing ? (
+          <ReviewEditForm review={review} onUpdate={handleUpdateReview} />
+        ) : (
+          <>
+            <p>Rating: {review.rating}/5</p>
+            <p></p>
+            <p>Review Text: {review.review_text}</p>
+            {currentUser.id === review.user_id && (
+              <button onClick={() => setIsEditing(true)}>Edit</button>
+            )}
+          </>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -61,11 +94,12 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
             </Text>
             {reviews.map((review) => (
                 <Box key={review.review_id} bg="gray.100" p={2} mb={2}>
-                    <Text fontWeight="bold">Review Text: {review.review_text}</Text>
-                    <Text>Rating: {review.rating}</Text>
+                    <Text fontWeight="bold">{review.review_text}</Text>
+                    <br/>
+                    <Text>Rating: {review.rating}/5</Text>
                 </Box>
             ))}
-            {reviews.length === 0 && <Text>No reviews available. 
+            {reviews.length === 0 && <Text>No reviews have been made. 
                 </Text>}
 
             {/* Button to write review */}

@@ -41,17 +41,23 @@ exports.getReviewsByProductId = async (req, res) => {
 exports.createReview = async (req, res) => {
   try {
     const { user_id, product_id, rating, review_text } = req.body;
+      console.log("Received data:", { user_id, product_id, rating, review_text });
+    const createdAt = new Date();
+    const updatedAt = new Date();
     const review = await db.reviews.create({
       user_id,
       product_id,
       rating,
       review_text,
+      created_at: createdAt,
+      updated_at: updatedAt,
     });
     res.status(201).json(review);
   } catch (error) {
     res.status(500).send({ message: "Error creating review" });
   }
 };
+
 
 exports.updateReview = async (req, res) => {
   try {
