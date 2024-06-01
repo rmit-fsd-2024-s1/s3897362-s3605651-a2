@@ -69,6 +69,7 @@ const ProductList = () => {
     });
     setSelectedProducts([]);
     setIsDeleteMode(false);
+    setIsDialogOpen(false);
   };
 
   const handleSelectProduct = (product_id) => {
