@@ -10,7 +10,6 @@ import Signin from "./components/Signin";
 import Profile from "./components/Profile";
 import DietPlan from "./components/DietPlan";
 import OrderSummary from "./components/OrderSummary";
-import ReviewEntry from "./components/ReviewEntry";
 import "./App.css";
 import { Fade } from "@chakra-ui/transition";
 
@@ -112,14 +111,6 @@ function App() {
           )}
           {currentView === "signin" && (
             <Signin onSuccessfulSignin={handleAuthSuccess} />
-          )}
-          {currentView === "reviewentry" && (
-            <ReviewEntry
-              changeView={changeView}
-              userId={user?.id}
-              productId={selectedProductId} // Pass the selected product ID
-              isAdmin={user?.role === "admin"}
-            />
           )}
         </GridItem>
         <GridItem pl="2" pr="2" pt="2" bg="middleGreen" gridArea="footer">

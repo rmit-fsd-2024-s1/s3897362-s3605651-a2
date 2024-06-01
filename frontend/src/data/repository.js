@@ -166,3 +166,58 @@ export {
   clearCart,
   checkoutCart,
 };
+
+// --- Review Functions ---------------------------------------------------------------------------
+async function getAllReviews() {
+  const response = await axios.get(`${API_HOST}/api/reviews`);
+  return response.data;
+}
+
+async function getReviewById(id) {
+  const response = await axios.get(`${API_HOST}/api/reviews/${id}`);
+  return response.data;
+}
+
+async function createReview(reviewData) {
+  try {
+    const response = await axios.post(`${API_HOST}/api/reviews`, reviewData);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response.data.message || "Failed to create review"
+    );
+  }
+}
+
+async function updateReview(reviewId, reviewData) {
+  try {
+    const response = await axios.put(
+      `${API_HOST}/api/reviews/${reviewId}`,
+      reviewData
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response.data.message || "Failed to update review"
+    );
+  }
+}
+
+async function deleteReviewByUser(id) {
+  const response = await axios.delete(`${API_HOST}/api/reviews/user/${id}`);
+  return response.data;
+}
+
+async function deleteReviewByAdmin(id) {
+  const response = await axios.delete(`${API_HOST}/api/reviews/admin/${id}`);
+  return response.data;
+}
+
+export {
+  getAllReviews,
+  getReviewById,
+  createReview,
+  updateReview,
+  deleteReviewByUser,
+  deleteReviewByAdmin,
+};
