@@ -8,75 +8,52 @@ import {
   ModalBody,
   Button,
   Text,
-  Input,
-  Textarea,
-  useToast,
+  Box,
 } from "@chakra-ui/react";
-import { createReview } from "../data/repository";
+import { getAllReviews } from "../data/repository";
 
 const ReviewModal = ({ isOpen, onClose, productId }) => {
-  const [reviewContent, setReviewContent] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const toast = useToast();
+  const [reviews, setReviews] = useState([]);
 
-  const handleCreateReview = async () => {
-    setIsLoading(true);
-    try {
-      // Create review
-      await createReview({
-        productId,
-        content: reviewContent,
-        // Optionally, you can also include user ID or other relevant data
-      });
-
-      // Reset review content
-      setReviewContent("");
-
-      // Display success message
-      toast({
-        title: "Review submitted",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      // Close the modal
-      onClose();
-    } catch (error) {
-      // Display error message
-      toast({
-        title: "Error",
-        description: error.message || "Failed to submit review",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    async function fetchReviews() {
+      try {
+        const fetchedReviews = await getAllReviews();
+        // Filter reviews for the specific product
+        const productReviews = fetchedReviews.filter(
+          (review) => review.productId === productId
+        );
+        setReviews(productReviews);
+      } catch (error) {
+        console.error("Failed to fetch reviews:", error);
+      }
     }
-  };
+
+    if (isOpen) {
+      fetchReviews();
+    }
+  }, [isOpen, productId]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Write a Review</ModalHeader>
+        <ModalHeader>Product Reviews</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Textarea
-            value={reviewContent}
-            onChange={(e) => setReviewContent(e.target.value)}
-            placeholder="Write your review here..."
-            mb={4}
-          />
-          <Button
-            colorScheme="blue"
-            isLoading={isLoading}
-            loadingText="Submitting"
-            onClick={handleCreateReview}
-          >
-            Submit Review
-          </Button>
+          <Box>
+            <Text fontSize="lg" fontWeight="bold" mb={2}>
+              Reviews:
+            </Text>
+            {reviews.map((review) => (
+              <Box key={review.id} bg="gray.100" p={2} mb={2}>
+                <Text fontWeight="bold">{review.title}</Text>
+                <Text>{review.content}</Text>
+                <Text>Rating: {review.rating}</Text>
+              </Box>
+            ))}
+            {reviews.length === 0 && <Text>No reviews available.</Text>}
+          </Box>
         </ModalBody>
       </ModalContent>
     </Modal>

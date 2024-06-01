@@ -63,14 +63,14 @@ const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 const [selectedProductId, setSelectedProductId] = useState(null);
 
 const handleReviewButtonClick = (product) => {
+  console.log("Review button clicked for product:", product);
   setIsReviewModalOpen(true);
   setSelectedProductId(product.product_id);
 };
-<ReviewModal
-  isOpen={isReviewModalOpen}
-  onClose={() => setIsReviewModalOpen(false)}
-  productId={selectedProductId}
-/>
+
+useEffect(() => {
+  console.log("selectedProductId after click:", selectedProductId);
+}, [selectedProductId]);
 //end
 
 
@@ -283,6 +283,7 @@ const handleReviewButtonClick = (product) => {
   };
 
   return (
+    <>
     <Fade in={true}>
       <Box p="4">
         <Flex direction="row" justify="space-between">
@@ -586,6 +587,12 @@ const handleReviewButtonClick = (product) => {
         </Flex>
       </Box>
     </Fade>
+    <ReviewModal
+    isOpen={isReviewModalOpen}
+    onClose={() => setIsReviewModalOpen(false)}
+    productId={selectedProductId}
+  />
+  </>
   );
 };
 
