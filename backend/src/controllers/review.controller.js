@@ -2,7 +2,7 @@ const db = require("../database");
 
 exports.getAllReviews = async (req, res) => {
   try {
-    const reviews = await db.Review.findAll();
+    const reviews = await db.reviews.findAll();
     res.json(reviews);
   } catch (error) {
     res.status(500).send({ message: "Error retrieving reviews" });
@@ -11,7 +11,7 @@ exports.getAllReviews = async (req, res) => {
 
 exports.getReviewById = async (req, res) => {
   try {
-    const review = await db.Review.findByPk(req.params.id);
+    const review = await db.reviews.findByPk(req.params.id);
     if (review) {
       res.json(review);
     } else {
@@ -22,10 +22,26 @@ exports.getReviewById = async (req, res) => {
   }
 };
 
+exports.getReviewsByProductId = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const reviews = await db.reviews.findAll({
+      where: {
+        product_id: productId,
+        is_deleted: false,
+      },
+    });
+    res.json(reviews);
+  } catch (error) {
+    console.error('Error retrieving reviews for product:', error);
+    res.status(500).send({ message: 'Error retrieving reviews for product' });
+  }
+};
+
 exports.createReview = async (req, res) => {
   try {
     const { user_id, product_id, rating, review_text } = req.body;
-    const review = await db.Review.create({
+    const review = await db.reviews.create({
       user_id,
       product_id,
       rating,
@@ -41,7 +57,7 @@ exports.updateReview = async (req, res) => {
   try {
     const { id } = req.params;
     const { rating, review_text } = req.body;
-    const review = await db.Review.findByPk(id);
+    const review = await db.reviews.findByPk(id);
     if (review) {
       await review.update({
         rating,
@@ -59,7 +75,7 @@ exports.updateReview = async (req, res) => {
 exports.deleteReviewByUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const review = await db.Review.findByPk(id);
+    const review = await db.reviews.findByPk(id);
     if (review) {
       await review.update({
         review_text: "[**** THIS REVIEW HAS BEEN DELETED BY THE USER ****]",
@@ -77,7 +93,7 @@ exports.deleteReviewByUser = async (req, res) => {
 exports.deleteReviewByAdmin = async (req, res) => {
   try {
     const { id } = req.params;
-    const review = await db.Review.findByPk(id);
+    const review = await db.reviews.findByPk(id);
     if (review) {
       await review.update({
         review_text: "[**** THIS REVIEW HAS BEEN DELETED BY THE ADMIN ****]",

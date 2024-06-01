@@ -178,6 +178,17 @@ async function getReviewById(id) {
   return response.data;
 }
 
+export async function getReviewsByProductId(productId) {
+  try {
+    const response = await axios.get(`${API_HOST}/api/reviews/product/${productId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data.message || "Failed to fetch reviews for product"
+    );
+  }
+}
+
 async function createReview(reviewData) {
   try {
     const response = await axios.post(`${API_HOST}/api/reviews`, reviewData);

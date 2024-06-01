@@ -11,27 +11,23 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import { getAllReviews, getReviewById } from "../data/repository";
+import { getAllReviews, getReviewsByProductId } from "../data/repository";
 import ReviewForm from "./ReviewForm"; // Import ReviewForm component
 
 const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
   const [reviews, setReviews] = useState([]);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const toast = useToast();
-
+  
   const fetchReviews = async () => {
     try {
-      const fetchedReview = await getReviewById(productId);
-      if (fetchedReview) {
-        setReviews([fetchedReview]);
-      } else {
-        setReviews([]);
-      }
+      const fetchedReviews = await getReviewsByProductId(productId); // Use new function
+      setReviews(fetchedReviews);
     } catch (error) {
-      console.error("Failed to fetch review:", error);
+      console.error("Failed to fetch reviews:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch review. Please try again later.",
+        description: "Failed to fetch reviews. Please try again later.",
         status: "error",
         duration: 3000,
         isClosable: true,
