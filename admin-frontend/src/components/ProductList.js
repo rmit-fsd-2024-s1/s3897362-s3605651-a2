@@ -135,6 +135,14 @@ const ProductList = () => {
           <Tbody>
             {data.getAllProducts.map((product) => (
               <Tr key={product.product_id}>
+                {isDeleteMode && (
+                  <Td p={2}>
+                    <Checkbox
+                      isChecked={selectedProducts.includes(product.product_id)}
+                      onChange={() => handleSelectProduct(product.product_id)}
+                    />
+                  </Td>
+                )}
                 <Td p={2}>{product.product_id}</Td>
                 <Td p={2}>{product.name}</Td>
                 <Td
