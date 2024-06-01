@@ -105,7 +105,8 @@ const ProductList = () => {
                     }
                     placement="right"
                     hasArrow
-                    padding={0}
+                    bg="rgba(49, 151, 149, 0.4)"
+                    padding={1}
                     borderRadius={10}
                   >
                     <Image
