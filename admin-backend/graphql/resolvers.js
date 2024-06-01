@@ -20,6 +20,18 @@ const resolvers = {
         throw new Error("Error creating product");
       }
     },
+    deleteProduct: async (_, { product_id }) => {
+      try {
+        const product = await db.product.findByPk(product_id);
+        if (!product) {
+          throw new Error("Product not found");
+        }
+        await product.destroy();
+        return true;
+      } catch (error) {
+        throw new Error("Error deleting product");
+      }
+    },
   },
 };
 
