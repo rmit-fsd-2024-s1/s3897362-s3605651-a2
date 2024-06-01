@@ -1,5 +1,19 @@
 import React from "react";
 import { useQuery, gql } from "@apollo/client";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+  Image,
+  Spinner,
+  Box,
+  Text,
+  Badge,
+} from "@chakra-ui/react";
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
@@ -20,46 +34,88 @@ const GET_PRODUCTS = gql`
 const ProductList = () => {
   const { loading, error, data } = useQuery(GET_PRODUCTS);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
+  if (loading) return <Spinner />;
+  if (error) return <Text>Error :(</Text>;
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Price</th>
-          <th>Quantity</th>
-          <th>Unit</th>
-          <th>Image</th>
-          <th>Is Special</th>
-          <th>Special Price</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.getAllProducts.map((product) => (
-          <tr key={product.product_id}>
-            <td>{product.product_id}</td>
-            <td>{product.name}</td>
-            <td>{product.description}</td>
-            <td>{product.price}</td>
-            <td>{product.quantity}</td>
-            <td>{product.unit}</td>
-            <td>
-              <img
-                src={product.image}
-                alt={product.name}
-                style={{ width: "50px" }}
-              />
-            </td>
-            <td>{product.isSpecial ? "Yes" : "No"}</td>
-            <td>{product.specialPrice || "N/A"}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <Box p={5} width="100%">
+      <TableContainer
+        maxW="100%"
+        overflowX="auto"
+        overflowY="unset"
+        maxHeight="calc(100vh - 120px)"
+      >
+        <Table variant="simple" size="sm" width="100%">
+          <Thead position="sticky" top={0} bg="teal.500" zIndex={1}>
+            <Tr>
+              <Th color="white" p={2}>
+                ID
+              </Th>
+              <Th color="white" p={2}>
+                Name
+              </Th>
+              <Th color="white" p={2}>
+                Description
+              </Th>
+              <Th color="white" p={2}>
+                Price
+              </Th>
+              <Th color="white" p={2}>
+                Quantity
+              </Th>
+              <Th color="white" p={2}>
+                Unit
+              </Th>
+              <Th color="white" p={2}>
+                Image
+              </Th>
+              <Th color="white" p={2}>
+                Is Special
+              </Th>
+              <Th color="white" p={2}>
+                Special Price
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {data.getAllProducts.map((product) => (
+              <Tr key={product.product_id}>
+                <Td p={2}>{product.product_id}</Td>
+                <Td p={2}>{product.name}</Td>
+                <Td
+                  p={2}
+                  maxWidth="150px"
+                  whiteSpace="normal"
+                  wordBreak="break-word"
+                >
+                  {product.description}
+                </Td>
+                <Td p={2}>${product.price}</Td>
+                <Td p={2}>{product.quantity}</Td>
+                <Td p={2}>{product.unit}</Td>
+                <Td p={2}>
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    boxSize="50px"
+                  />
+                </Td>
+                <Td p={2}>
+                  {product.isSpecial ? (
+                    <Badge colorScheme="green">Yes</Badge>
+                  ) : (
+                    <Badge colorScheme="red">No</Badge>
+                  )}
+                </Td>
+                <Td p={2}>
+                  {product.specialPrice ? `$${product.specialPrice}` : "N/A"}
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 
