@@ -15,7 +15,6 @@ import {
   Badge,
   Tooltip,
   Button,
-  IconButton,
   Checkbox,
   Flex,
   AlertDialog,
@@ -88,135 +87,137 @@ const ProductList = () => {
     .filter(Boolean);
 
   return (
-    <Box p={5} width="100%">
-      <Flex justifyContent="space-between" mb={4}>
-        <Button
-          colorScheme="red"
-          onClick={() => setIsDeleteMode(!isDeleteMode)}
-        >
-          {isDeleteMode ? "Cancel Delete" : "Delete Product"}
-        </Button>
-        {isDeleteMode && (
+    <Box p={5} width="100%" height="100%" overflow="hidden">
+      <Box position="sticky" top={0} bg="white" zIndex={2} pb={4}>
+        <Flex justifyContent="space-between" mb={4}>
           <Button
             colorScheme="red"
-            onClick={() => setIsDialogOpen(true)}
-            isDisabled={selectedProducts.length === 0}
+            onClick={() => setIsDeleteMode(!isDeleteMode)}
           >
-            Confirm
+            {isDeleteMode ? "Cancel Delete" : "Delete Product"}
           </Button>
-        )}
-      </Flex>
-      <TableContainer
-        maxW="100%"
-        overflowX="auto"
-        overflowY="unset"
-        maxHeight="calc(100vh - 120px)"
-      >
-        <Table variant="simple" size="sm" width="100%">
-          <Thead position="sticky" top={0} bg="teal.500" zIndex={1}>
-            <Tr>
-              {isDeleteMode && (
-                <Th color="white" p={2}>
-                  Select
-                </Th>
-              )}
-              <Th color="white" p={2}>
-                ID
-              </Th>
-              <Th color="white" p={2}>
-                Name
-              </Th>
-              <Th color="white" p={2}>
-                Description
-              </Th>
-              <Th color="white" p={2}>
-                Price
-              </Th>
-              <Th color="white" p={2}>
-                Quantity
-              </Th>
-              <Th color="white" p={2}>
-                Unit
-              </Th>
-              <Th color="white" p={2}>
-                Image
-              </Th>
-              <Th color="white" p={2}>
-                Is Special
-              </Th>
-              <Th color="white" p={2}>
-                Special Price
-              </Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data.getAllProducts.map((product) => (
-              <Tr key={product.product_id}>
+          {isDeleteMode && (
+            <Button
+              colorScheme="red"
+              onClick={() => setIsDialogOpen(true)}
+              isDisabled={selectedProducts.length === 0}
+            >
+              Confirm
+            </Button>
+          )}
+        </Flex>
+      </Box>
+      <Box flex="1" overflowY="auto" height="calc(100vh - 120px)">
+        <TableContainer>
+          <Table variant="simple" size="sm" width="100%">
+            <Thead position="sticky" top={0} bg="teal.500" zIndex={1}>
+              <Tr>
                 {isDeleteMode && (
-                  <Td p={2}>
-                    <Checkbox
-                      isChecked={selectedProducts.includes(product.product_id)}
-                      onChange={() => handleSelectProduct(product.product_id)}
-                    />
-                  </Td>
+                  <Th color="white" p={2}>
+                    Select
+                  </Th>
                 )}
-                <Td p={2}>{product.product_id}</Td>
-                <Td p={2}>{product.name}</Td>
-                <Td
-                  p={2}
-                  maxWidth="150px"
-                  whiteSpace="normal"
-                  wordBreak="break-word"
-                >
-                  {product.description}
-                </Td>
-                <Td p={2}>${product.price}</Td>
-                <Td p={2}>{product.quantity}</Td>
-                <Td p={2}>{product.unit}</Td>
-                <Td p={2}>
-                  <Tooltip
-                    label={
+                <Th color="white" p={2}>
+                  ID
+                </Th>
+                <Th color="white" p={2}>
+                  Name
+                </Th>
+                <Th color="white" p={2}>
+                  Description
+                </Th>
+                <Th color="white" p={2}>
+                  Price
+                </Th>
+                <Th color="white" p={2}>
+                  Quantity
+                </Th>
+                <Th color="white" p={2}>
+                  Unit
+                </Th>
+                <Th color="white" p={2}>
+                  Image
+                </Th>
+                <Th color="white" p={2}>
+                  Is Special
+                </Th>
+                <Th color="white" p={2}>
+                  Special Price
+                </Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {data.getAllProducts.map((product) => (
+                <Tr key={product.product_id}>
+                  {isDeleteMode && (
+                    <Td p={2}>
+                      <Checkbox
+                        isChecked={selectedProducts.includes(
+                          product.product_id
+                        )}
+                        onChange={() => handleSelectProduct(product.product_id)}
+                      />
+                    </Td>
+                  )}
+                  <Td p={2}>{product.product_id}</Td>
+                  <Td p={2}>{product.name}</Td>
+                  <Td
+                    p={2}
+                    maxWidth="150px"
+                    whiteSpace="normal"
+                    wordBreak="break-word"
+                  >
+                    {product.description}
+                  </Td>
+                  <Td p={2}>${product.price}</Td>
+                  <Td p={2}>{product.quantity}</Td>
+                  <Td p={2}>{product.unit}</Td>
+                  <Td p={2}>
+                    <Tooltip
+                      label={
+                        <Image
+                          borderRadius={10}
+                          src={product.image}
+                          alt={product.name}
+                        />
+                      }
+                      placement="right"
+                      hasArrow
+                      bg="rgba(49, 151, 149, 0.4)"
+                      padding={1}
+                      borderRadius={10}
+                    >
                       <Image
-                        borderRadius={10}
                         src={product.image}
                         alt={product.name}
+                        borderRadius={3}
+                        boxSize="50px"
+                        cursor="pointer"
                       />
-                    }
-                    placement="right"
-                    hasArrow
-                    bg="rgba(49, 151, 149, 0.4)"
-                    padding={1}
-                    borderRadius={10}
+                    </Tooltip>
+                  </Td>
+                  <Td p={2}>
+                    {product.isSpecial ? (
+                      <Badge colorScheme="green">Yes</Badge>
+                    ) : (
+                      <Badge colorScheme="red">No</Badge>
+                    )}
+                  </Td>
+                  <Td
+                    p={2}
+                    fontWeight={product.specialPrice ? "bold" : "normal"}
+                    color={product.specialPrice ? "red.500" : "gray.500"}
+                    fontStyle={product.specialPrice ? "normal" : "italic"}
                   >
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      borderRadius={3}
-                      boxSize="50px"
-                      cursor="pointer"
-                    />
-                  </Tooltip>
-                </Td>
-                <Td p={2}>
-                  {product.isSpecial ? (
-                    <Badge colorScheme="green">Yes</Badge>
-                  ) : (
-                    <Badge colorScheme="red">No</Badge>
-                  )}
-                </Td>
-                <Td
-                  p={2}
-                  fontWeight={product.specialPrice ? "bold" : "normal"}
-                  color={product.specialPrice ? "red.500" : "gray.500"}
-                  fontStyle={product.specialPrice ? "normal" : "italic"}
-                >
-                  {product.specialPrice ? `$${product.specialPrice}` : "N/A"}
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+                    {product.specialPrice ? `$${product.specialPrice}` : "N/A"}
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
+
       <AlertDialog
         isOpen={isDialogOpen}
         leastDestructiveRef={cancelRef}
