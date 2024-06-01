@@ -35,7 +35,12 @@ import {
   Input,
   NumberInput,
   NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
   Switch,
+  Textarea,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
@@ -118,10 +123,91 @@ const ProductList = () => {
     isSpecial: false,
     specialPrice: 0,
   });
+  const [formErrors, setFormErrors] = useState({});
   const cancelRef = useRef();
 
   if (loading) return <Spinner />;
   if (error) return <Text>Error :(</Text>;
+
+  const validateForm = () => {
+    const errors = {};
+    if (
+      !formState.name ||
+      formState.name.length < 1 ||
+      formState.name.length > 80
+    ) {
+      errors.name = "Name must be between 1 and 80 characters";
+    }
+    if (
+      !formState.description ||
+      formState.description.length < 1 ||
+      formState.description.length > 256
+    ) {
+      errors.description = "Description must be between 1 and 256 characters";
+    }
+    if (
+      isNaN(formState.price) ||
+      formState.price <= 0 ||
+      !/^\d+(\.\d{1,2})?$/.test(formState.price)
+    ) {
+      errors.price =
+        "Price must be a number greater than 0 with up to two decimal places";
+    }
+    if (
+      isNaN(formState.quantity) ||
+      formState.quantity <= 0 ||
+      !Number.isInteger(formState.quantity)
+    ) {
+      errors.quantity = "Quantity must be a positive integer";
+    }
+    if (!formState.unit) {
+      errors.unit = "Unit cannot be null";
+    }
+    const urlPattern = new RegExp(
+      "^(https?:\\/\\/)?" + // validate protocol
+        "((([a-z\\d](([a-z\\d-]*[a-z\\d])?))\\.)*[a-z]{2,}|" + // validate domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // validate OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // validate port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // validate query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // validate fragment locator
+    if (!formState.image) {
+      errors.image = "Image URL cannot be null";
+    } else if (!urlPattern.test(formState.image)) {
+      errors.image = "Image URL must be a valid URL";
+    }
+    if (
+      formState.isSpecial &&
+      (isNaN(formState.specialPrice) ||
+        formState.specialPrice >= formState.price ||
+        formState.specialPrice <= 0 ||
+        !/^\d+(\.\d{1,2})?$/.test(formState.specialPrice))
+    ) {
+      errors.specialPrice =
+        "Special Price must be a number less than Price and greater than 0 with up to two decimal places";
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleAddProduct = () => {
+    if (validateForm()) {
+      createProduct({ variables: formState });
+      setIsModalOpen(false);
+      setFormState({
+        name: "",
+        description: "",
+        price: 0,
+        quantity: 0,
+        unit: "",
+        image: "",
+        isSpecial: false,
+        specialPrice: 0,
+      });
+      setFormErrors({});
+    }
+  };
 
   const handleDelete = () => {
     selectedProducts.forEach((product_id) => {
@@ -138,21 +224,6 @@ const ProductList = () => {
         ? prevSelected.filter((id) => id !== product_id)
         : [...prevSelected, product_id]
     );
-  };
-
-  const handleAddProduct = () => {
-    createProduct({ variables: formState });
-    setIsModalOpen(false);
-    setFormState({
-      name: "",
-      description: "",
-      price: 0,
-      quantity: 0,
-      unit: "",
-      image: "",
-      isSpecial: false,
-      specialPrice: 0,
-    });
   };
 
   const productNames = selectedProducts
@@ -346,7 +417,7 @@ const ProductList = () => {
           <ModalHeader>Add New Product</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl id="name" mb={4}>
+            <FormControl id="name" mb={4} isInvalid={formErrors.name}>
               <FormLabel>Name</FormLabel>
               <Input
                 type="text"
@@ -355,31 +426,38 @@ const ProductList = () => {
                   setFormState({ ...formState, name: e.target.value })
                 }
               />
+              <FormErrorMessage>{formErrors.name}</FormErrorMessage>
             </FormControl>
-            <FormControl id="description" mb={4}>
+            <FormControl
+              id="description"
+              mb={4}
+              isInvalid={formErrors.description}
+            >
               <FormLabel>Description</FormLabel>
-              <Input
-                type="text"
+              <Textarea
                 value={formState.description}
                 onChange={(e) =>
                   setFormState({ ...formState, description: e.target.value })
                 }
               />
+              <FormErrorMessage>{formErrors.description}</FormErrorMessage>
             </FormControl>
-            <FormControl id="price" mb={4}>
+            <FormControl id="price" mb={4} isInvalid={formErrors.price}>
               <FormLabel>Price</FormLabel>
-              <NumberInput
-                step={0.01}
-                min={0.01}
+              <Input
+                type="number"
+                step="0.01"
                 value={formState.price}
-                onChange={(valueString) =>
-                  setFormState({ ...formState, price: parseFloat(valueString) })
+                onChange={(e) =>
+                  setFormState({
+                    ...formState,
+                    price: parseFloat(e.target.value),
+                  })
                 }
-              >
-                <NumberInputField />
-              </NumberInput>
+              />
+              <FormErrorMessage>{formErrors.price}</FormErrorMessage>
             </FormControl>
-            <FormControl id="quantity" mb={4}>
+            <FormControl id="quantity" mb={4} isInvalid={formErrors.quantity}>
               <FormLabel>Quantity</FormLabel>
               <NumberInput
                 step={1}
@@ -393,9 +471,14 @@ const ProductList = () => {
                 }
               >
                 <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
               </NumberInput>
+              <FormErrorMessage>{formErrors.quantity}</FormErrorMessage>
             </FormControl>
-            <FormControl id="unit" mb={4}>
+            <FormControl id="unit" mb={4} isInvalid={formErrors.unit}>
               <FormLabel>Unit</FormLabel>
               <Input
                 type="text"
@@ -404,8 +487,9 @@ const ProductList = () => {
                   setFormState({ ...formState, unit: e.target.value })
                 }
               />
+              <FormErrorMessage>{formErrors.unit}</FormErrorMessage>
             </FormControl>
-            <FormControl id="image" mb={4}>
+            <FormControl id="image" mb={4} isInvalid={formErrors.image}>
               <FormLabel>Image URL</FormLabel>
               <Input
                 type="text"
@@ -414,6 +498,7 @@ const ProductList = () => {
                   setFormState({ ...formState, image: e.target.value })
                 }
               />
+              <FormErrorMessage>{formErrors.image}</FormErrorMessage>
             </FormControl>
             <FormControl
               id="isSpecial"
@@ -430,21 +515,24 @@ const ProductList = () => {
               />
             </FormControl>
             {formState.isSpecial && (
-              <FormControl id="specialPrice" mb={4}>
+              <FormControl
+                id="specialPrice"
+                mb={4}
+                isInvalid={formErrors.specialPrice}
+              >
                 <FormLabel>Special Price</FormLabel>
-                <NumberInput
-                  step={0.01}
-                  min={0.01}
+                <Input
+                  type="number"
+                  step="0.01"
                   value={formState.specialPrice}
-                  onChange={(valueString) =>
+                  onChange={(e) =>
                     setFormState({
                       ...formState,
-                      specialPrice: parseFloat(valueString),
+                      specialPrice: parseFloat(e.target.value),
                     })
                   }
-                >
-                  <NumberInputField />
-                </NumberInput>
+                />
+                <FormErrorMessage>{formErrors.specialPrice}</FormErrorMessage>
               </FormControl>
             )}
           </ModalBody>
