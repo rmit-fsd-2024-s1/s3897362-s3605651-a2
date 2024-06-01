@@ -80,6 +80,13 @@ const ProductList = () => {
     );
   };
 
+  const productNames = selectedProducts
+    .map(
+      (id) =>
+        data.getAllProducts.find((product) => product.product_id === id)?.name
+    )
+    .filter(Boolean);
+
   return (
     <Box p={5} width="100%">
       <Flex justifyContent="space-between" mb={4}>
