@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import {
   Table,
@@ -99,7 +99,7 @@ const ProductList = () => {
         {isDeleteMode && (
           <Button
             colorScheme="red"
-            onClick={handleDelete}
+            onClick={() => setIsDialogOpen(true)}
             isDisabled={selectedProducts.length === 0}
           >
             Confirm
@@ -217,6 +217,39 @@ const ProductList = () => {
           </Tbody>
         </Table>
       </TableContainer>
+      <AlertDialog
+        isOpen={isDialogOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={() => setIsDialogOpen(false)}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Confirm Deletion
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to delete the following products?
+              <Box mt={4}>
+                {productNames.map((name) => (
+                  <Text fontWeight="bold" key={name}>
+                    {name}
+                  </Text>
+                ))}
+              </Box>
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };
