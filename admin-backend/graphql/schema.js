@@ -16,6 +16,19 @@ const typeDefs = gql`
   type Query {
     getAllProducts: [Product]
   }
+
+  type Mutation {
+    createProduct(
+      name: String!
+      description: String!
+      price: Float!
+      quantity: Int!
+      unit: String!
+      image: String!
+      isSpecial: Boolean!
+      specialPrice: Float
+    ): Product
+  }
 `;
 
 module.exports = typeDefs;
