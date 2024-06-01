@@ -23,6 +23,19 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Input,
+  NumberInput,
+  NumberInputField,
+  Switch,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
@@ -48,15 +61,63 @@ const DELETE_PRODUCT = gql`
   }
 `;
 
+const CREATE_PRODUCT = gql`
+  mutation CreateProduct(
+    $name: String!
+    $description: String!
+    $price: Float!
+    $quantity: Int!
+    $unit: String!
+    $image: String!
+    $isSpecial: Boolean!
+    $specialPrice: Float
+  ) {
+    createProduct(
+      name: $name
+      description: $description
+      price: $price
+      quantity: $quantity
+      unit: $unit
+      image: $image
+      isSpecial: $isSpecial
+      specialPrice: $specialPrice
+    ) {
+      product_id
+      name
+      description
+      price
+      quantity
+      unit
+      image
+      isSpecial
+      specialPrice
+    }
+  }
+`;
+
 const ProductList = () => {
   const { loading, error, data } = useQuery(GET_PRODUCTS);
   const [deleteProduct] = useMutation(DELETE_PRODUCT, {
+    refetchQueries: [{ query: GET_PRODUCTS }],
+  });
+  const [createProduct] = useMutation(CREATE_PRODUCT, {
     refetchQueries: [{ query: GET_PRODUCTS }],
   });
 
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formState, setFormState] = useState({
+    name: "",
+    description: "",
+    price: 0,
+    quantity: 0,
+    unit: "",
+    image: "",
+    isSpecial: false,
+    specialPrice: 0,
+  });
   const cancelRef = useRef();
 
   if (loading) return <Spinner />;
@@ -79,6 +140,21 @@ const ProductList = () => {
     );
   };
 
+  const handleAddProduct = () => {
+    createProduct({ variables: formState });
+    setIsModalOpen(false);
+    setFormState({
+      name: "",
+      description: "",
+      price: 0,
+      quantity: 0,
+      unit: "",
+      image: "",
+      isSpecial: false,
+      specialPrice: 0,
+    });
+  };
+
   const productNames = selectedProducts
     .map(
       (id) =>
@@ -90,12 +166,22 @@ const ProductList = () => {
     <Box p={5} width="100%" height="100%" display="flex" flexDirection="column">
       <Box position="sticky" top={0} bg="white" zIndex={2} pb={4}>
         <Flex justifyContent="space-between" mb={4}>
-          <Button
-            colorScheme="red"
-            onClick={() => setIsDeleteMode(!isDeleteMode)}
-          >
-            {isDeleteMode ? "Cancel Delete" : "Delete Product"}
-          </Button>
+          <Flex>
+            <Button
+              colorScheme="red"
+              onClick={() => setIsDeleteMode(!isDeleteMode)}
+            >
+              {isDeleteMode ? "Cancel Delete" : "Delete Product"}
+            </Button>
+            <Button
+              colorScheme="blue"
+              onClick={() => setIsModalOpen(true)}
+              ml={4}
+              isDisabled={isDeleteMode}
+            >
+              Add Product
+            </Button>
+          </Flex>
           {isDeleteMode && (
             <Button
               colorScheme="red"
@@ -253,6 +339,123 @@ const ProductList = () => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add New Product</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl id="name" mb={4}>
+              <FormLabel>Name</FormLabel>
+              <Input
+                type="text"
+                value={formState.name}
+                onChange={(e) =>
+                  setFormState({ ...formState, name: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl id="description" mb={4}>
+              <FormLabel>Description</FormLabel>
+              <Input
+                type="text"
+                value={formState.description}
+                onChange={(e) =>
+                  setFormState({ ...formState, description: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl id="price" mb={4}>
+              <FormLabel>Price</FormLabel>
+              <NumberInput
+                step={0.01}
+                min={0.01}
+                value={formState.price}
+                onChange={(valueString) =>
+                  setFormState({ ...formState, price: parseFloat(valueString) })
+                }
+              >
+                <NumberInputField />
+              </NumberInput>
+            </FormControl>
+            <FormControl id="quantity" mb={4}>
+              <FormLabel>Quantity</FormLabel>
+              <NumberInput
+                step={1}
+                min={1}
+                value={formState.quantity}
+                onChange={(valueString) =>
+                  setFormState({
+                    ...formState,
+                    quantity: parseInt(valueString),
+                  })
+                }
+              >
+                <NumberInputField />
+              </NumberInput>
+            </FormControl>
+            <FormControl id="unit" mb={4}>
+              <FormLabel>Unit</FormLabel>
+              <Input
+                type="text"
+                value={formState.unit}
+                onChange={(e) =>
+                  setFormState({ ...formState, unit: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl id="image" mb={4}>
+              <FormLabel>Image URL</FormLabel>
+              <Input
+                type="text"
+                value={formState.image}
+                onChange={(e) =>
+                  setFormState({ ...formState, image: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl
+              id="isSpecial"
+              display="flex"
+              alignItems="center"
+              mb={4}
+            >
+              <FormLabel mb="0">Is Special</FormLabel>
+              <Switch
+                isChecked={formState.isSpecial}
+                onChange={(e) =>
+                  setFormState({ ...formState, isSpecial: e.target.checked })
+                }
+              />
+            </FormControl>
+            {formState.isSpecial && (
+              <FormControl id="specialPrice" mb={4}>
+                <FormLabel>Special Price</FormLabel>
+                <NumberInput
+                  step={0.01}
+                  min={0.01}
+                  value={formState.specialPrice}
+                  onChange={(valueString) =>
+                    setFormState({
+                      ...formState,
+                      specialPrice: parseFloat(valueString),
+                    })
+                  }
+                >
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleAddProduct}>
+              Add Product
+            </Button>
+            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
