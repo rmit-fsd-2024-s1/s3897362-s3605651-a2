@@ -44,6 +44,9 @@ const ProductList = () => {
     refetchQueries: [{ query: GET_PRODUCTS }],
   });
 
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+
   if (loading) return <Spinner />;
   if (error) return <Text>Error :(</Text>;
 
