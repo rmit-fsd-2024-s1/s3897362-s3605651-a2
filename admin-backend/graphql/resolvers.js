@@ -20,6 +20,19 @@ const resolvers = {
         throw new Error("Error creating product");
       }
     },
+    updateProduct: async (_, args) => {
+      try {
+        const { product_id } = args;
+        const product = await db.product.findByPk(product_id);
+        if (!product) {
+          throw new Error("Product not found");
+        }
+        await product.update(args);
+        return product;
+      } catch (error) {
+        throw new Error("Error updating product");
+      }
+    },
     deleteProduct: async (_, { product_id }) => {
       try {
         const product = await db.product.findByPk(product_id);
