@@ -342,7 +342,7 @@ const ProductList = () => {
                       }
                       placement="right"
                       hasArrow
-                      bg="rgba(49, 151, 149, 0.4)"
+                      bg="rgba(128, 128, 128, 0.5)"
                       padding={1}
                       borderRadius={10}
                     >
