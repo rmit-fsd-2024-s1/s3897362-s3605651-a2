@@ -25,6 +25,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
 } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
@@ -56,6 +57,8 @@ const ProductList = () => {
 
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const cancelRef = useRef();
 
   if (loading) return <Spinner />;
   if (error) return <Text>Error :(</Text>;
