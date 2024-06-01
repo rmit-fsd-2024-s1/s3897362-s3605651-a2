@@ -36,7 +36,7 @@ import {
   deleteReviewByAdmin,
 } from "../data/repository";
 import CreditCardForm from "./CreditCardForm";
-
+import ReviewModal from "./ReviewModal";
 
 const Products = ({ changeView }) => {
   const [specialProducts, setSpecialProducts] = useState([]);
@@ -57,6 +57,22 @@ const Products = ({ changeView }) => {
     onOpen: onCheckoutOpen,
     onClose: onCheckoutClose,
   } = useDisclosure();
+
+//reviews test code
+const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+const [selectedProductId, setSelectedProductId] = useState(null);
+
+const handleReviewButtonClick = (product) => {
+  setIsReviewModalOpen(true);
+  setSelectedProductId(product.product_id);
+};
+<ReviewModal
+  isOpen={isReviewModalOpen}
+  onClose={() => setIsReviewModalOpen(false)}
+  productId={selectedProductId}
+/>
+//end
+
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -562,21 +578,6 @@ const Products = ({ changeView }) => {
                         />
                       </Box>
                     </Flex>
-                  </ModalBody>
-                </ModalContent>
-              </Modal>
-              {/* Button to open the modal */}
-              <Button onClick={onOpen}>Open Modal</Button>
-
-              {/* Modal component */}
-              <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>Modal Title</ModalHeader>
-                  <ModalCloseButton />
-                  <ModalBody>
-                    {/* Content of the modal */}
-                    This is the content of the modal.
                   </ModalBody>
                 </ModalContent>
               </Modal>
