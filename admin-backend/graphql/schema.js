@@ -28,6 +28,7 @@ const typeDefs = gql`
       isSpecial: Boolean!
       specialPrice: Float
     ): Product
+    deleteProduct(product_id: ID!): Boolean
   }
 `;
 
