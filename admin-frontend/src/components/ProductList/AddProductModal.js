@@ -61,6 +61,21 @@ const AddProductModal = ({
     }));
   };
 
+  const handleQuantityChange = (e) => {
+    const { value } = e.target;
+    if (/^\d+$/.test(value) && parseInt(value) > 0) {
+      setFormState((prevState) => ({
+        ...prevState,
+        quantity: parseInt(value),
+      }));
+    } else {
+      setFormState((prevState) => ({
+        ...prevState,
+        quantity: value,
+      }));
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -103,7 +118,7 @@ const AddProductModal = ({
             <Input
               type="number"
               value={formState.quantity}
-              onChange={handleInputChange}
+              onChange={handleQuantityChange}
             />
             <FormErrorMessage>{formErrors.quantity}</FormErrorMessage>
           </FormControl>

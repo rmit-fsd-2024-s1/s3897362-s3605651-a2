@@ -1,17 +1,5 @@
 import React from "react";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  Image,
-  Tooltip,
-  Checkbox,
-  Badge,
-} from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, TableContainer } from "@chakra-ui/react";
 import ProductRow from "./ProductRow";
 
 const ProductTable = ({
@@ -21,8 +9,8 @@ const ProductTable = ({
   selectedProducts,
 }) => (
   <TableContainer>
-    <Table variant="simple" size="sm" height="100%" width="100%">
-      <Thead position="sticky" top={0} bg="teal.500" zIndex={1}>
+    <Table variant="simple" size="sm">
+      <Thead bg="teal.500">
         <Tr>
           {isDeleteMode && (
             <Th color="white" p={2}>
@@ -58,6 +46,7 @@ const ProductTable = ({
           </Th>
         </Tr>
       </Thead>
+
       <Tbody>
         {products.map((product) => (
           <ProductRow

@@ -93,7 +93,20 @@ const ProductList = () => {
 
   const handleAddProduct = () => {
     if (validateForm(formState, setFormErrors)) {
-      createProduct({ variables: formState });
+      createProduct({
+        variables: {
+          name: formState.name,
+          description: formState.description,
+          price: parseFloat(formState.price),
+          quantity: parseInt(formState.quantity),
+          unit: formState.unit,
+          image: formState.image,
+          isSpecial: formState.isSpecial,
+          specialPrice: formState.isSpecial
+            ? parseFloat(formState.specialPrice)
+            : null,
+        },
+      });
       setIsModalOpen(false);
       setFormState({
         name: "",
