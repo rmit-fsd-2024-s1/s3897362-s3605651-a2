@@ -1,5 +1,5 @@
-import React from "react";
-import { useQuery, gql } from "@apollo/client";
+import React, { useState } from "react";
+import { useQuery, gql, useMutation } from "@apollo/client";
 import {
   Table,
   Thead,
@@ -98,6 +98,11 @@ const ProductList = () => {
         <Table variant="simple" size="sm" width="100%">
           <Thead position="sticky" top={0} bg="teal.500" zIndex={1}>
             <Tr>
+              {isDeleteMode && (
+                <Th color="white" p={2}>
+                  Select
+                </Th>
+              )}
               <Th color="white" p={2}>
                 ID
               </Th>
