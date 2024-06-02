@@ -64,7 +64,7 @@ const ProductTable = ({
           </Tr>
         </Thead>
         <Tbody>
-          {products.map((product) => (
+          {products && products.map((product) => (
             <ProductRow
               key={product.product_id}
               product={product}
