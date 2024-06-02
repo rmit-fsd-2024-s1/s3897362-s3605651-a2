@@ -1,5 +1,10 @@
 import React from "react";
 import { useQuery, gql } from "@apollo/client";
+import { Pie } from "react-chartjs-2";
+import { Chart, ArcElement } from "chart.js";
+import { SimpleGrid, Box } from "@chakra-ui/react";
+
+Chart.register(ArcElement);
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
@@ -20,13 +25,62 @@ const Home = () => {
     (product) => product.isSpecial
   );
 
+  const regularProducts = data.getAllProducts.filter(
+    (product) => !product.isSpecial
+  );
+
+  const pieData = {
+    labels: ["Special Products", "Regular Products"],
+    datasets: [
+      {
+        data: [specialProducts.length, regularProducts.length],
+        backgroundColor: ["#FF6384", "#36A2EB"],
+        hoverBackgroundColor: ["#FF6384", "#36A2EB"],
+      },
+    ],
+  };
+
   return (
-    <div>
-      <h1>Special Products:</h1>
-      {specialProducts.map((product) => (
-        <p key={product.name}>{product.name}</p>
-      ))}
-    </div>
+    <SimpleGrid columns={3} spacing={10}>
+      <Box
+        bg="card"
+        p={5}
+        shadow="md"
+        borderWidth="1px"
+        borderRadius="lg"
+        borderColor={"beige"}
+        transition="all 0.2s"
+        _hover={{ transform: "scale(1.01)" }}
+        marginBottom="1em" // Add space between the cards
+      >
+        <h1>Products:</h1>
+        <Pie data={pieData} />
+      </Box>
+      <Box
+        bg="card"
+        p={5}
+        shadow="md"
+        borderWidth="1px"
+        borderRadius="lg"
+        borderColor={"beige"}
+        transition="all 0.2s"
+        _hover={{ transform: "scale(1.01)" }}
+        marginBottom="1em" // Add space between the cards
+      ></Box>{" "}
+      {/* Empty Box for first column */}
+      <Box
+        bg="card"
+        p={5}
+        shadow="md"
+        borderWidth="1px"
+        borderRadius="lg"
+        borderColor={"beige"}
+        transition="all 0.2s"
+        _hover={{ transform: "scale(1.01)" }}
+        marginBottom="1em" // Add space between the cards
+      ></Box>{" "}
+      {/* Empty Box for third column */}
+    </SimpleGrid>
   );
 };
 
