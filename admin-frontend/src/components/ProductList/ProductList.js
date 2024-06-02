@@ -213,6 +213,7 @@ const ProductList = () => {
       });
       setSelectedProducts([]);
       setFormErrors({});
+      setIsEditMode(false);
     }
   };
 
