@@ -1,29 +1,25 @@
-
-
-/*  This unit test is designed to verify that the user checking of current user and the user who wrote a review is correct
-    This is smportant as it ensures we dont acidentally allow somone to delete or edit a review that is not their's
-*/
-// Need to pull functions from repository to do the test
-jest.mock("axios");
-jest.mock("../src/data/repository");
-
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import '@testing-library/jest-dom/extend-expect';
 import ReviewModal from "../src/components/ReviewModal.js";
 import { getReviewsByProductId, deleteReviewByUser } from "../src/data/repository";
 
+jest.mock('axios', () => ({
+    get: jest.fn(() => Promise.resolve({ data: {} })),
+    post: jest.fn(() => Promise.resolve({ data: {} })),
+}));
+
+jest.mock("../src/data/repository");
+
 describe("ReviewModal Component - User ID System", () => {
   const productId = 1;
   const currentUser = { user_id: 1, username: "testuser" };
-  // Mock reviews as the contents excluding user id is not important in testing
   const reviews = [
-    { review_id: 1, user_id: 1, review_text: "Great product", rating: 5 },
-    { review_id: 2, user_id: 2, review_text: "Not bad", rating: 3 },
+    { review_id: 1, user_id: 1, review_text: "Great product", rating: 5, User: { username: "testuser1" } },
+    { review_id: 2, user_id: 2, review_text: "Not bad", rating: 3, User: { username: "testuser2" } },
   ];
 
   beforeEach(() => {
-    // Mock localStorage to set a current user
     Storage.prototype.getItem = jest.fn(() => JSON.stringify(currentUser));
     getReviewsByProductId.mockResolvedValue(reviews);
   });
@@ -31,9 +27,20 @@ describe("ReviewModal Component - User ID System", () => {
   it("should allow the user to edit or delete their own reviews only", async () => {
     render(<ReviewModal isOpen={true} onClose={jest.fn()} productId={productId} />);
 
+    // Wait for reviews to be loaded and rendered
+    await waitFor(() => expect(screen.getByText("Great product")).toBeInTheDocument());
+
+    // Debugging: log the rendered HTML to see what's rendered
+    screen.debug();
+
     // Check that the first review (Matches currentUser) has edit and delete buttons
     const deleteButtons = await screen.findAllByText("Delete");
     const editButtons = await screen.findAllByText("Edit");
+
+    // Debugging: log the buttons found
+    console.log("Delete Buttons:", deleteButtons);
+    console.log("Edit Buttons:", editButtons);
+
     expect(deleteButtons.length).toBe(1);
     expect(editButtons.length).toBe(1);
 
