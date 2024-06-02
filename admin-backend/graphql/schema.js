@@ -46,13 +46,13 @@ const typeDefs = gql`
 
   type Review {
     review_id: ID!
-    user_id:
-    product_id: 
-    rating:
-    review_text: 
-    is_deleted: 
-    createdAt:
-    updatedAt:
+    user_id: ID!
+    product_id: ID!
+    rating: Int!
+    review_text: String
+    is_deleted: Boolean
+    createdAt: String
+    updatedAt: String
   }
   type Query {
     getAllReviews: [Review]
