@@ -227,9 +227,7 @@ const ProductList = () => {
 
   const handleSelectProduct = (product_id) => {
     setSelectedProducts((prevSelected) =>
-      prevSelected.includes(product_id)
-        ? prevSelected.filter((id) => id !== product_id)
-        : [...prevSelected, product_id]
+      prevSelected.includes(product_id) ? [] : [product_id]
     );
   };
 
