@@ -53,7 +53,7 @@ const NavBar = ({ changeView, isLoggedIn, handleLogout }) => {
             variant="ghost"
             textColor={"beige"}
           >
-            Product Specials
+            Products
           </Button>
           {isLoggedIn && (
             <Button
@@ -64,7 +64,7 @@ const NavBar = ({ changeView, isLoggedIn, handleLogout }) => {
             >
               Diet Plan
             </Button>
-            )}
+          )}
         </Flex>
         <Flex justify="end" pr={4} align="center">
           {isLoggedIn ? (
