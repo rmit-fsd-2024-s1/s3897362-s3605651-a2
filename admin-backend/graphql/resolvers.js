@@ -10,6 +10,14 @@ const resolvers = {
         throw new Error("Error retrieving products");
       }
     },
+    getAllReviews: async () => {
+      try {
+        const reviews = await db.review.findAll();
+        return reviews;
+      } catch (error) {
+        throw new Error("Error retrieving reviews");
+      }
+    },
   },
   Mutation: {
     createProduct: async (_, args) => {
@@ -45,43 +53,18 @@ const resolvers = {
         throw new Error("Error deleting product");
       }
     },
-  },
-    
-  Query: {
-    getAllReviews: async (req, res) => {
+    deleteReviewByAdmin: async (_, { review_id }) => {
       try {
-        const reviews = await db.reviews.findAll({
-          include: [
-            {
-              model: db.user,
-              attributes: ["username"],
-            },
-          ],
-        });
-        res.json(reviews);
-      } catch (error) {
-        res.status(500).send({ message: "Error retrieving reviews" });
-      }
-    },
-  },
-  Mutation: {
-    deleteReviewByAdmin: async (req, res) => {
-      try {
-        const { id } = req.params;
-        const review = await db.reviews.findByPk(id);
-        if (review) {
-          await review.update({
-            review_text: "[**** THIS REVIEW HAS BEEN DELETED BY THE ADMIN ****]",
-            is_deleted: true,
-          });
-          res.json(review);
-        } else {
-          res.status(404).send({ message: "Review not found" });
+        const review = await db.review.findByPk(review_id);
+        if (!review) {
+          throw new Error("Review not found");
         }
+        await review.destroy();
+        return true;
       } catch (error) {
-        res.status(500).send({ message: "Error deleting review" });
+        throw new Error("Error deleting review");
       }
     },
-  }
+  },
 };
 module.exports = resolvers;
