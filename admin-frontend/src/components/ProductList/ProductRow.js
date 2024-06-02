@@ -4,11 +4,12 @@ import { Tr, Td, Checkbox, Image, Tooltip, Badge } from "@chakra-ui/react";
 const ProductRow = ({
   product,
   isDeleteMode,
+  isEditMode,
   handleSelectProduct,
   selectedProducts,
 }) => (
   <Tr>
-    {isDeleteMode && (
+    {(isDeleteMode || isEditMode) && (
       <Td p={2}>
         <Checkbox
           isChecked={selectedProducts.includes(product.product_id)}

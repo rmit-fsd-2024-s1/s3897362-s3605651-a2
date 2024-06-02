@@ -4,6 +4,7 @@ import { Box, Spinner, Text, Button, Flex } from "@chakra-ui/react";
 import ProductTable from "./ProductTable";
 import DeleteProductDialog from "./DeleteProductDialog";
 import AddProductModal from "./AddProductModal";
+import EditProductModal from "./EditProductModal"; // Import the new component
 import { validateForm } from "../Validation/formValidation";
 
 const GET_PRODUCTS = gql`
@@ -62,6 +63,42 @@ const CREATE_PRODUCT = gql`
   }
 `;
 
+const UPDATE_PRODUCT = gql`
+  mutation UpdateProduct(
+    $product_id: ID!
+    $name: String!
+    $description: String!
+    $price: Float!
+    $quantity: Int!
+    $unit: String!
+    $image: String!
+    $isSpecial: Boolean!
+    $specialPrice: Float
+  ) {
+    updateProduct(
+      product_id: $product_id
+      name: $name
+      description: $description
+      price: $price
+      quantity: $quantity
+      unit: $unit
+      image: $image
+      isSpecial: $isSpecial
+      specialPrice: $specialPrice
+    ) {
+      product_id
+      name
+      description
+      price
+      quantity
+      unit
+      image
+      isSpecial
+      specialPrice
+    }
+  }
+`;
+
 const ProductList = () => {
   const { loading, error, data } = useQuery(GET_PRODUCTS);
   const [deleteProduct] = useMutation(DELETE_PRODUCT, {
@@ -70,11 +107,16 @@ const ProductList = () => {
   const [createProduct] = useMutation(CREATE_PRODUCT, {
     refetchQueries: [{ query: GET_PRODUCTS }],
   });
+  const [updateProduct] = useMutation(UPDATE_PRODUCT, {
+    refetchQueries: [{ query: GET_PRODUCTS }],
+  });
 
   const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formState, setFormState] = useState({
     name: "",
     description: "",
@@ -122,6 +164,58 @@ const ProductList = () => {
     }
   };
 
+  const handleEditProduct = () => {
+    if (selectedProducts.length === 1) {
+      const productToEdit = data.getAllProducts.find(
+        (product) => product.product_id === selectedProducts[0]
+      );
+      setFormState({
+        name: productToEdit.name,
+        description: productToEdit.description,
+        price: productToEdit.price,
+        quantity: productToEdit.quantity,
+        unit: productToEdit.unit,
+        image: productToEdit.image,
+        isSpecial: productToEdit.isSpecial,
+        specialPrice: productToEdit.specialPrice,
+      });
+      setIsEditModalOpen(true);
+    }
+  };
+
+  const handleUpdateProduct = () => {
+    if (validateForm(formState, setFormErrors)) {
+      updateProduct({
+        variables: {
+          product_id: selectedProducts[0],
+          name: formState.name,
+          description: formState.description,
+          price: parseFloat(formState.price),
+          quantity: parseInt(formState.quantity),
+          unit: formState.unit,
+          image: formState.image,
+          isSpecial: formState.isSpecial,
+          specialPrice: formState.isSpecial
+            ? parseFloat(formState.specialPrice)
+            : null,
+        },
+      });
+      setIsEditModalOpen(false);
+      setFormState({
+        name: "",
+        description: "",
+        price: 0,
+        quantity: 0,
+        unit: "",
+        image: "",
+        isSpecial: false,
+        specialPrice: 0,
+      });
+      setSelectedProducts([]);
+      setFormErrors({});
+    }
+  };
+
   const handleDelete = () => {
     selectedProducts.forEach((product_id) => {
       deleteProduct({ variables: { product_id } });
@@ -161,9 +255,17 @@ const ProductList = () => {
               colorScheme="blue"
               onClick={() => setIsModalOpen(true)}
               ml={4}
-              isDisabled={isDeleteMode}
+              isDisabled={isDeleteMode || isEditMode}
             >
               Add Product
+            </Button>
+            <Button
+              colorScheme="yellow"
+              onClick={() => setIsEditMode(!isEditMode)}
+              ml={4}
+              isDisabled={isDeleteMode || isModalOpen}
+            >
+              {isEditMode ? "Cancel Edit" : "Edit Product"}
             </Button>
           </Flex>
           {isDeleteMode && (
@@ -175,12 +277,22 @@ const ProductList = () => {
               Confirm
             </Button>
           )}
+          {isEditMode && (
+            <Button
+              colorScheme="yellow"
+              onClick={handleEditProduct}
+              isDisabled={selectedProducts.length !== 1}
+            >
+              Confirm
+            </Button>
+          )}
         </Flex>
       </Box>
       <Box flex="1" overflowY="auto" height="calc(100vh - 120px)">
         <ProductTable
           products={data.getAllProducts}
           isDeleteMode={isDeleteMode}
+          isEditMode={isEditMode}
           handleSelectProduct={handleSelectProduct}
           selectedProducts={selectedProducts}
         />
@@ -199,6 +311,14 @@ const ProductList = () => {
         setFormState={setFormState}
         formErrors={formErrors}
         handleAddProduct={handleAddProduct}
+      />
+      <EditProductModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        formState={formState}
+        setFormState={setFormState}
+        formErrors={formErrors}
+        handleUpdateProduct={handleUpdateProduct}
       />
     </Box>
   );
