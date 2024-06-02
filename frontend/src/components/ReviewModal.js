@@ -96,6 +96,7 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
                 <Text fontWeight="bold">{review.review_text}</Text>
                 <br />
                 <Text>Rating: {review.rating}/5</Text>
+                <Text>By: {review.User.username}</Text>
                 {currentUser && currentUser.id === review.user_id && (
                   <Button
                     colorScheme="red"
