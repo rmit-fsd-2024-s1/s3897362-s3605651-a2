@@ -1,70 +1,81 @@
-# Getting Started with Create React App
+# Home Analytics Page
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The Home Analytics page is composed of several components, each displaying a specific set of data.
 
-## Available Scripts
+## Components
 
-In the project directory, you can run:
+### [`SpecialPie`](admin-frontend/src/components/Home/Analytics/SpecialPie.js)
 
-### `npm start`
+This component displays a pie chart showing the ratio of total stock of products that are on special.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### [`RecentReviews`](admin-frontend/src/components/Home/Analytics/RecentReviews.js)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+This component is responsible for displaying the most recent reviews.
 
-### `npm test`
+### [`PopularItems`](admin-frontend/src/components/Home/Analytics/PopularItems.js)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This component displays a bar chart of the top 3 most reviewed products. The bars are color-coded based on the review sentiment (deleted, bad, average, positive).
 
-### `npm run build`
+### [`OverallReviewsPie`](admin-frontend/src/components/Home/Analytics/OverallReviewsPie.js)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This component displays a pie chart showing the overall sentiment of all reviews.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### [`SentimentPie`](admin-frontend/src/components/Home/Analytics/SentimentPie.js)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This component displays a pie chart showing the general sentiment towards our products.
 
-### `npm run eject`
+### [`MostActiveUsers`](admin-frontend/src/components/Home/Analytics/MostActiveUsers.js)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+This component displays a chart showing the most active and engaging users.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Usage
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Each component is used in the [`Home`](admin-frontend/src/components/Home/Home.js) component. They are placed inside a `SimpleGrid` component from the Chakra UI library, which is responsible for the layout of the components on the page.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+The data for these components is fetched using the `useQuery` hook from the Apollo Client library. The GraphQL query `GET_PRODUCTS` is used to fetch all products, and the data is then filtered and manipulated as needed for each component.
 
-## Learn More
+# ProductList Component
+The ProductList component in admin-frontend/src/components/ProductList/ProductList.js is a key part of the application. It allows you to manage products in various ways.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Adding a Product
+To add a product, click the "Add Product" button. This opens a modal where you can enter the product's details:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- name
+- description
+- price
+- quantity
+- unit
+- image
+- isSpecial
+- specialPrice
 
-### Code Splitting
+After filling out the form, click the "Add" button to create the product. The new product will then appear in the product list.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Editing a Product
+To edit a product, first select the product from the list by clicking on it. Then, click the "Edit Product" button. This opens a modal with the product's current details pre-filled. You can change any of these details. After making your changes, click the "Update" button to save them.
 
-### Analyzing the Bundle Size
+## Deleting a Product
+To delete a product, first select the product from the list by clicking on it. Then, click the "Delete Product" button. This opens a dialog asking you to confirm the deletion. Click the "Confirm" button to delete the product.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Selecting a Product
+To select a product, simply click on it in the list. If you click on a product that is already selected, it will be deselected.
 
-### Making a Progressive Web App
+## Note
+The "Add Product", "Edit Product", and "Delete Product" buttons are mutually exclusive. If one mode is active, the others are disabled. For example, if you are in "Delete Product" mode, you cannot add or edit products until you exit "Delete Product" mode.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+The "Edit Product" and "Delete Product" modes also require a product to be selected. If no product is selected, these buttons are disabled.
 
-### Advanced Configuration
+# ReviewList Component
+The ReviewList component is a part of the admin frontend, which allows administrators to manage and delete reviews. This component is located in the file admin-frontend/src/components/ReviewList/ReviewList.js.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Overview
+The ReviewList component fetches all reviews from the backend using the GET_REVIEWS GraphQL query. It displays these reviews in a table, where each row represents a review and includes a checkbox for selection.
 
-### Deployment
+The component maintains a state selectedReviews which is an array of review IDs that the admin has selected for deletion.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+A "Delete Review" button is provided. When clicked, it opens a dialog box asking for confirmation of the deletion. This dialog box is implemented by the DeleteReviewDialog component from admin-frontend/src/components/ReviewList/DeleteReviewDialog.js.
 
-### `npm run build` fails to minify
+## Deletion Process
+The deletion process is handled by the handleDelete function. This function iterates over the selectedReviews array and for each review, it calls the updateReview mutation with the review ID, a placeholder text indicating the review has been deleted, and a flag is_deleted set to true.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+After the deletion, the selectedReviews array is cleared and the dialog box is close
