@@ -6,6 +6,7 @@ import RecentReviews from "./Analytics/RecentReviews";
 import PopularItems from "./Analytics/PopularItems";
 import OverallReviewsPie from "./Analytics/OverallReviewsPie";
 import SentimentPie from "./Analytics/SentimentPie";
+import MostActiveUsers from "./Analytics/MostActiveUsers";
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
@@ -85,6 +86,17 @@ const Home = () => {
             Out of all reviews the general sentiment to our products
           </Text>
           <SentimentPie />
+        </Box>
+      </GridItem>
+      <GridItem colSpan={1}>
+        <Box>
+          <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
+            Most Active Users
+          </Heading>
+          <Text pl={5} color="gray.500">
+            Our most active and engaging users
+          </Text>
+          <MostActiveUsers />
         </Box>
       </GridItem>
     </SimpleGrid>

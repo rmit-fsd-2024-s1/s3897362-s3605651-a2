@@ -79,7 +79,7 @@ const PopularItems = () => {
 
   // Get the top 3 most reviewed products
   const top3Data = sortedData.slice(0, 3);
-
+  const colors = ["#333333", "#f54242", "#f5d142", "#42f554"];
   return (
     <div style={{ width: "100%" }}>
       <div style={{ height: "500px" }}>
@@ -91,20 +91,7 @@ const PopularItems = () => {
           padding={0.3}
           valueScale={{ type: "linear" }}
           indexScale={{ type: "band", round: true }}
-          colors={({ id, data }) => {
-            switch (id) {
-              case "deleted":
-                return "#333333"; // dark gray
-              case "positive":
-                return "#4CAF50"; // green
-              case "average":
-                return "#FFEB3B"; // yellow
-              case "bad":
-                return "#F44336"; // red
-              default:
-                return "#9E9E9E"; // gray
-            }
-          }}
+          colors={colors}
           axisBottom={{
             tickSize: 5,
             tickPadding: 5,
