@@ -53,36 +53,6 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
     setIsReviewFormOpen(false);
   };
 
-  const ReviewItem = ({ review, currentUser }) => {
-    const [isEditing, setIsEditing] = useState(false);
-
-    const handleUpdateReview = async (updatedReviewData) => {
-      try {
-        await updateReview(review.id, updatedReviewData);
-        setIsEditing(false);
-        // Optionally, refresh the reviews list after editing
-      } catch (error) {
-        console.error("Failed to update review:", error);
-        // Handle error
-      }
-    };
-
-    return (
-      <div>
-        {isEditing ? (
-          <ReviewEditForm review={review} onUpdate={handleUpdateReview} />
-        ) : (
-          <>
-            <p>Rating: {review.rating}/5</p>
-            <p></p>
-            <p>Review Text: {review.review_text}</p>
-            {currentUser.id === review.user_id && (
-              <button onClick={() => setIsEditing(true)}>Edit</button>
-            )}
-          </>
-        )}
-      </div>
-    );
   const handleDeleteReview = async (reviewId) => {
     try {
       await deleteReviewByUser(reviewId);
@@ -106,8 +76,6 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
     }
   };
 
-  {console.log(userId)}
-  {console.log()}
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -124,6 +92,9 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
                 <Text fontWeight="bold">{review.review_text}</Text>
                 <br />
                 <Text>Rating: {review.rating}/5</Text>
+                {currentUser && currentUser.id === review.user_id && (
+                  <Button onClick={() => handleDeleteReview(review.review_id)}>Delete</Button>
+                )}
               </Box>
             ))}
             {reviews.length === 0 && <Text>No reviews have been made.</Text>}
@@ -150,6 +121,6 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
       </ModalContent>
     </Modal>
   );
-}};
+};
 
 export default ReviewModal;
