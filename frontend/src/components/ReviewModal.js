@@ -32,7 +32,7 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
   useEffect(() => {
     if (isOpen) {
       fetchReviews();
-      setCurrentUser(JSON.parse(localStorage.getItem("user")));
+      setCurrentUser({ id: userId });
     }
   }, [isOpen, productId, toast]);
 
@@ -97,7 +97,10 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
                 <br />
                 <Text>Rating: {review.rating}/5</Text>
                 {currentUser && currentUser.id === review.user_id && (
-                  <Button onClick={() => handleDeleteReview(review.review_id)}>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => handleDeleteReview(review.review_id)}
+                  >
                     Delete
                   </Button>
                 )}
