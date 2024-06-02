@@ -11,24 +11,30 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import { getReviewsByProductId, updateReview, deleteReviewByUser } from "../data/repository";
+import { getReviewsByProductId, deleteReviewByUser } from "../data/repository";
 import ReviewForm from "./ReviewForm";
-import ReviewEditForm from "./ReviewEdit";
+import ReviewEdit from "./ReviewEdit";
 
 const ReviewModal = ({ isOpen, onClose, productId }) => {
   const [reviews, setReviews] = useState([]);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const toast = useToast();
-  const [userId, setUserId] = useState(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    return user ? user.user_id : null;
-  });
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  const [isEditingReview, setIsEditingReview] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+
+  const handleEditReview = (review) => {
+    setEditingReview(review);
+    setIsEditingReview(true);
+  };
 
   useEffect(() => {
     if (isOpen) {
+      setCurrentUserId(
+        (JSON.parse(localStorage.getItem("user")) || {}).user_id || null
+      );
       fetchReviews();
-      setCurrentUser(JSON.parse(localStorage.getItem("user")));
     }
   }, [isOpen, productId, toast]);
 
@@ -88,14 +94,33 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
               Reviews:
             </Text>
             {reviews.map((review) => (
-              <Box key={review.review_id} bg="gray.100" p={2} mb={2}>
+              <Box key={review.review_id} bg="gray.100" p={2} mb={2} display="flex" alignItems="center">
+              <Box flex="1">
                 <Text fontWeight="bold">{review.review_text}</Text>
                 <br />
                 <Text>Rating: {review.rating}/5</Text>
-                {currentUser && currentUser.id === review.user_id && (
-                  <Button onClick={() => handleDeleteReview(review.review_id)}>Delete</Button>
+                {currentUserId && currentUserId === review.user_id && (
+                  <>
+                    <Button
+                      onClick={() => handleDeleteReview(review.review_id)}
+                      colorScheme="red"
+                      color="white"
+                      mr={2}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      onClick={() => handleEditReview(review)}
+                      colorScheme="blue"
+                      color="white"
+                      mr={2}
+                    >
+                      Edit
+                    </Button>
+                  </>
                 )}
               </Box>
+            </Box>
             ))}
             {reviews.length === 0 && <Text>No reviews have been made.</Text>}
 
@@ -112,8 +137,19 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
                 isOpen={isReviewFormOpen}
                 onClose={() => setIsReviewFormOpen(false)}
                 productId={productId}
-                userId={userId}
+                userId={currentUserId}
                 onSubmit={handleSubmitReview}
+              />
+            )}
+            {isEditingReview && (
+              <ReviewEdit
+                isOpen={true} // Make sure it's set to true when you want to render the modal
+                onClose={() => setIsEditingReview(false)} // Make sure you pass onClose function
+                review={editingReview}
+                onUpdate={() => {
+                  setIsEditingReview(false);
+                  fetchReviews(); // Update the reviews list after editing
+                }}
               />
             )}
           </Box>

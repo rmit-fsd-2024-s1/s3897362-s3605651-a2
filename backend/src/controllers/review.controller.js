@@ -35,7 +35,6 @@ exports.getReviewsByProductId = async (req, res) => {
     const reviews = await db.reviews.findAll({
       where: {
         product_id: productId,
-        is_deleted: false,
       },
       include: [
         {
