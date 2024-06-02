@@ -180,7 +180,9 @@ async function getReviewById(id) {
 
 export async function getReviewsByProductId(productId) {
   try {
-    const response = await axios.get(`${API_HOST}/api/reviews/product/${productId}`);
+    const response = await axios.get(
+      `${API_HOST}/api/reviews/product/${productId}`
+    );
     return response.data;
   } catch (error) {
     throw new Error(
@@ -207,9 +209,7 @@ async function updateReview(reviewId, reviewData) {
     );
     return response.data;
   } catch (error) {
-    throw new Error(
-      error.response.data.message || "Failed to update review"
-    );
+    throw new Error(error.response.data.message || "Failed to update review");
   }
 }
 
