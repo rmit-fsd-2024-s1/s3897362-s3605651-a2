@@ -11,6 +11,7 @@ import ReviewModal from "../src/components/ReviewModal.js";
 import { getReviewsByProductId, deleteReviewByUser } from "../src/data/repository";
 
 // Mock so that we can bypassing importing axios 
+jest.clearAllMocks()
 jest.mock('axios', () => ({
     get: jest.fn(() => Promise.resolve({ data: {} })),
     post: jest.fn(() => Promise.resolve({ data: {} })),
