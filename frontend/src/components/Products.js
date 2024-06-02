@@ -28,12 +28,6 @@ import {
   addToCart,
   removeFromCart,
   clearCart,
-  getAllReviews,
-  getReviewById,
-  createReview,
-  updateReview,
-  deleteReviewByUser,
-  deleteReviewByAdmin,
 } from "../data/repository";
 import CreditCardForm from "./CreditCardForm";
 import ReviewModal from "./ReviewModal";

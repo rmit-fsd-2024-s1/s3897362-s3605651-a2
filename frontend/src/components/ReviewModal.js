@@ -11,18 +11,30 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import { getReviewsByProductId, updateReview } from "../data/repository";
+import { getReviewsByProductId, updateReview, deleteReviewByUser } from "../data/repository";
 import ReviewForm from "./ReviewForm";
 import ReviewEditForm from "./ReviewEdit";
 
-const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
+const ReviewModal = ({ isOpen, onClose, productId }) => {
   const [reviews, setReviews] = useState([]);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const toast = useToast();
+  const [userId, setUserId] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user ? user.user_id : null;
+  });
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchReviews();
+      setCurrentUser(JSON.parse(localStorage.getItem("user")));
+    }
+  }, [isOpen, productId, toast]);
 
   const fetchReviews = async () => {
     try {
-      const fetchedReviews = await getReviewsByProductId(productId); // Use new function
+      const fetchedReviews = await getReviewsByProductId(productId);
       setReviews(fetchedReviews);
     } catch (error) {
       console.error("Failed to fetch reviews:", error);
@@ -36,14 +48,7 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
     }
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchReviews();
-    }
-  }, [isOpen, productId, toast]);
-
   const handleSubmitReview = async () => {
-    // Refresh reviews after submitting a new review
     await fetchReviews();
     setIsReviewFormOpen(false);
   };
@@ -78,8 +83,31 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
         )}
       </div>
     );
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      await deleteReviewByUser(reviewId);
+      fetchReviews();
+      toast({
+        title: "Success",
+        description: "Review deleted successfully.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Failed to delete review:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete review. Please try again later.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
+  {console.log(userId)}
+  {console.log()}
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -100,7 +128,6 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
             ))}
             {reviews.length === 0 && <Text>No reviews have been made.</Text>}
 
-            {/* Button to write review */}
             <Button
               colorScheme="blue"
               onClick={() => setIsReviewFormOpen(true)}
@@ -109,7 +136,6 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
               Write a Review
             </Button>
 
-            {/* Include ReviewForm if isOpen is true */}
             {isReviewFormOpen && (
               <ReviewForm
                 isOpen={isReviewFormOpen}
@@ -124,6 +150,6 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
       </ModalContent>
     </Modal>
   );
-};
+}};
 
 export default ReviewModal;

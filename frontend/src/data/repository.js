@@ -189,14 +189,13 @@ export async function getReviewsByProductId(productId) {
   }
 }
 
-async function createReview(reviewData) {
+export async function createReview(reviewData) {
   try {
     const response = await axios.post(`${API_HOST}/api/reviews`, reviewData);
     return response.data;
   } catch (error) {
-    throw new Error(
-      error.response.data.message || "Failed to create review"
-    );
+    console.error("Error in createReview:", error);
+    throw error;
   }
 }
 
@@ -227,7 +226,6 @@ async function deleteReviewByAdmin(id) {
 export {
   getAllReviews,
   getReviewById,
-  createReview,
   updateReview,
   deleteReviewByUser,
   deleteReviewByAdmin,

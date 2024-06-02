@@ -41,9 +41,17 @@ exports.getReviewsByProductId = async (req, res) => {
 exports.createReview = async (req, res) => {
   try {
     const { user_id, product_id, rating, review_text } = req.body;
-      console.log("Received data:", { user_id, product_id, rating, review_text });
+
+    // Log incoming request data
+    console.log("Received data:", { user_id, product_id, rating, review_text });
+
+    if (!user_id || !product_id || !rating || !review_text) {
+      return res.status(400).send({ message: "Missing required fields" });
+    }
+
     const createdAt = new Date();
     const updatedAt = new Date();
+
     const review = await db.reviews.create({
       user_id,
       product_id,
@@ -52,12 +60,13 @@ exports.createReview = async (req, res) => {
       created_at: createdAt,
       updated_at: updatedAt,
     });
+
     res.status(201).json(review);
   } catch (error) {
+    console.error("Error creating review:", error);
     res.status(500).send({ message: "Error creating review" });
   }
 };
-
 
 exports.updateReview = async (req, res) => {
   try {
