@@ -81,43 +81,45 @@ const PopularItems = () => {
   const top3Data = sortedData.slice(0, 3);
 
   return (
-    <div style={{ height: "500px", width: "100%" }}>
-      <ResponsiveBar
-        data={top3Data}
-        keys={["deleted", "positive", "average", "bad"]}
-        indexBy="product"
-        margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-        padding={0.3}
-        valueScale={{ type: "linear" }}
-        indexScale={{ type: "band", round: true }}
-        colors={({ id, data }) => {
-          switch (id) {
-            case "deleted":
-              return "#333333"; // dark gray
-            case "positive":
-              return "#4CAF50"; // green
-            case "average":
-              return "#FFEB3B"; // yellow
-            case "bad":
-              return "#F44336"; // red
-            default:
-              return "#9E9E9E"; // gray
-          }
-        }}
-        axisBottom={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: "country",
-          legendPosition: "middle",
-          legendOffset: 32,
-          truncateTickAt: 0,
-        }}
-        axisLeft={{
-          format: (value) => (Number.isInteger(value) ? value : ""),
-        }}
-        enableLabel={false}
-      />
+    <div style={{ width: "100%" }}>
+      <div style={{ height: "500px" }}>
+        <ResponsiveBar
+          data={top3Data}
+          keys={["deleted", "bad", "average", "positive"]}
+          indexBy="product"
+          margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+          padding={0.3}
+          valueScale={{ type: "linear" }}
+          indexScale={{ type: "band", round: true }}
+          colors={({ id, data }) => {
+            switch (id) {
+              case "deleted":
+                return "#333333"; // dark gray
+              case "positive":
+                return "#4CAF50"; // green
+              case "average":
+                return "#FFEB3B"; // yellow
+              case "bad":
+                return "#F44336"; // red
+              default:
+                return "#9E9E9E"; // gray
+            }
+          }}
+          axisBottom={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: "country",
+            legendPosition: "middle",
+            legendOffset: 32,
+            truncateTickAt: 0,
+          }}
+          axisLeft={{
+            format: (value) => (Number.isInteger(value) ? value : ""),
+          }}
+          enableLabel={false}
+        />
+      </div>
     </div>
   );
 };

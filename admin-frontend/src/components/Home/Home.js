@@ -46,6 +46,14 @@ const Home = () => {
     <SimpleGrid columns={4} spacing={10}>
       <GridItem colSpan={1}>
         <Box>
+          <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
+            Recent Reviews
+          </Heading>
+          <RecentReviews />
+        </Box>
+      </GridItem>
+      <GridItem colSpan={1}>
+        <Box>
           <Heading pt={5} pl={5} as="h2" size="lg" color="gray.500">
             Products on Special
           </Heading>
@@ -55,17 +63,9 @@ const Home = () => {
       <GridItem colSpan={2}>
         <Box>
           <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
-            Our Most Popular Items
+            Our Most Reviewed Items
           </Heading>
           <PopularItems />
-        </Box>
-      </GridItem>
-      <GridItem colSpan={1}>
-        <Box>
-          <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
-            Recent Reviews
-          </Heading>
-          <RecentReviews />
         </Box>
       </GridItem>
     </SimpleGrid>
