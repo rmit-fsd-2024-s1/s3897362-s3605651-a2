@@ -9,10 +9,12 @@ import {
   ModalBody,
   Button,
   Text,
+  IconButton,
   Box,
   useToast,
   Flex,
 } from "@chakra-ui/react";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { getReviewsByProductId, deleteReviewByUser } from "../data/repository";
 import ReviewForm from "./ReviewForm";
 import ReviewEdit from "./ReviewEdit";
@@ -41,6 +43,9 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
   }, [isOpen, productId, toast]);
 
   const fetchReviews = async () => {
+    // Clear the previous reviews
+    setReviews([]);
+
     try {
       const fetchedReviews = await getReviewsByProductId(productId);
       setReviews(fetchedReviews);
@@ -132,60 +137,56 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
                 p={5}
                 mb={2}
               >
-                <Box flex="1">
-                  <Flex justifyContent="space-between" alignItems="center">
-                    <Box>
-                      <Flex
-                        fontWeight="bold"
-                        flexDirection="row"
-                        alignItems="center"
-                      >
-                        <Text mr={2}>User:</Text>
-                        <Text color="text"> {review.User.username}</Text>
-                      </Flex>
-                      <Text fontWeight="bold">
-                        Rating:{" "}
-                        <StarRatings
-                          rating={Number(review.rating) || 0}
-                          starRatedColor="gold"
-                          starEmptyColor="gray"
-                          starDimension="20px"
-                          starSpacing="2px"
-                          numberOfStars={5}
-                          name="rating"
-                        />
-                      </Text>
-                      <Flex
-                        fontWeight="bold"
-                        flexDirection="row"
-                        alignItems="center"
-                      >
-                        <Text mr={2}>Review:</Text>
-                        <Text color="text"> {review.review_text}</Text>
-                      </Flex>
-                    </Box>
-
-                    {currentUserId && currentUserId === review.user_id && (
-                      <Box>
-                        <Button
-                          onClick={() => handleDeleteReview(review.review_id)}
-                          colorScheme="red"
-                          color="white"
-                          mr={2}
-                        >
-                          Delete
-                        </Button>
-                        <Button
-                          onClick={() => handleEditReview(review)}
-                          colorScheme="blue"
-                          color="white"
-                          mr={2}
-                        >
-                          Edit
-                        </Button>
-                      </Box>
-                    )}
+                <Box position="relative">
+                  <Flex direction="column" align="flex-start">
+                    <Flex
+                      fontWeight="bold"
+                      flexDirection="row"
+                      alignItems="center"
+                    >
+                      <Text mr={2}>User:</Text>
+                      <Text color="text"> {review.User.username}</Text>
+                    </Flex>
+                    <Text fontWeight="bold">
+                      Rating:{" "}
+                      <StarRatings
+                        rating={Number(review.rating) || 0}
+                        starRatedColor="gold"
+                        starEmptyColor="gray"
+                        starDimension="20px"
+                        starSpacing="2px"
+                        numberOfStars={5}
+                        name="rating"
+                      />
+                    </Text>
+                    <Flex
+                      fontWeight="bold"
+                      flexDirection="row"
+                      alignItems="center"
+                    >
+                      <Text mr={2}>Review:</Text>
+                      <Text color="text"> {review.review_text}</Text>
+                    </Flex>
                   </Flex>
+                  {currentUserId && currentUserId === review.user_id && (
+                    <Box position="absolute" top={2} right={2}>
+                      <IconButton
+                        aria-label="Delete review"
+                        icon={<DeleteIcon />}
+                        colorScheme="red"
+                        onClick={() => handleDeleteReview(review.review_id)}
+                        mr={2}
+                        size="sm"
+                      />
+                      <IconButton
+                        aria-label="Edit review"
+                        icon={<EditIcon />}
+                        colorScheme="blue"
+                        onClick={() => handleEditReview(review)}
+                        size="sm"
+                      />
+                    </Box>
+                  )}
                 </Box>
               </Box>
             ))}
