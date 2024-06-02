@@ -201,13 +201,18 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
               ))}
               {reviews.length === 0 && <Text>No reviews have been made.</Text>}
 
-              <Button
-                colorScheme="blue"
-                onClick={() => setIsReviewFormOpen(true)}
-                mt={4}
-              >
-                Write a Review
-              </Button>
+              <Box width="100%" mb={4}>
+                <Button
+                  color="beige"
+                  bg="heading"
+                  _hover={{ bg: "middleGreen", color: "heading" }}
+                  onClick={() => setIsReviewFormOpen(true)}
+                  mt={4}
+                  width="full"
+                >
+                  Write a Review
+                </Button>
+              </Box>
 
               {isReviewFormOpen && (
                 <ReviewForm
