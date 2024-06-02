@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage, // Add FormErrorMessage
+  Box,
 } from "@chakra-ui/react";
 import { createReview } from "../data/repository";
 
@@ -44,7 +45,8 @@ const ReviewForm = ({ isOpen, onClose, productId, onSubmit }) => {
         return;
       }
 
-      if (reviewText.split(" ").length > 100) { // Check if review exceeds 100 words
+      if (reviewText.split(" ").length > 100) {
+        // Check if review exceeds 100 words
         setError("Review should be up to 100 words");
         return;
       }
@@ -65,12 +67,14 @@ const ReviewForm = ({ isOpen, onClose, productId, onSubmit }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Write a Review</ModalHeader>
-        <ModalCloseButton />
+      <ModalContent bg="card">
+        <ModalHeader color="heading">Write a Review</ModalHeader>
+        <ModalCloseButton color={"heading"} />
         <ModalBody>
           <FormControl isInvalid={error}>
-            <FormLabel>Rating</FormLabel>
+            <FormLabel fontWeight={"bold"} color="heading">
+              Rating
+            </FormLabel>
             <Select value={rating} onChange={(e) => setRating(e.target.value)}>
               {[5, 4, 3, 2, 1].map((value) => (
                 <option key={value} value={value}>
@@ -80,7 +84,9 @@ const ReviewForm = ({ isOpen, onClose, productId, onSubmit }) => {
             </Select>
           </FormControl>
           <FormControl mt={4} isInvalid={error}>
-            <FormLabel>Review</FormLabel>
+            <FormLabel fontWeight={"bold"} color="heading">
+              Review
+            </FormLabel>
             <Textarea
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
@@ -88,9 +94,18 @@ const ReviewForm = ({ isOpen, onClose, productId, onSubmit }) => {
             />
             <FormErrorMessage>{error}</FormErrorMessage>
           </FormControl>
-          <Button colorScheme="blue" onClick={handleSubmit} mt={4}>
-            Submit Review
-          </Button>
+          <Box width="100%" mb={4}>
+            <Button
+              color="beige"
+              bg="heading"
+              _hover={{ bg: "middleGreen", color: "heading" }}
+              onClick={handleSubmit}
+              mt={4}
+              width="full"
+            >
+              Submit Review
+            </Button>
+          </Box>
         </ModalBody>
       </ModalContent>
     </Modal>

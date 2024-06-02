@@ -1,5 +1,19 @@
 import React, { useState } from "react";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button, Textarea, Select, FormControl, FormLabel, FormErrorMessage } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  Button,
+  Textarea,
+  Select,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Box,
+} from "@chakra-ui/react";
 import { updateReview } from "../data/repository";
 
 const ReviewEdit = ({ isOpen, onClose, review, onUpdate }) => {
@@ -20,7 +34,8 @@ const ReviewEdit = ({ isOpen, onClose, review, onUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (updatedReviewData.review_text.split(" ").length > 100) { // Check if review exceeds 100 words
+      if (updatedReviewData.review_text.split(" ").length > 100) {
+        // Check if review exceeds 100 words
         setError("Review should be up to 100 words");
         return;
       }
@@ -36,13 +51,19 @@ const ReviewEdit = ({ isOpen, onClose, review, onUpdate }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Edit Review</ModalHeader>
-        <ModalCloseButton />
+      <ModalContent bg="card">
+        <ModalHeader color="heading">Edit Review</ModalHeader>
+        <ModalCloseButton color={"heading"} />
         <ModalBody>
           <FormControl isInvalid={error}>
-            <FormLabel>Rating</FormLabel>
-            <Select name="rating" value={updatedReviewData.rating} onChange={handleChange}>
+            <FormLabel fontWeight={"bold"} color="heading">
+              Rating
+            </FormLabel>
+            <Select
+              name="rating"
+              value={updatedReviewData.rating}
+              onChange={handleChange}
+            >
               {[5, 4, 3, 2, 1].map((value) => (
                 <option key={value} value={value}>
                   {value}
@@ -51,7 +72,9 @@ const ReviewEdit = ({ isOpen, onClose, review, onUpdate }) => {
             </Select>
           </FormControl>
           <FormControl mt={4} isInvalid={error}>
-            <FormLabel>Review</FormLabel>
+            <FormLabel fontWeight={"bold"} color="heading">
+              Review
+            </FormLabel>
             <Textarea
               name="review_text"
               value={updatedReviewData.review_text}
@@ -60,9 +83,18 @@ const ReviewEdit = ({ isOpen, onClose, review, onUpdate }) => {
             />
             <FormErrorMessage>{error}</FormErrorMessage>
           </FormControl>
-          <Button colorScheme="blue" onClick={handleSubmit} mt={4}>
-            Update Review
-          </Button>
+          <Box width="100%" mb={4}>
+            <Button
+              color="beige"
+              bg="heading"
+              _hover={{ bg: "middleGreen", color: "heading" }}
+              onClick={handleSubmit}
+              mt={4}
+              width="full"
+            >
+              Update Review
+            </Button>
+          </Box>
         </ModalBody>
       </ModalContent>
     </Modal>

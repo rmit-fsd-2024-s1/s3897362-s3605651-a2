@@ -103,7 +103,7 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
       <ModalOverlay />
       <ModalContent bg="background">
         <ModalHeader color="heading">{productName}</ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton color={"heading"} />
         <ModalBody>
           {isLoading ? (
             <Text>Loading reviews...</Text>
