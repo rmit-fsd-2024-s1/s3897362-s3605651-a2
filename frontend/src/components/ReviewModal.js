@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import StarRatings from "react-star-ratings";
 import {
   Modal,
   ModalOverlay,
