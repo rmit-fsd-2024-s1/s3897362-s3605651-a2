@@ -10,7 +10,7 @@ jest.mock("../src/data/repository");
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import '@testing-library/jest-dom/extend-expect';
-import ReviewModal from "../src/components/ReviewModal";
+import ReviewModal from "../src/components/ReviewModal.js";
 import { getReviewsByProductId, deleteReviewByUser } from "../src/data/repository";
 
 describe("ReviewModal Component - User ID System", () => {
