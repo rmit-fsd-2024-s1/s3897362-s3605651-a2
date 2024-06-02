@@ -50,21 +50,21 @@ const App = () => {
         >
           <Flex direction="column" align="flex-start">
             <Button onClick={() => setSelectedPage("home")} mb={4} width="100%">
-              Home
+              Analytics
             </Button>
             <Button
               onClick={() => setSelectedPage("products")}
               mb={4}
               width="100%"
             >
-              Products
+              Modify Products
             </Button>
             <Button
               onClick={() => setSelectedPage("reviews")}
               mb={4}
               width="100%"
             >
-              Reviews
+              Moderate Reviews
             </Button>
           </Flex>
         </Box>
