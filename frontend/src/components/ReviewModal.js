@@ -13,6 +13,7 @@ import {
   Box,
   useToast,
   Flex,
+  Tooltip,
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { getReviewsByProductId, deleteReviewByUser } from "../data/repository";
@@ -95,8 +96,9 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
   };
 
   // Calculate the average rating
-  const averageRating =
-    reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
+  const averageRating = (
+    reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
+  ).toFixed(2);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -110,18 +112,24 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
           ) : (
             <Box>
               <Box textColor={"heading"}>
-                <Text fontSize="md" fontWeight="bold" mb={2}>
-                  Average user rating:{" "}
-                  <StarRatings
-                    rating={Number(averageRating) || 0}
-                    starRatedColor="gold"
-                    starEmptyColor="gray"
-                    starDimension="25px"
-                    starSpacing="2px"
-                    numberOfStars={5}
-                    name="rating"
-                  />
-                </Text>
+                <Tooltip
+                  label={`Rating: ${averageRating} out of 5`}
+                  aria-label="A tooltip"
+                  hasArrow
+                >
+                  <Text fontSize="md" fontWeight="bold" mb={2}>
+                    Average user rating:{" "}
+                    <StarRatings
+                      rating={Number(averageRating) || 0}
+                      starRatedColor="gold"
+                      starEmptyColor="gray"
+                      starDimension="25px"
+                      starSpacing="2px"
+                      numberOfStars={5}
+                      name="rating"
+                    />
+                  </Text>
+                </Tooltip>
               </Box>
               <Text color="heading" fontSize="md" fontWeight="bold" mb={2}>
                 Individual Reviews:
@@ -155,19 +163,25 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
                       >
                         <Text mr={2}>User:</Text>
                         <Text color="text"> {review.User.username}</Text>
-                      </Flex>
-                      <Text fontWeight="bold">
-                        Rating:{" "}
-                        <StarRatings
-                          rating={Number(review.rating) || 0}
-                          starRatedColor="gold"
-                          starEmptyColor="gray"
-                          starDimension="20px"
-                          starSpacing="2px"
-                          numberOfStars={5}
-                          name="rating"
-                        />
-                      </Text>
+                      </Flex>{" "}
+                      <Tooltip
+                        label={`Rating: ${review.rating} out of 5`}
+                        aria-label="A tooltip"
+                        hasArrow
+                      >
+                        <Text fontWeight="bold">
+                          Rating:{" "}
+                          <StarRatings
+                            rating={Number(review.rating) || 0}
+                            starRatedColor="gold"
+                            starEmptyColor="gray"
+                            starDimension="20px"
+                            starSpacing="2px"
+                            numberOfStars={5}
+                            name="rating"
+                          />
+                        </Text>
+                      </Tooltip>
                       <Flex
                         fontWeight="bold"
                         flexDirection="row"
