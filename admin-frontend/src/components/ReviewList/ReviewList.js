@@ -1,5 +1,17 @@
 import React, { useState, useRef } from "react";
-import { Box, Spinner, Text, Flex, Button, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import {
+  Box,
+  Spinner,
+  Text,
+  Flex,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+} from "@chakra-ui/react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import DeleteReviewDialog from "./DeleteReviewDialog";
 
@@ -17,20 +29,32 @@ const GET_REVIEWS = gql`
   }
 `;
 
-const DELETE_REVIEW = gql`
-  mutation DeleteReview($review_id: ID!) {
-    deleteReview(review_id: $review_id)
+const UPDATE_REVIEW = gql`
+  mutation UpdateReview(
+    $review_id: ID!
+    $review_text: String!
+    $is_deleted: Boolean!
+  ) {
+    updateReview(
+      review_id: $review_id
+      review_text: $review_text
+      is_deleted: $is_deleted
+    ) {
+      review_id
+      review_text
+      is_deleted
+    }
   }
 `;
 
 const ReviewList = () => {
   const { loading, error, data } = useQuery(GET_REVIEWS);
-  const [deleteReview] = useMutation(DELETE_REVIEW, {
-    refetchQueries: [{ query: GET_REVIEWS }],
-  });
 
   const [selectedReviews, setSelectedReviews] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [updateReview] = useMutation(UPDATE_REVIEW, {
+    refetchQueries: [GET_REVIEWS],
+  });
   const cancelRef = useRef();
 
   if (loading) return <Spinner />;
@@ -38,7 +62,13 @@ const ReviewList = () => {
 
   const handleDelete = () => {
     selectedReviews.forEach((review_id) => {
-      deleteReview({ variables: { review_id } });
+      updateReview({
+        variables: {
+          review_id,
+          review_text: "[**** THIS REVIEW HAS BEEN DELETED BY AN ADMIN ****]",
+          is_deleted: true,
+        },
+      });
     });
     setSelectedReviews([]);
     setIsDialogOpen(false);
@@ -46,7 +76,7 @@ const ReviewList = () => {
 
   const handleSelectReview = (review_id) => {
     setSelectedReviews((prevSelected) =>
-      prevSelected.includes(review_id) ? prevSelected.filter((id) => id !== review_id) : [...prevSelected, review_id]
+      prevSelected.includes(review_id) ? [] : [review_id]
     );
   };
 

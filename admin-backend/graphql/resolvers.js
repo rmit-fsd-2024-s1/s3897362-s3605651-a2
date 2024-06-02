@@ -53,17 +53,15 @@ const resolvers = {
         throw new Error("Error deleting product");
       }
     },
-    deleteReviewByAdmin: async (_, { review_id }) => {
-      try {
-        const review = await db.review.findByPk(review_id);
-        if (!review) {
-          throw new Error("Review not found");
-        }
-        await review.destroy();
-        return true;
-      } catch (error) {
-        throw new Error("Error deleting review");
+    updateReview: async (_, { review_id, review_text, is_deleted }) => {
+      const review = await db.review.findByPk(review_id);
+      if (!review) {
+        throw new Error("Review not found");
       }
+      review.review_text = review_text;
+      review.is_deleted = is_deleted;
+      await review.save();
+      return review;
     },
   },
 };

@@ -15,6 +15,8 @@ const typeDefs = gql`
 
   type Query {
     getAllProducts: [Product]
+
+    getAllReviews: [Review]
   }
 
   type Mutation {
@@ -42,6 +44,12 @@ const typeDefs = gql`
     ): Product
 
     deleteProduct(product_id: ID!): Boolean
+
+    updateReview(
+      review_id: ID!
+      review_text: String!
+      is_deleted: Boolean!
+    ): Review
   }
 
   type Review {
@@ -53,14 +61,6 @@ const typeDefs = gql`
     is_deleted: Boolean
     createdAt: String
     updatedAt: String
-  }
-
-  type Query {
-    getAllReviews: [Review]
-  }
-  
-  type Mutation {
-    deleteReviewByAdmin(review_id: ID!): Boolean
   }
 `;
 

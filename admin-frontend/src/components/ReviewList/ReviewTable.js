@@ -15,7 +15,7 @@ const ReviewTable = ({
           position: "sticky",
           top: 0,
           zIndex: 1,
-          backgroundColor: "teal.500",
+          backgroundColor: "teal",
         }}
       >
         <Tr>
@@ -77,7 +77,10 @@ const ReviewTable = ({
             <Td>{review.updatedAt}</Td>
             {isDeleteMode && (
               <Td>
-                <Button onClick={() => onDeleteReview(review.review_id)} colorScheme="red">
+                <Button
+                  onClick={() => onDeleteReview(review.review_id)}
+                  colorScheme="red"
+                >
                   Delete
                 </Button>
               </Td>
