@@ -11,6 +11,7 @@ import {
   Text,
   Box,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import { getReviewsByProductId, deleteReviewByUser } from "../data/repository";
 import ReviewForm from "./ReviewForm";
@@ -90,70 +91,101 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader color="darkGreen">{productName}</ModalHeader>
+      <ModalContent bg="background">
+        <ModalHeader color="heading">{productName}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Box>
-            <Text fontSize="lg" fontWeight="bold" mb={2}>
-              Average user rating:{" "}
-              <StarRatings
-                rating={averageRating}
-                starRatedColor="gold"
-                starEmptyColor="gray"
-                starDimension="30px"
-                starSpacing="2px"
-                numberOfStars={5}
-                name="rating"
-              />
-            </Text>
-            <Text fontSize="lg" fontWeight="bold" mb={2}>
+            <Box textColor={"heading"}>
+              <Text fontSize="md" fontWeight="bold" mb={2}>
+                Average user rating:{" "}
+                <StarRatings
+                  rating={averageRating}
+                  starRatedColor="gold"
+                  starEmptyColor="gray"
+                  starDimension="25px"
+                  starSpacing="2px"
+                  numberOfStars={5}
+                  name="rating"
+                />
+              </Text>
+            </Box>
+            <Text color="heading" fontSize="md" fontWeight="bold" mb={2}>
               Individual Reviews:
             </Text>
             {reviews.map((review) => (
               <Box
                 key={review.review_id}
-                bg="gray.100"
-                p={2}
-                mb={2}
+                shadow="lg"
+                borderWidth="1px"
+                borderRadius="lg"
+                position="relative"
+                bg="card"
+                textColor={"heading"}
+                height="100%"
                 display="flex"
-                alignItems="center"
+                flexDirection="column"
+                transition="all 0.2s"
+                _hover={{ transform: "scale(1.01)" }}
+                overflow="hidden"
+                borderColor={"beige"}
+                p={5}
+                mb={2}
               >
                 <Box flex="1">
-                  <Text fontWeight="bold">{review.review_text}</Text>
-                  <br />
-                  <Text>
-                    Rating:{" "}
-                    <StarRatings
-                      rating={review.rating}
-                      starRatedColor="gold"
-                      starEmptyColor="gray"
-                      starDimension="20px"
-                      starSpacing="2px"
-                      numberOfStars={5}
-                      name="rating"
-                    />
-                  </Text>
-                  {currentUserId && currentUserId === review.user_id && (
-                    <>
-                      <Button
-                        onClick={() => handleDeleteReview(review.review_id)}
-                        colorScheme="red"
-                        color="white"
-                        mr={2}
+                  <Flex justifyContent="space-between" alignItems="center">
+                    <Box>
+                      <Flex
+                        fontWeight="bold"
+                        flexDirection="row"
+                        alignItems="center"
                       >
-                        Delete
-                      </Button>
-                      <Button
-                        onClick={() => handleEditReview(review)}
-                        colorScheme="blue"
-                        color="white"
-                        mr={2}
+                        <Text mr={2}>User:</Text>
+                        <Text color="text"> {review.User.username}</Text>
+                      </Flex>
+                      <Text fontWeight="bold">
+                        Rating:{" "}
+                        <StarRatings
+                          rating={review.rating}
+                          starRatedColor="gold"
+                          starEmptyColor="gray"
+                          starDimension="20px"
+                          starSpacing="2px"
+                          numberOfStars={5}
+                          name="rating"
+                        />
+                      </Text>
+                      <Flex
+                        fontWeight="bold"
+                        flexDirection="row"
+                        alignItems="center"
                       >
-                        Edit
-                      </Button>
-                    </>
-                  )}
+                        <Text mr={2}>Review:</Text>
+                        <Text color="text"> {review.review_text}</Text>
+                      </Flex>
+                    </Box>
+
+                    {currentUserId && currentUserId === review.user_id && (
+                      <Box>
+                        <Button
+                          onClick={() => handleDeleteReview(review.review_id)}
+                          colorScheme="red"
+                          color="white"
+                          mr={2}
+                        >
+                          Delete
+                        </Button>
+                        <Button
+                          onClick={() => handleEditReview(review)}
+                          colorScheme="blue"
+                          color="white"
+                          mr={2}
+                        >
+                          Edit
+                        </Button>
+                      </Box>
+                    )}
+                  </Flex>
                 </Box>
               </Box>
             ))}
