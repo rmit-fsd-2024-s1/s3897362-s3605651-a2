@@ -8,9 +8,10 @@ const SpecialPie = ({ chartData }) => {
       <div style={{ height: 400 }}>
         <ResponsivePie
           data={chartData}
+          colors={{ scheme: "accent" }}
           margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
           innerRadius={0.5}
-          padAngle={0.7}
+          padAngle={0.9}
           cornerRadius={3}
           activeOuterRadiusOffset={8}
           borderWidth={1}
@@ -18,85 +19,40 @@ const SpecialPie = ({ chartData }) => {
             from: "color",
             modifiers: [["darker", 0.2]],
           }}
+          tooltip={({ datum }) => (
+            <div
+              style={{
+                backgroundColor: "rgba(249, 249, 249, 0.9)",
+                border: "1px solid #ccc",
+                borderRadius: "15px",
+                boxShadow: "2px 2px 2px #ccc",
+                padding: "10px",
+                maxWidth: "200px",
+              }}
+            >
+              <strong>{datum.label}</strong>
+              <ul style={{ listStyleType: "none" }}>
+                {" "}
+                {/* Remove bullet points here */}
+                {datum.data.productNames.map((name) => (
+                  <li key={name}>- {name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           arcLinkLabelsSkipAngle={10}
           arcLinkLabelsTextColor="#333333"
           arcLinkLabelsThickness={2}
           arcLinkLabelsColor={{ from: "color" }}
           arcLabelsSkipAngle={10}
-          arcLabelsTextColor={{
-            from: "color",
-            modifiers: [["darker", 2]],
+          arcLabelsTextColor="#FFFFFF" // Change color to white
+          theme={{
+            labels: {
+              text: {
+                fontWeight: "bold", // Make text bolder
+              },
+            },
           }}
-          defs={[
-            {
-              id: "dots",
-              type: "patternDots",
-              background: "inherit",
-              color: "rgba(255, 255, 255, 0.3)",
-              size: 4,
-              padding: 1,
-              stagger: true,
-            },
-            {
-              id: "lines",
-              type: "patternLines",
-              background: "inherit",
-              color: "rgba(255, 255, 255, 0.3)",
-              rotation: -45,
-              lineWidth: 6,
-              spacing: 10,
-            },
-          ]}
-          fill={[
-            {
-              match: {
-                id: "ruby",
-              },
-              id: "dots",
-            },
-            {
-              match: {
-                id: "c",
-              },
-              id: "dots",
-            },
-            {
-              match: {
-                id: "go",
-              },
-              id: "dots",
-            },
-            {
-              match: {
-                id: "python",
-              },
-              id: "dots",
-            },
-            {
-              match: {
-                id: "scala",
-              },
-              id: "lines",
-            },
-            {
-              match: {
-                id: "lisp",
-              },
-              id: "lines",
-            },
-            {
-              match: {
-                id: "elixir",
-              },
-              id: "lines",
-            },
-            {
-              match: {
-                id: "javascript",
-              },
-              id: "lines",
-            },
-          ]}
           legends={[
             {
               anchor: "bottom",

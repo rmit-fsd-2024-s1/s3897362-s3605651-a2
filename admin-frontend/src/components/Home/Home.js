@@ -30,11 +30,13 @@ const Home = () => {
       id: "special",
       label: "Special",
       value: specialProducts.length,
+      productNames: specialProducts.map((product) => product.name),
     },
     {
       id: "notSpecial",
       label: "Not Special",
       value: notSpecialProducts.length,
+      productNames: notSpecialProducts.map((product) => product.name),
     },
   ];
   return (
