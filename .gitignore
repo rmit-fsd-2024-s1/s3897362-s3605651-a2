@@ -1,2 +1,4 @@
 node_modules
 backend/.env
+admin-backend/.env
+admin-backend/.DS_Store
