@@ -17,7 +17,7 @@ const ProductTable = ({
   handleSelectProduct,
   selectedProducts,
 }) => (
-  <Box maxH="calc(100vh - 120px)" overflowY="auto">
+  <Box maxH="calc(100vh - 120px)" overflowY="unset">
     <TableContainer>
       <Table variant="simple" size="sm" width="100%">
         <Thead
@@ -25,7 +25,7 @@ const ProductTable = ({
             position: "sticky",
             top: 0,
             zIndex: 1,
-            backgroundColor: "teal.500",
+            backgroundColor: "teal",
           }}
         >
           <Tr>
