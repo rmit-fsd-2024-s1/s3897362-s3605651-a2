@@ -82,16 +82,23 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
     }
   };
 
+  // Calculate the average rating
+  const averageRating =
+    reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Reviews for {productName}</ModalHeader>
+        <ModalHeader color="darkGreen">{productName}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Box>
             <Text fontSize="lg" fontWeight="bold" mb={2}>
-              Reviews:
+              Average user rating: {averageRating.toFixed(2)}
+            </Text>
+            <Text fontSize="lg" fontWeight="bold" mb={2}>
+              Individual Reviews:
             </Text>
             {reviews.map((review) => (
               <Box
