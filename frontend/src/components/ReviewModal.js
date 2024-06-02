@@ -96,7 +96,16 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
         <ModalBody>
           <Box>
             <Text fontSize="lg" fontWeight="bold" mb={2}>
-              Average user rating: {averageRating.toFixed(2)}
+              Average user rating:{" "}
+              <StarRatings
+                rating={averageRating}
+                starRatedColor="gold"
+                starEmptyColor="gray"
+                starDimension="30px"
+                starSpacing="2px"
+                numberOfStars={5}
+                name="rating"
+              />
             </Text>
             <Text fontSize="lg" fontWeight="bold" mb={2}>
               Individual Reviews:
@@ -113,7 +122,18 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
                 <Box flex="1">
                   <Text fontWeight="bold">{review.review_text}</Text>
                   <br />
-                  <Text>Rating: {review.rating}/5</Text>
+                  <Text>
+                    Rating:{" "}
+                    <StarRatings
+                      rating={review.rating}
+                      starRatedColor="gold"
+                      starEmptyColor="gray"
+                      starDimension="20px"
+                      starSpacing="2px"
+                      numberOfStars={5}
+                      name="rating"
+                    />
+                  </Text>
                   {currentUserId && currentUserId === review.user_id && (
                     <>
                       <Button
