@@ -11,7 +11,11 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import { getReviewsByProductId, updateReview, deleteReviewByUser } from "../data/repository";
+import {
+  getReviewsByProductId,
+  updateReview,
+  deleteReviewByUser,
+} from "../data/repository";
 import ReviewForm from "./ReviewForm";
 import ReviewEditForm from "./ReviewEdit";
 
@@ -93,7 +97,9 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
                 <br />
                 <Text>Rating: {review.rating}/5</Text>
                 {currentUser && currentUser.id === review.user_id && (
-                  <Button onClick={() => handleDeleteReview(review.review_id)}>Delete</Button>
+                  <Button onClick={() => handleDeleteReview(review.review_id)}>
+                    Delete
+                  </Button>
                 )}
               </Box>
             ))}
