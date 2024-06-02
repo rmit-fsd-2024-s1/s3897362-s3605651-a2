@@ -12,6 +12,7 @@ import {
   IconButton,
   Box,
   useToast,
+  Spinner,
   Flex,
   Tooltip,
 } from "@chakra-ui/react";
@@ -116,7 +117,15 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
         <ModalCloseButton color={"heading"} />
         <ModalBody>
           {isLoading ? (
-            <Text>Loading reviews...</Text>
+            <Flex justifyContent="center" alignItems="center" padding="20px">
+              <Spinner
+                thickness="6px"
+                speed="0.65s"
+                emptyColor="lightGreen"
+                color="darkGreen"
+                size="xl"
+              />
+            </Flex>
           ) : (
             <Box>
               <Box textColor={"heading"}>
