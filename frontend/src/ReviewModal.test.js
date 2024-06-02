@@ -1,16 +1,23 @@
+/*
+The reasoning behind this unit test is that a users ability to edit reviews
+is soley dependant on the userId of the current user and the user that made
+the original review
+*/
+
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import '@testing-library/jest-dom/extend-expect';
 import ReviewModal from "../src/components/ReviewModal.js";
 import { getReviewsByProductId, deleteReviewByUser } from "../src/data/repository";
 
+// Mock so that we can bypassing importing axios 
 jest.mock('axios', () => ({
     get: jest.fn(() => Promise.resolve({ data: {} })),
     post: jest.fn(() => Promise.resolve({ data: {} })),
 }));
-
 jest.mock("../src/data/repository");
 
+// Mock reviews so that we can test seperatley from the backend
 describe("ReviewModal Component - User ID System", () => {
   const productId = 1;
   const currentUser = { user_id: 1, username: "testuser" };
@@ -25,35 +32,31 @@ describe("ReviewModal Component - User ID System", () => {
   });
 
   it("should allow the user to edit or delete their own reviews only", async () => {
-    render(<ReviewModal isOpen={true} onClose={jest.fn()} productId={productId} />);
+    render(<ReviewModal isOpen={true} onClose={jest.fn()} productId={productId} productName="Test Product" />);
 
-    // Wait for reviews to be loaded and rendered
-    await waitFor(() => expect(screen.getByText("Great product")).toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByText("Great product")).toBeInTheDocument();
+      expect(screen.getByText("Not bad")).toBeInTheDocument();
+    });
 
-    // Debugging: log the rendered HTML to see what's rendered
     screen.debug();
 
-    // Check that the first review (Matches currentUser) has edit and delete buttons
-    const deleteButtons = await screen.findAllByText("Delete");
-    const editButtons = await screen.findAllByText("Edit");
-
-    // Debugging: log the buttons found
-    console.log("Delete Buttons:", deleteButtons);
-    console.log("Edit Buttons:", editButtons);
-
+    // Check that ids match and code executes
+    const deleteButtons = screen.getAllByLabelText("Delete review");
+    const editButtons = screen.getAllByLabelText("Edit review");
     expect(deleteButtons.length).toBe(1);
     expect(editButtons.length).toBe(1);
 
-    // Check that the second review (Does not match currentUser) does not have edit or delete buttons
+    // Check that buttons are not present on id mismatch so users cannot edit and delet other users reviews
     const secondReview = screen.getByText("Not bad").closest('div');
-    expect(secondReview).not.toHaveTextContent("Delete");
-    expect(secondReview).not.toHaveTextContent("Edit");
+    expect(secondReview).not.toHaveTextContent("Delete review");
+    expect(secondReview).not.toHaveTextContent("Edit review");
 
-    // Check if delete function is called correctly
+    // Check for delete
     fireEvent.click(deleteButtons[0]);
     await waitFor(() => expect(deleteReviewByUser).toHaveBeenCalledWith(1));
 
-    // Check if edit form appears
+    // Check for edit
     fireEvent.click(editButtons[0]);
     expect(await screen.findByText("Update Review")).toBeInTheDocument();
   });
