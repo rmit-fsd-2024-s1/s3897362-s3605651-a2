@@ -8,7 +8,7 @@ const clearInactiveCarts = async () => {
     const inactiveCarts = await db.cart.findAll({
       where: {
         updatedAt: {
-          [db.Sequelize.Op.lt]: fifteenMinutesAgo,
+          [db.Op.lt]: fifteenMinutesAgo,
         },
       },
     });
