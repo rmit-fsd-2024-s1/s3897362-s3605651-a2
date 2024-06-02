@@ -4,6 +4,7 @@ import { SimpleGrid, Box, Heading, GridItem } from "@chakra-ui/react";
 import SpecialPie from "./Analytics/SpecialPie";
 import RecentReviews from "./Analytics/RecentReviews";
 import PopularItems from "./Analytics/PopularItems";
+import OverallReviewsPie from "./Analytics/OverallReviewsPie";
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
@@ -66,6 +67,14 @@ const Home = () => {
             Our Most Reviewed Items
           </Heading>
           <PopularItems />
+        </Box>
+      </GridItem>
+      <GridItem colSpan={2}>
+        <Box>
+          <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
+            Our Most Reviewed Items
+          </Heading>
+          <OverallReviewsPie />
         </Box>
       </GridItem>
     </SimpleGrid>
