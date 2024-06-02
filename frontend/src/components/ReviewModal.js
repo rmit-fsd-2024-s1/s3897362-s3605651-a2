@@ -96,9 +96,17 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
   };
 
   // Calculate the average rating
-  const averageRating = (
-    reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
-  ).toFixed(2);
+  const rawAverageRating =
+    reviews.reduce(
+      (acc, review) => (review.is_deleted ? acc : acc + review.rating),
+      0
+    ) / reviews.filter((review) => !review.is_deleted).length;
+
+  // Format the average rating
+  const averageRating =
+    rawAverageRating % 1 === 0
+      ? rawAverageRating.toFixed(0)
+      : rawAverageRating.toFixed(2);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -154,63 +162,67 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
                   p={5}
                   mb={2}
                 >
-                  <Box position="relative">
-                    <Flex direction="column" align="flex-start">
-                      <Flex
-                        fontWeight="bold"
-                        flexDirection="row"
-                        alignItems="center"
-                      >
-                        <Text mr={2}>User:</Text>
-                        <Text color="text"> {review.User.username}</Text>
-                      </Flex>{" "}
-                      <Tooltip
-                        label={`Rating: ${review.rating} out of 5`}
-                        aria-label="A tooltip"
-                        hasArrow
-                      >
-                        <Text fontWeight="bold">
-                          Rating:{" "}
-                          <StarRatings
-                            rating={Number(review.rating) || 0}
-                            starRatedColor="gold"
-                            starEmptyColor="gray"
-                            starDimension="20px"
-                            starSpacing="2px"
-                            numberOfStars={5}
-                            name="rating"
-                          />
-                        </Text>
-                      </Tooltip>
-                      <Flex
-                        fontWeight="bold"
-                        flexDirection="row"
-                        alignItems="center"
-                      >
-                        <Text mr={2}>Review:</Text>
-                        <Text color="text"> {review.review_text}</Text>
+                  {review.is_deleted ? (
+                    <Text fontWeight={"bold"}>{review.review_text}</Text>
+                  ) : (
+                    <Box position="relative">
+                      <Flex direction="column" align="flex-start">
+                        <Flex
+                          fontWeight="bold"
+                          flexDirection="row"
+                          alignItems="center"
+                        >
+                          <Text mr={2}>User:</Text>
+                          <Text color="text"> {review.User.username}</Text>
+                        </Flex>{" "}
+                        <Tooltip
+                          label={`Rating: ${review.rating} out of 5`}
+                          aria-label="A tooltip"
+                          hasArrow
+                        >
+                          <Text fontWeight="bold">
+                            Rating:{" "}
+                            <StarRatings
+                              rating={Number(review.rating) || 0}
+                              starRatedColor="gold"
+                              starEmptyColor="gray"
+                              starDimension="20px"
+                              starSpacing="2px"
+                              numberOfStars={5}
+                              name="rating"
+                            />
+                          </Text>
+                        </Tooltip>
+                        <Flex
+                          fontWeight="bold"
+                          flexDirection="row"
+                          alignItems="center"
+                        >
+                          <Text mr={2}>Review:</Text>
+                          <Text color="text"> {review.review_text}</Text>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                    {currentUserId && currentUserId === review.user_id && (
-                      <Box position="absolute" top={2} right={2}>
-                        <IconButton
-                          aria-label="Delete review"
-                          icon={<DeleteIcon />}
-                          colorScheme="red"
-                          onClick={() => handleDeleteReview(review.review_id)}
-                          mr={2}
-                          size="sm"
-                        />
-                        <IconButton
-                          aria-label="Edit review"
-                          icon={<EditIcon />}
-                          colorScheme="blue"
-                          onClick={() => handleEditReview(review)}
-                          size="sm"
-                        />
-                      </Box>
-                    )}
-                  </Box>
+                      {currentUserId && currentUserId === review.user_id && (
+                        <Box position="absolute" top={2} right={2}>
+                          <IconButton
+                            aria-label="Delete review"
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            onClick={() => handleDeleteReview(review.review_id)}
+                            mr={2}
+                            size="sm"
+                          />
+                          <IconButton
+                            aria-label="Edit review"
+                            icon={<EditIcon />}
+                            colorScheme="blue"
+                            onClick={() => handleEditReview(review)}
+                            size="sm"
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                  )}
                 </Box>
               ))}
               {reviews.length === 0 && <Text>No reviews have been made.</Text>}
