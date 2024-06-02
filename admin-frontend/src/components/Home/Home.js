@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery, gql } from "@apollo/client";
-import { SimpleGrid, Box, Heading } from "@chakra-ui/react";
+import { SimpleGrid, Box, Heading, GridItem } from "@chakra-ui/react";
 import SpecialPie from "./Analytics/SpecialPie";
 import RecentReviews from "./Analytics/RecentReviews";
 import PopularItems from "./Analytics/PopularItems";
@@ -41,26 +41,33 @@ const Home = () => {
       productNames: notSpecialProducts.map((product) => product.name),
     },
   ];
+
   return (
-    <SimpleGrid columns={3} spacing={10}>
-      <Box>
-        <Heading pt={5} pl={5} as="h2" size="lg" color="gray.500">
-          Products on Special
-        </Heading>
-        <SpecialPie chartData={chartData} />
-      </Box>
-      <Box>
-        <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
-          Popular Items
-        </Heading>
-        <PopularItems />
-      </Box>
-      <Box>
-        <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
-          Recent Reviews
-        </Heading>
-        <RecentReviews />
-      </Box>
+    <SimpleGrid columns={4} spacing={10}>
+      <GridItem colSpan={1}>
+        <Box>
+          <Heading pt={5} pl={5} as="h2" size="lg" color="gray.500">
+            Products on Special
+          </Heading>
+          <SpecialPie chartData={chartData} />
+        </Box>
+      </GridItem>
+      <GridItem colSpan={2}>
+        <Box>
+          <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
+            Our Most Popular Items
+          </Heading>
+          <PopularItems />
+        </Box>
+      </GridItem>
+      <GridItem colSpan={1}>
+        <Box>
+          <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
+            Recent Reviews
+          </Heading>
+          <RecentReviews />
+        </Box>
+      </GridItem>
     </SimpleGrid>
   );
 };
