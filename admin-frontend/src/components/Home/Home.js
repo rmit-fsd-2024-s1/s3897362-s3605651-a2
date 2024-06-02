@@ -1,7 +1,8 @@
 import React from "react";
 import { useQuery, gql } from "@apollo/client";
 import { SimpleGrid, Box, Heading } from "@chakra-ui/react";
-import SpecialPie from "./SpecialPie/SpecialPie";
+import SpecialPie from "./Analytics/SpecialPie";
+import RecentReviews from "./Analytics/RecentReviews";
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
@@ -41,11 +42,17 @@ const Home = () => {
   ];
   return (
     <SimpleGrid columns={3} spacing={10}>
-      <Box boxShadow="lg" p="3" rounded="2xl" bg="white">
+      <Box>
         <Heading pt={5} pl={5} as="h2" size="lg" color="gray.500">
           Products on Special
         </Heading>
         <SpecialPie chartData={chartData} />
+      </Box>
+      <Box>
+        <Heading mb={5} pt={5} pl={5} as="h2" size="lg" color="gray.500">
+          Recent Reviews
+        </Heading>
+        <RecentReviews />
       </Box>
     </SimpleGrid>
   );

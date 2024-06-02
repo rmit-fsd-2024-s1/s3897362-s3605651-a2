@@ -17,6 +17,8 @@ const typeDefs = gql`
     getAllProducts: [Product]
 
     getAllReviews: [Review]
+
+    getAllUsers: [User]
   }
 
   type Mutation {
@@ -59,6 +61,16 @@ const typeDefs = gql`
     rating: Int!
     review_text: String
     is_deleted: Boolean
+    createdAt: String
+    updatedAt: String
+  }
+
+  type User {
+    user_id: ID!
+    username: String!
+    email: String!
+    first_name: String!
+    last_name: String!
     createdAt: String
     updatedAt: String
   }

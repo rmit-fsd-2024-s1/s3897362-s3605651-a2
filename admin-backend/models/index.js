@@ -23,4 +23,10 @@ db.review = require("../../backend/src/database/models/review")(
   DataTypes
 );
 
+// Import User from existing backend
+db.user = require("../../backend/src/database/models/user")(
+  sequelize,
+  DataTypes
+);
+
 module.exports = db;

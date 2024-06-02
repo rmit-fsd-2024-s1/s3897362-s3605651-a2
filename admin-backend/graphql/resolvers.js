@@ -1,3 +1,6 @@
+const {
+  getAllUsers,
+} = require("../../backend/src/controllers/user.controller");
 const db = require("../models");
 
 const resolvers = {
@@ -16,6 +19,14 @@ const resolvers = {
         return reviews;
       } catch (error) {
         throw new Error("Error retrieving reviews");
+      }
+    },
+    getAllUsers: async () => {
+      try {
+        const users = await db.user.findAll();
+        return users;
+      } catch (error) {
+        throw new Error("Error retrieving users");
       }
     },
   },
