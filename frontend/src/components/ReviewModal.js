@@ -36,7 +36,6 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
     }
   };
 
-
   useEffect(() => {
     if (isOpen) {
       fetchReviews();
@@ -51,18 +50,18 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
 
   const ReviewItem = ({ review, currentUser }) => {
     const [isEditing, setIsEditing] = useState(false);
-  
+
     const handleUpdateReview = async (updatedReviewData) => {
       try {
         await updateReview(review.id, updatedReviewData);
         setIsEditing(false);
         // Optionally, refresh the reviews list after editing
       } catch (error) {
-        console.error('Failed to update review:', error);
+        console.error("Failed to update review:", error);
         // Handle error
       }
     };
-  
+
     return (
       <div>
         {isEditing ? (
@@ -93,14 +92,13 @@ const ReviewModal = ({ isOpen, onClose, productId, userId }) => {
               Reviews:
             </Text>
             {reviews.map((review) => (
-                <Box key={review.review_id} bg="gray.100" p={2} mb={2}>
-                    <Text fontWeight="bold">{review.review_text}</Text>
-                    <br/>
-                    <Text>Rating: {review.rating}/5</Text>
-                </Box>
+              <Box key={review.review_id} bg="gray.100" p={2} mb={2}>
+                <Text fontWeight="bold">{review.review_text}</Text>
+                <br />
+                <Text>Rating: {review.rating}/5</Text>
+              </Box>
             ))}
-            {reviews.length === 0 && <Text>No reviews have been made. 
-                </Text>}
+            {reviews.length === 0 && <Text>No reviews have been made.</Text>}
 
             {/* Button to write review */}
             <Button

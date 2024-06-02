@@ -58,21 +58,20 @@ const Products = ({ changeView }) => {
     onClose: onCheckoutClose,
   } = useDisclosure();
 
-//reviews test code
-const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-const [selectedProductId, setSelectedProductId] = useState(null);
+  //reviews test code
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
-const handleReviewButtonClick = (product) => {
-  console.log("Review button clicked for product:", product);
-  setIsReviewModalOpen(true);
-  setSelectedProductId(product.product_id);
-};
+  const handleReviewButtonClick = (product) => {
+    console.log("Review button clicked for product:", product);
+    setIsReviewModalOpen(true);
+    setSelectedProductId(product.product_id);
+  };
 
-useEffect(() => {
-  console.log("selectedProductId after click:", selectedProductId);
-}, [selectedProductId]);
-//end
-
+  useEffect(() => {
+    console.log("selectedProductId after click:", selectedProductId);
+  }, [selectedProductId]);
+  //end
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -284,315 +283,323 @@ useEffect(() => {
 
   return (
     <>
-    <Fade in={true}>
-      <Box p="4">
-        <Flex direction="row" justify="space-between">
-          <Box maxWidth="1100" margin="0 auto">
-            {specialProducts.length > 0 && (
-              <>
-                <Heading
-                  as="h2"
-                  size="lg"
-                  fontFamily="'Josefin Sans', sans-serif"
-                  textAlign="center"
-                  mb={5}
-                  color="heading"
-                >
-                  Specials of the Week!
-                </Heading>
-                <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10}>
-                  {specialProducts.map((product, index) => (
-                    <Box
-                      key={index}
-                      p={5}
-                      shadow="lg"
-                      borderWidth="1px"
-                      borderRadius="lg"
-                      position="relative"
-                      bg="card"
-                      textColor={"heading"}
-                      height="100%"
-                      display="flex"
-                      flexDirection="column"
-                      transition="all 0.2s"
-                      _hover={{ transform: "scale(1.01)" }}
-                      overflow="hidden"
-                      borderColor={"beige"}
-                    >
-                      <Skeleton
-                        isLoaded={isLoaded}
-                        height="200px"
+      <Fade in={true}>
+        <Box p="4">
+          <Flex direction="row" justify="space-between">
+            <Box maxWidth="1100" margin="0 auto">
+              {specialProducts.length > 0 && (
+                <>
+                  <Heading
+                    as="h2"
+                    size="lg"
+                    fontFamily="'Josefin Sans', sans-serif"
+                    textAlign="center"
+                    mb={5}
+                    color="heading"
+                  >
+                    Specials of the Week!
+                  </Heading>
+                  <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10}>
+                    {specialProducts.map((product, index) => (
+                      <Box
+                        key={index}
+                        p={5}
+                        shadow="lg"
+                        borderWidth="1px"
                         borderRadius="lg"
+                        position="relative"
+                        bg="card"
+                        textColor={"heading"}
+                        height="100%"
+                        display="flex"
+                        flexDirection="column"
+                        transition="all 0.2s"
+                        _hover={{ transform: "scale(1.01)" }}
+                        overflow="hidden"
+                        borderColor={"beige"}
                       >
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          objectFit="cover"
-                          boxSize="200px"
-                          width="100%"
+                        <Skeleton
+                          isLoaded={isLoaded}
+                          height="200px"
                           borderRadius="lg"
-                        />
-                      </Skeleton>
-                      <Heading fontSize="xl" mb={2} mt={4}>
-                        {product.name}
-                      </Heading>
-                      <Text color="text" mb={4} flexGrow={1}>
-                        {product.description}
-                      </Text>
-                      <Spacer />
-                      <Flex justifyContent="space-between" alignItems="center">
-                        <Text fontWeight="bold" fontSize="lg" color="red.500">
-                          ${Number(product.specialPrice).toFixed(2)}
-                          <Text
-                            as="span"
-                            fontSize="sm"
-                            color="text"
-                            fontWeight="normal"
-                            fontFamily="'Josefin Sans', sans-serif"
-                          >
-                            /{product.unit}
+                        >
+                          <Image
+                            src={product.image}
+                            alt={product.name}
+                            objectFit="cover"
+                            boxSize="200px"
+                            width="100%"
+                            borderRadius="lg"
+                          />
+                        </Skeleton>
+                        <Heading fontSize="xl" mb={2} mt={4}>
+                          {product.name}
+                        </Heading>
+                        <Text color="text" mb={4} flexGrow={1}>
+                          {product.description}
+                        </Text>
+                        <Spacer />
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <Text fontWeight="bold" fontSize="lg" color="red.500">
+                            ${Number(product.specialPrice).toFixed(2)}
                             <Text
-                              fontWeight="bold"
-                              fontSize="md"
-                              color="middleGreen"
-                              textDecoration="line-through"
+                              as="span"
+                              fontSize="sm"
+                              color="text"
+                              fontWeight="normal"
+                              fontFamily="'Josefin Sans', sans-serif"
                             >
-                              ${Number(product.price).toFixed(2)}
+                              /{product.unit}
+                              <Text
+                                fontWeight="bold"
+                                fontSize="md"
+                                color="middleGreen"
+                                textDecoration="line-through"
+                              >
+                                ${Number(product.price).toFixed(2)}
+                              </Text>
                             </Text>
                           </Text>
-                        </Text>
 
-                        <Text fontSize="md">QTY: {product.quantity}</Text>
-                      </Flex>
-                      <Button
-                        mt={4}
-                        bg={"darkGreen"}
-                        textColor={"beige"}
-                        onClick={() => handleAddToCart(product)}
-                        _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
-                      >
-                        Add to cart
-                      </Button>
-                      <Button
-                        mt={4}
-                        bg={"darkGreen"}
-                        textColor={"beige"}
-                        onClick={() => handleReviewButtonClick(product)}
-                        _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
-                      >
-                        Reviews
-                      </Button>
-                    </Box>
-                  ))}
-                </SimpleGrid>
-              </>
-            )}
-            <Heading
-              as="h2"
-              size="lg"
-              fontFamily="'Josefin Sans', sans-serif"
-              textAlign="center"
-              mt={10}
-              mb={5}
-              color="heading"
-            >
-              Regular Products
-            </Heading>
-            <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10}>
-              {regularProducts.map((product, index) => (
-                <Box
-                  key={index}
-                  p={5}
-                  shadow="lg"
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  position="relative"
-                  bg="card"
-                  textColor={"heading"}
-                  height="100%"
-                  display="flex"
-                  flexDirection="column"
-                  transition="all 0.2s"
-                  _hover={{ transform: "scale(1.01)" }}
-                  overflow="hidden"
-                  borderColor={"beige"}
-                >
-                  <Skeleton
-                    isLoaded={isLoaded}
-                    height="200px"
-                    borderRadius="lg"
-                  >
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      objectFit="cover"
-                      boxSize="200px"
-                      width="100%"
-                      borderRadius="lg"
-                    />
-                  </Skeleton>
-                  <Heading fontSize="xl" mb={2} mt={4}>
-                    {product.name}
-                  </Heading>
-                  <Text color="text" mb={4} flexGrow={1}>
-                    {product.description}
-                  </Text>
-                  <Spacer />
-                  <Flex justifyContent="space-between" alignItems="center">
-                    <Text fontWeight="bold" fontSize="lg">
-                      ${Number(product.price).toFixed(2)}
-                      <Text
-                        as="span"
-                        fontSize="sm"
-                        color="text"
-                        fontWeight="normal"
-                        fontFamily="'Josefin Sans', sans-serif"
-                      >
-                        /{product.unit}
-                      </Text>
-                    </Text>
-                    <Text fontSize="md">QTY: {product.quantity}</Text>
-                  </Flex>
-                  <Button
-                    mt={4}
-                    bg={"darkGreen"}
-                    textColor={"beige"}
-                    onClick={() => handleAddToCart(product)}
-                    _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
-                  >
-                    Add to cart
-                  </Button>
-                  <Button
-                        mt={4}
-                        bg={"darkGreen"}
-                        textColor={"beige"}
-                        onClick={() => handleReviewButtonClick(product)}
-                        _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
-                      >
-                        Reviews
-                      </Button>
-                </Box>
-              ))}
-            </SimpleGrid>
-          </Box>
-          {cart.length > 0 && (
-            <Box
-              position="sticky"
-              top={20}
-              bg="card"
-              p={5}
-              ml={5}
-              mr={5}
-              shadow="lg"
-              borderWidth="1px"
-              borderRadius="lg"
-              borderColor={"beige"}
-              transition="all 0.2s"
-              _hover={{ transform: "scale(1.005)" }}
-              width={{ base: "40vw", lg: "30vw", xl: "20vw" }}
-              flexShrink={0}
-              alignSelf="start"
-            >
-              <Heading as="h3" size="lg" mb={4} textColor={"heading"}>
-                Cart
-              </Heading>
-              <CartItems cart={cart} />
-              <Modal
-                isOpen={isCheckoutOpen}
-                onClose={onCheckoutClose}
-                size="3xl"
+                          <Text fontSize="md">QTY: {product.quantity}</Text>
+                        </Flex>
+                        <Button
+                          mt={4}
+                          bg={"darkGreen"}
+                          textColor={"beige"}
+                          onClick={() => handleAddToCart(product)}
+                          _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+                        >
+                          Add to cart
+                        </Button>
+                        <Button
+                          mt={4}
+                          bg={"darkGreen"}
+                          textColor={"beige"}
+                          onClick={() => handleReviewButtonClick(product)}
+                          _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+                        >
+                          Reviews
+                        </Button>
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                </>
+              )}
+              <Heading
+                as="h2"
+                size="lg"
+                fontFamily="'Josefin Sans', sans-serif"
+                textAlign="center"
+                mt={10}
+                mb={5}
+                color="heading"
               >
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>
-                    {user.first_name} {user.last_name}'s Cart
-                  </ModalHeader>
-                  <ModalCloseButton />
-                  <ModalBody>
-                    <Flex direction="row" justify="space-between">
-                      <Box flex="1" mr="2">
-                        {cart.length > 0 ? (
-                          cart.map((item, index) => (
-                            <Flex
-                              key={index}
-                              alignItems="center"
-                              justifyContent="space-between"
-                              mb={3}
-                            >
-                              <Flex alignItems="center">
-                                <Text fontSize="2xl" color="heading" mr={2}>
-                                  {item.quantity}
-                                </Text>
-                                <Text fontSize="2xl" color="lightGreen" mr={2}>
-                                  x
-                                </Text>
-                                <Text fontWeight="bold" color="text" mr={2}>
-                                  {item.Product.name}
+                Regular Products
+              </Heading>
+              <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={10}>
+                {regularProducts.map((product, index) => (
+                  <Box
+                    key={index}
+                    p={5}
+                    shadow="lg"
+                    borderWidth="1px"
+                    borderRadius="lg"
+                    position="relative"
+                    bg="card"
+                    textColor={"heading"}
+                    height="100%"
+                    display="flex"
+                    flexDirection="column"
+                    transition="all 0.2s"
+                    _hover={{ transform: "scale(1.01)" }}
+                    overflow="hidden"
+                    borderColor={"beige"}
+                  >
+                    <Skeleton
+                      isLoaded={isLoaded}
+                      height="200px"
+                      borderRadius="lg"
+                    >
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        objectFit="cover"
+                        boxSize="200px"
+                        width="100%"
+                        borderRadius="lg"
+                      />
+                    </Skeleton>
+                    <Heading fontSize="xl" mb={2} mt={4}>
+                      {product.name}
+                    </Heading>
+                    <Text color="text" mb={4} flexGrow={1}>
+                      {product.description}
+                    </Text>
+                    <Spacer />
+                    <Flex justifyContent="space-between" alignItems="center">
+                      <Text fontWeight="bold" fontSize="lg">
+                        ${Number(product.price).toFixed(2)}
+                        <Text
+                          as="span"
+                          fontSize="sm"
+                          color="text"
+                          fontWeight="normal"
+                          fontFamily="'Josefin Sans', sans-serif"
+                        >
+                          /{product.unit}
+                        </Text>
+                      </Text>
+                      <Text fontSize="md">QTY: {product.quantity}</Text>
+                    </Flex>
+                    <Button
+                      mt={4}
+                      bg={"darkGreen"}
+                      textColor={"beige"}
+                      onClick={() => handleAddToCart(product)}
+                      _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+                    >
+                      Add to cart
+                    </Button>
+                    <Button
+                      mt={4}
+                      bg={"darkGreen"}
+                      textColor={"beige"}
+                      onClick={() => handleReviewButtonClick(product)}
+                      _hover={{ bg: "lightGreen", textColor: "darkGreen" }}
+                    >
+                      Reviews
+                    </Button>
+                  </Box>
+                ))}
+              </SimpleGrid>
+            </Box>
+            {cart.length > 0 && (
+              <Box
+                position="sticky"
+                top={20}
+                bg="card"
+                p={5}
+                ml={5}
+                mr={5}
+                shadow="lg"
+                borderWidth="1px"
+                borderRadius="lg"
+                borderColor={"beige"}
+                transition="all 0.2s"
+                _hover={{ transform: "scale(1.005)" }}
+                width={{ base: "40vw", lg: "30vw", xl: "20vw" }}
+                flexShrink={0}
+                alignSelf="start"
+              >
+                <Heading as="h3" size="lg" mb={4} textColor={"heading"}>
+                  Cart
+                </Heading>
+                <CartItems cart={cart} />
+                <Modal
+                  isOpen={isCheckoutOpen}
+                  onClose={onCheckoutClose}
+                  size="3xl"
+                >
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader>
+                      {user.first_name} {user.last_name}'s Cart
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                      <Flex direction="row" justify="space-between">
+                        <Box flex="1" mr="2">
+                          {cart.length > 0 ? (
+                            cart.map((item, index) => (
+                              <Flex
+                                key={index}
+                                alignItems="center"
+                                justifyContent="space-between"
+                                mb={3}
+                              >
+                                <Flex alignItems="center">
+                                  <Text fontSize="2xl" color="heading" mr={2}>
+                                    {item.quantity}
+                                  </Text>
+                                  <Text
+                                    fontSize="2xl"
+                                    color="lightGreen"
+                                    mr={2}
+                                  >
+                                    x
+                                  </Text>
+                                  <Text fontWeight="bold" color="text" mr={2}>
+                                    {item.Product.name}
+                                  </Text>
+                                </Flex>
+                                <Text color="middleGreen">
+                                  $
+                                  {(
+                                    (item.Product.isSpecial
+                                      ? item.Product.specialPrice
+                                      : item.Product.price) * item.quantity
+                                  ).toFixed(2)}
                                 </Text>
                               </Flex>
-                              <Text color="middleGreen">
-                                $
-                                {(
-                                  (item.Product.isSpecial
-                                    ? item.Product.specialPrice
-                                    : item.Product.price) * item.quantity
-                                ).toFixed(2)}
-                              </Text>
-                            </Flex>
-                          ))
-                        ) : (
-                          <Text>No items in the cart.</Text>
-                        )}
-                        <Divider borderColor="lightGreen" />
-                        <Flex justifyContent="space-between" mt={5}>
-                          <Text
-                            fontSize="xl"
-                            fontWeight="bold"
-                            color={"heading"}
-                          >
-                            Total:
-                          </Text>
-                          <Text
-                            fontSize="xl"
-                            fontWeight="bold"
-                            color={"orange.500"}
-                          >
-                            $
-                            {cart
-                              .reduce(
-                                (total, item) =>
-                                  total +
-                                  (item.Product.isSpecial
-                                    ? item.Product.specialPrice
-                                    : item.Product.price) *
-                                    item.quantity,
-                                0
-                              )
-                              .toFixed(2)}
-                          </Text>
-                        </Flex>
-                      </Box>
-                      <Box flex="1" ml="2">
-                        <CreditCardForm
-                          onClose={onCheckoutClose}
-                          changeView={changeView}
-                        />
-                      </Box>
-                    </Flex>
-                  </ModalBody>
-                </ModalContent>
-              </Modal>
-            </Box>
-          )}
-        </Flex>
-      </Box>
-    </Fade>
-    <ReviewModal
-    isOpen={isReviewModalOpen}
-    onClose={() => setIsReviewModalOpen(false)}
-    productId={selectedProductId}
-  />
-  </>
+                            ))
+                          ) : (
+                            <Text>No items in the cart.</Text>
+                          )}
+                          <Divider borderColor="lightGreen" />
+                          <Flex justifyContent="space-between" mt={5}>
+                            <Text
+                              fontSize="xl"
+                              fontWeight="bold"
+                              color={"heading"}
+                            >
+                              Total:
+                            </Text>
+                            <Text
+                              fontSize="xl"
+                              fontWeight="bold"
+                              color={"orange.500"}
+                            >
+                              $
+                              {cart
+                                .reduce(
+                                  (total, item) =>
+                                    total +
+                                    (item.Product.isSpecial
+                                      ? item.Product.specialPrice
+                                      : item.Product.price) *
+                                      item.quantity,
+                                  0
+                                )
+                                .toFixed(2)}
+                            </Text>
+                          </Flex>
+                        </Box>
+                        <Box flex="1" ml="2">
+                          <CreditCardForm
+                            onClose={onCheckoutClose}
+                            changeView={changeView}
+                          />
+                        </Box>
+                      </Flex>
+                    </ModalBody>
+                  </ModalContent>
+                </Modal>
+              </Box>
+            )}
+          </Flex>
+        </Box>
+      </Fade>
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        productId={selectedProductId}
+        userId={userId}
+      />
+    </>
   );
 };
 
