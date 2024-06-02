@@ -1,6 +1,4 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import '@testing-library/jest-dom/extend-expect';
+
 
 /*  This unit test is designed to verify that the user checking of current user and the user who wrote a review is correct
     This is smportant as it ensures we dont acidentally allow somone to delete or edit a review that is not their's
@@ -9,6 +7,9 @@ import '@testing-library/jest-dom/extend-expect';
 jest.mock("axios");
 jest.mock("../src/data/repository");
 
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import '@testing-library/jest-dom/extend-expect';
 import ReviewModal from "../src/components/ReviewModal";
 import { getReviewsByProductId, deleteReviewByUser } from "../src/data/repository";
 
