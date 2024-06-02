@@ -79,6 +79,8 @@ const RecentReviews = () => {
           shadow="md"
           borderWidth="1px"
           borderRadius="2xl"
+          transition="all 0.2s"
+          _hover={{ transform: "scale(1.02)" }}
         >
           <HStack spacing={2}>
             <Text fontWeight="bold">User:</Text>
