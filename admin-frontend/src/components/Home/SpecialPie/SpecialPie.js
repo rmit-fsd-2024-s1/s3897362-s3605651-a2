@@ -4,12 +4,12 @@ import { Box } from "@chakra-ui/react";
 
 const SpecialPie = ({ chartData }) => {
   return (
-    <Box>
-      <div style={{ height: 400 }}>
+    <Box width="100%" height="100%">
+      <div style={{ height: 400, width: "100%" }}>
         <ResponsivePie
           data={chartData}
           colors={{ scheme: "accent" }}
-          margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+          margin={{ top: 30, right: 100, bottom: 100, left: 100 }}
           innerRadius={0.5}
           padAngle={0.9}
           cornerRadius={3}

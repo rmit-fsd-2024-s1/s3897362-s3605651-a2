@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery, gql } from "@apollo/client";
-import { SimpleGrid } from "@chakra-ui/react";
+import { SimpleGrid, Box, Heading } from "@chakra-ui/react";
 import SpecialPie from "./SpecialPie/SpecialPie";
 
 const GET_PRODUCTS = gql`
@@ -41,7 +41,12 @@ const Home = () => {
   ];
   return (
     <SimpleGrid columns={3} spacing={10}>
-      <SpecialPie chartData={chartData} />
+      <Box boxShadow="lg" p="3" rounded="2xl" bg="white">
+        <Heading pt={5} pl={5} as="h2" size="lg" color="gray.500">
+          Products on Special
+        </Heading>
+        <SpecialPie chartData={chartData} />
+      </Box>
     </SimpleGrid>
   );
 };
