@@ -55,11 +55,13 @@ const Products = ({ changeView }) => {
   //reviews test code
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedProductName, setSelectedProductName] = useState(null);
 
   const handleReviewButtonClick = (product) => {
     console.log("Review button clicked for product:", product);
     setIsReviewModalOpen(true);
     setSelectedProductId(product.product_id);
+    setSelectedProductName(product.name);
   };
 
   useEffect(() => {
@@ -592,6 +594,7 @@ const Products = ({ changeView }) => {
         onClose={() => setIsReviewModalOpen(false)}
         productId={selectedProductId}
         userId={userId}
+        productName={selectedProductName}
       />
     </>
   );

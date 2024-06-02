@@ -15,7 +15,7 @@ import { getReviewsByProductId, deleteReviewByUser } from "../data/repository";
 import ReviewForm from "./ReviewForm";
 import ReviewEdit from "./ReviewEdit";
 
-const ReviewModal = ({ isOpen, onClose, productId }) => {
+const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
   const [reviews, setReviews] = useState([]);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const toast = useToast();
@@ -86,7 +86,7 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Product Reviews</ModalHeader>
+        <ModalHeader>Reviews for {productName}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Box>
@@ -94,33 +94,40 @@ const ReviewModal = ({ isOpen, onClose, productId }) => {
               Reviews:
             </Text>
             {reviews.map((review) => (
-              <Box key={review.review_id} bg="gray.100" p={2} mb={2} display="flex" alignItems="center">
-              <Box flex="1">
-                <Text fontWeight="bold">{review.review_text}</Text>
-                <br />
-                <Text>Rating: {review.rating}/5</Text>
-                {currentUserId && currentUserId === review.user_id && (
-                  <>
-                    <Button
-                      onClick={() => handleDeleteReview(review.review_id)}
-                      colorScheme="red"
-                      color="white"
-                      mr={2}
-                    >
-                      Delete
-                    </Button>
-                    <Button
-                      onClick={() => handleEditReview(review)}
-                      colorScheme="blue"
-                      color="white"
-                      mr={2}
-                    >
-                      Edit
-                    </Button>
-                  </>
-                )}
+              <Box
+                key={review.review_id}
+                bg="gray.100"
+                p={2}
+                mb={2}
+                display="flex"
+                alignItems="center"
+              >
+                <Box flex="1">
+                  <Text fontWeight="bold">{review.review_text}</Text>
+                  <br />
+                  <Text>Rating: {review.rating}/5</Text>
+                  {currentUserId && currentUserId === review.user_id && (
+                    <>
+                      <Button
+                        onClick={() => handleDeleteReview(review.review_id)}
+                        colorScheme="red"
+                        color="white"
+                        mr={2}
+                      >
+                        Delete
+                      </Button>
+                      <Button
+                        onClick={() => handleEditReview(review)}
+                        colorScheme="blue"
+                        color="white"
+                        mr={2}
+                      >
+                        Edit
+                      </Button>
+                    </>
+                  )}
+                </Box>
               </Box>
-            </Box>
             ))}
             {reviews.length === 0 && <Text>No reviews have been made.</Text>}
 
