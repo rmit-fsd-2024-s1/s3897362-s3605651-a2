@@ -54,9 +54,11 @@ const typeDefs = gql`
     createdAt: String
     updatedAt: String
   }
+
   type Query {
     getAllReviews: [Review]
   }
+  
   type Mutation {
     deleteReviewByAdmin(review_id: ID!): Boolean
   }
