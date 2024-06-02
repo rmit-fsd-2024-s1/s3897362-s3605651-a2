@@ -100,7 +100,7 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
               <Text fontSize="md" fontWeight="bold" mb={2}>
                 Average user rating:{" "}
                 <StarRatings
-                  rating={averageRating}
+                  rating={Number(averageRating) || 0}
                   starRatedColor="gold"
                   starEmptyColor="gray"
                   starDimension="25px"
@@ -146,7 +146,7 @@ const ReviewModal = ({ isOpen, onClose, productId, productName }) => {
                       <Text fontWeight="bold">
                         Rating:{" "}
                         <StarRatings
-                          rating={review.rating}
+                          rating={Number(review.rating) || 0}
                           starRatedColor="gold"
                           starEmptyColor="gray"
                           starDimension="20px"
