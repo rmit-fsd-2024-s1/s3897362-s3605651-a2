@@ -43,6 +43,23 @@ const typeDefs = gql`
 
     deleteProduct(product_id: ID!): Boolean
   }
+
+  type Review {
+    review_id: ID!
+    user_id:
+    product_id: 
+    rating:
+    review_text: 
+    is_deleted: 
+    createdAt:
+    updatedAt:
+  }
+  type Query {
+    getAllReviews: [Review]
+  }
+  type Mutation {
+    deleteReviewByAdmin(review_id: ID!): Boolean
+  }
 `;
 
 module.exports = typeDefs;
