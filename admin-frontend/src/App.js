@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Heading, Flex, Button } from "@chakra-ui/react";
 import Home from "./components/Home";
 import ProductList from "./components/ProductList/ProductList";
+import ReviewList from "./components/ReviewList/ReviewList";
 
 const App = () => {
   const [selectedPage, setSelectedPage] = useState("home");
@@ -10,6 +11,8 @@ const App = () => {
     switch (selectedPage) {
       case "products":
         return <ProductList />;
+      case "reviews":
+        return <ReviewList />;
       case "home":
       default:
         return <Home />;
@@ -55,6 +58,13 @@ const App = () => {
               width="100%"
             >
               Products
+            </Button>
+            <Button
+              onClick={() => setSelectedPage("reviews")}
+              mb={4}
+              width="100%"
+            >
+              Reviews
             </Button>
           </Flex>
         </Box>

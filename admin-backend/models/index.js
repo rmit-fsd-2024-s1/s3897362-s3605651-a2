@@ -17,4 +17,10 @@ db.product = require("../../backend/src/database/models/product")(
   DataTypes
 );
 
+// Import Reviews from existing backend
+db.product = require("../../backend/src/database/models/review")(
+  sequelize,
+  DataTypes
+);
+
 module.exports = db;

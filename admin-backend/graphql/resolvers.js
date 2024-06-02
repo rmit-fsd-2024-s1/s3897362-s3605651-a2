@@ -46,6 +46,42 @@ const resolvers = {
       }
     },
   },
+    
+  Query: {
+    getAllReviews: async (req, res) => {
+      try {
+        const reviews = await db.reviews.findAll({
+          include: [
+            {
+              model: db.user,
+              attributes: ["username"],
+            },
+          ],
+        });
+        res.json(reviews);
+      } catch (error) {
+        res.status(500).send({ message: "Error retrieving reviews" });
+      }
+    },
+  },
+  Mutation: {
+    deleteReviewByAdmin: async (req, res) => {
+      try {
+        const { id } = req.params;
+        const review = await db.reviews.findByPk(id);
+        if (review) {
+          await review.update({
+            review_text: "[**** THIS REVIEW HAS BEEN DELETED BY THE ADMIN ****]",
+            is_deleted: true,
+          });
+          res.json(review);
+        } else {
+          res.status(404).send({ message: "Review not found" });
+        }
+      } catch (error) {
+        res.status(500).send({ message: "Error deleting review" });
+      }
+    },
+  }
 };
-
 module.exports = resolvers;
