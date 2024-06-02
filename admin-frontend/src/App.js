@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Heading, Flex, Button } from "@chakra-ui/react";
-import Home from "./components/Home";
+import Home from "./components/Home/Home";
 import ProductList from "./components/ProductList/ProductList";
 import ReviewList from "./components/ReviewList/ReviewList";
 
