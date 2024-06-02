@@ -2,7 +2,14 @@ const db = require("../database");
 
 exports.getAllReviews = async (req, res) => {
   try {
-    const reviews = await db.reviews.findAll();
+    const reviews = await db.reviews.findAll({
+      include: [
+        {
+          model: db.user,
+          attributes: ["username"],
+        },
+      ],
+    });
     res.json(reviews);
   } catch (error) {
     res.status(500).send({ message: "Error retrieving reviews" });
@@ -30,25 +37,24 @@ exports.getReviewsByProductId = async (req, res) => {
         product_id: productId,
         is_deleted: false,
       },
+      include: [
+        {
+          model: db.user,
+          attributes: ["username"],
+        },
+      ],
     });
     res.json(reviews);
   } catch (error) {
-    console.error('Error retrieving reviews for product:', error);
-    res.status(500).send({ message: 'Error retrieving reviews for product' });
+    console.error("Error retrieving reviews for product:", error);
+    res.status(500).send({ message: "Error retrieving reviews for product" });
   }
 };
 
 exports.createReview = async (req, res) => {
   try {
     const { user_id, product_id, rating, review_text } = req.body;
-
-    // Log incoming request data
     console.log("Received data:", { user_id, product_id, rating, review_text });
-
-    if (!user_id || !product_id || !rating || !review_text) {
-      return res.status(400).send({ message: "Missing required fields" });
-    }
-
     const createdAt = new Date();
     const updatedAt = new Date();
 
